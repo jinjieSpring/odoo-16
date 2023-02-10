@@ -771,6 +771,8 @@ class AccountMove(models.Model):
                 move.invoice_payment_term_id = move.partner_id.property_payment_term_id
             elif move.is_purchase_document(include_receipts=True) and move.partner_id.property_supplier_payment_term_id:
                 move.invoice_payment_term_id = move.partner_id.property_supplier_payment_term_id
+            else:
+                move.invoice_payment_term_id = False
 
     @api.depends('needed_terms')
     def _compute_invoice_date_due(self):
@@ -1269,7 +1271,7 @@ class AccountMove(models.Model):
     @api.depends('currency_id')
     def _compute_display_inactive_currency_warning(self):
         for move in self.with_context(active_test=False):
-            move.display_inactive_currency_warning = not move.currency_id.active
+            move.display_inactive_currency_warning = move.currency_id and not move.currency_id.active
 
     @api.depends('company_id.account_fiscal_country_id', 'fiscal_position_id', 'fiscal_position_id.country_id', 'fiscal_position_id.foreign_vat')
     def _compute_tax_country_id(self):
