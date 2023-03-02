@@ -3603,6 +3603,12 @@ const SnippetOptionWidget = Widget.extend({
                 }
 
                 const dependencies = widget.getDependencies();
+
+                if (dependencies.length === 1 && dependencies[0] === 'fake') {
+                    widget.toggleVisibility(false);
+                    return;
+                }
+
                 const dependenciesData = [];
                 dependencies.forEach(depName => {
                     const toBeActive = (depName[0] !== '!');
@@ -4533,7 +4539,8 @@ registry.sizing = SnippetOptionWidget.extend({
                 const isGridHandle = handleEl.classList.contains('o_grid_handle');
                 handleEl.classList.toggle('d-none', isGrid ^ isGridHandle);
                 // Disabling the resize if we are in mobile view.
-                handleEl.classList.toggle('readonly', isMobileView && isGridHandle);
+                const isHorizontalSizing = handleEl.matches('.e, .w');
+                handleEl.classList.toggle('readonly', isMobileView && (isHorizontalSizing || isGridHandle));
             }
 
             // Hiding the move handle in mobile view so we can't drag the
@@ -5253,9 +5260,6 @@ registry.layout_column = SnippetOptionWidget.extend({
         }
         // Removing the grid properties.
         delete rowEl.dataset.rowCount;
-
-        // Adding back an align-items-* class.
-        rowEl.classList.add('align-items-start');
     },
     /**
      * Removes the padding highlights that were added when changing the grid
@@ -5268,6 +5272,22 @@ registry.layout_column = SnippetOptionWidget.extend({
         rowEl.removeEventListener('animationend', rowEl._removePaddingPreview);
         rowEl.classList.remove('o_we_padding_highlight');
         delete rowEl._removePaddingPreview;
+    },
+});
+
+registry.vAlignment = SnippetOptionWidget.extend({
+    /**
+     * @override
+     */
+    async _computeWidgetState(methodName, params) {
+        const value = await this._super(...arguments);
+        if (methodName === 'selectClass' && !value) {
+            // If there is no `align-items-` class on the row, then the `align-
+            // items-stretch` class is selected, because the behaviors are
+            // equivalent in both situations.
+            return 'align-items-stretch';
+        }
+        return value;
     },
 });
 

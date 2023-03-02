@@ -220,6 +220,7 @@ const Wysiwyg = Widget.extend({
             direction: options.direction || localization.direction || 'ltr',
             collaborationClientAvatarUrl: `${browser.location.origin}/web/image?model=res.users&field=avatar_128&id=${this.getSession().uid}`,
             renderingClasses: ['o_dirty', 'o_transform_removal', 'oe_edited_link', 'o_menu_loading'],
+            foldSnippets: !!options.foldSnippets,
         }, editorCollaborationOptions));
 
         this.odooEditor.addEventListener('contentChanged', function () {
@@ -600,7 +601,7 @@ const Wysiwyg = Widget.extend({
             if (!ICE_SERVERS) {
                 ICE_SERVERS = await this._rpc({route: '/web_editor/get_ice_servers'});
             }
-            let iceServers = structuredClone(ICE_SERVERS);
+            let iceServers = ICE_SERVERS;
             if (!iceServers.length) {
                 iceServers = [
                     {
