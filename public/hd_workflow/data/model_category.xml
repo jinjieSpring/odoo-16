@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.module.category" id="module_category_hd_public">
+            <field name="name">公共</field>
+        </record>
+<!--        <record model="ir.module.category" id="module_category_hd_territory">-->
+<!--            <field name="name">华东领域</field>-->
+<!--        </record>-->
+<!--        <record model="ir.module.category" id="module_category_hd_modules">-->
+<!--            <field name="name">华东模块</field>-->
+<!--        </record>-->
+    </data>
+</odoo>

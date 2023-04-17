@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hd_workflow_inherit_res_users_view_form_simple_modif" model="ir.ui.view">
+            <field name="name">res.users.view.form.simple.inherit</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form_simple_modif"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='signature']" position="before">
+                    <field name="psignature" widget="signature" readonly="0" />
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
