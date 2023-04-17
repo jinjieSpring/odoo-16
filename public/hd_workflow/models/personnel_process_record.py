@@ -8,24 +8,32 @@ class PersonnelProcessRecord(models.Model):
 
     name = fields.Char(string='过程', help='''新建---->新建''')
     model_id = fields.Many2one('ir.model', string='模型对象')
-    res_model = fields.Char(string='对象程序名称', related='model_id.model', store=True, index=True)
-    res_id = fields.Integer(string='记录ID', index=True, group_operator=False)
+    res_model = fields.Char(string='对象程序名称', related='model_id.model', store=True)
+    res_id = fields.Integer(string='记录ID', group_operator=False)
     user_id = fields.Many2one('res.users', string='人员')
-    valid = fields.Boolean(string='有效性', default=True, index=True)
+    valid = fields.Boolean(string='有效性', default=True)
+
+    @api.model
+    def workflow_bus_send(self, records, mode):
+        notifications = [[r.user_id.partner_id, 'personnel.process.record/updated', {mode: True}] for r in records if r.user_id.partner_id]
+        self.env['bus.bus']._sendmany(notifications)
 
     @api.model_create_multi
     def create(self, val_list):
+        if self._context.get('active_model') and self._context.get('active_id'):
+            self.search([('res_id', '=', self._context.get('active_id')),
+                         ('res_model', '=', self._context.get('active_model')),
+                         ('valid', '=', True)]).with_context(way='create').write({'valid': False})
         create_results = super(PersonnelProcessRecord, self).create(val_list)
-        notifications = [[r.user_id.partner_id, 'personnel.process.record/updated', {'activity_created': True}] for r in create_results]
-        self.env['bus.bus']._sendmany(notifications)
+        self.workflow_bus_send(create_results, 'todo_created')
         return create_results
 
     def write(self, vals):
-        notifications = [[r.user_id.partner_id, 'personnel.process.record/updated', {'activity_deleted': True}] for r in self]
-        self.env['bus.bus']._sendmany(notifications)
+        '''write方法只处理create方法中要修改成无效的数据, 不处理直接编辑, 直接编辑要重新点击待办按钮获取'''
+        if self._context.get('way'):
+            self.workflow_bus_send(self, 'todo_deleted')
         return super(PersonnelProcessRecord, self).write(vals)
 
     def unlink(self):
-        notifications = [[r.user_id.partner_id, 'personnel.process.record/updated', {'activity_deleted': True}] for r in self]
-        self.env['bus.bus']._sendmany(notifications)
+        self.workflow_bus_send(self, 'todo_deleted')
         return super(PersonnelProcessRecord, self).unlink()
