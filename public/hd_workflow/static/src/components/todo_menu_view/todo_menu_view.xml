@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="hd_workflow.TodoMenuView" owl="1">
+        <div class="o_TodoMenuView dropdown" t-ref="root">
+            <a class="o_TodoMenuView_dropdownToggle dropdown-toggle o-no-caret o-dropdown--narrow" title="Todoes" href="#" role="button">
+                <i class="fa fa-lg fa-bell-o" role="img" aria-label="Todoes"/>
+            </a>
+<!--            <div t-if="activityMenuView.isOpen" class="o_TodoMenuView_dropdownMenu o-dropdown-menu dropdown-menu-end show bg-view" role="menu">-->
+<!--                <div class="o_TodoMenuView_activityGroups">-->
+<!--                    <t t-if="activityMenuView.activityGroupViews.length === 0">-->
+<!--                        <div class="o_TodoMenuView_noTodo dropdown-item-text text-center d-flex justify-content-center">-->
+<!--                            <span>Congratulations, you're done with your activities.</span>-->
+<!--                        </div>-->
+<!--                    </t>-->
+<!--                    <t t-foreach="activityMenuView.activityGroupViews" t-as="activityGroupView" t-key="activityGroupView.localId" name="activityGroupLoop">-->
+<!--                        <div class="o_TodoMenuView_activityGroup" t-att-data-res_model="activityGroupView.activityGroup.irModel.model" t-att-data-model_name="activityGroupView.activityGroup.irModel.name" t-att-data-domain="activityGroupView.activityGroup.domain" data-filter='my' t-att-data-activity-group-view-local-id="activityGroupView.localId" t-on-click="activityGroupView.onClickFilterButton">-->
+<!--                            <div t-if="activityGroupView.activityGroup.irModel.iconUrl" class="o_TodoMenuView_activityGroupIconContainer">-->
+<!--                                <img t-att-src="activityGroupView.activityGroup.irModel.iconUrl" alt="Todo"/>-->
+<!--                            </div>-->
+<!--                            <div class="o_TodoMenuView_activityGroupInfo">-->
+<!--                                <div class="o_TodoMenuView_activityGroupTitle">-->
+<!--                                    <span class="o_TodoMenuView_activityGroupName">-->
+<!--                                        <t t-esc="activityGroupView.activityGroup.irModel.name"/>-->
+<!--                                    </span>-->
+<!--                                    <div t-if="activityGroupView.activityGroup.actions" class="o_TodoMenuView_activityGroupActionButtons">-->
+<!--                                        <t t-foreach="activityGroupView.activityGroup.actions" t-as="action" t-key="action.name">-->
+<!--                                            <button type="button"-->
+<!--                                                t-att-title="action.name"-->
+<!--                                                t-att-class="'o_TodoMenuView_activityGroupActionButton btn btn-link fa ' + action.icon"-->
+<!--                                                t-att-data-action_xmlid="action.action_xmlid"-->
+<!--                                                t-att-data-res_model="activityGroupView.activityGroup.irModel.model"-->
+<!--                                                t-att-data-model_name="activityGroupView.activityGroup.irModel.name"-->
+<!--                                                t-att-data-domain="activityGroupView.activityGroup.domain"-->
+<!--                                                t-on-click="activityGroupView.onClick"-->
+<!--                                            >-->
+<!--                                            </button>-->
+<!--                                        </t>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div t-if="activityGroupView.activityGroup.type == 'activity'">-->
+<!--                                    <button t-if="activityGroupView.activityGroup.overdue_count" type="button" class="o_TodoMenuView_activityGroupFilterButton btn btn-link mr16" t-att-data-res_model="activityGroupView.activityGroup.irModel.model" t-att-data-model_name="activityGroupView.activityGroup.irModel.name" data-filter='overdue'><t t-esc="activityGroupView.activityGroup.overdue_count"/> Late </button>-->
+<!--                                    <span t-if="!activityGroupView.activityGroup.overdue_count" class="o_TodoMenuView_activityGroupNoCount mr16 text-muted">0 Late </span>-->
+<!--                                    <button t-if="activityGroupView.activityGroup.today_count" type="button" class="o_TodoMenuView_activityGroupFilterButton btn btn-link mr16" t-att-data-res_model="activityGroupView.activityGroup.irModel.model" t-att-data-model_name="activityGroupView.activityGroup.irModel.name" data-filter='today'> <t t-esc="activityGroupView.activityGroup.today_count"/> Today </button>-->
+<!--                                    <span t-if="!activityGroupView.activityGroup.today_count" class="o_TodoMenuView_activityGroupNoCount mr16 text-muted">0 Today </span>-->
+<!--                                    <button t-if="activityGroupView.activityGroup.planned_count" type="button" class="o_TodoMenuView_activityGroupFilterButton btn btn-link float-end" t-att-data-res_model="activityGroupView.activityGroup.irModel.model" t-att-data-model_name="activityGroupView.activityGroup.irModel.name" data-filter='upcoming_all'> <t t-esc="activityGroupView.activityGroup.planned_count"/> Future </button>-->
+<!--                                    <span t-if="!activityGroupView.activityGroup.planned_count" class="o_TodoMenuView_activityGroupNoCount float-end text-muted">0 Future</span>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </t>-->
+<!--                </div>-->
+<!--            </div>-->
+        </div>
+    </t>
+
+</templates>
