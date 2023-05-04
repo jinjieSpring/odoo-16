@@ -11,13 +11,14 @@ export class TodoMenuView extends Component {
      */
      setup() {
         super.setup();
+        useComponentToModel({ fieldName: 'component' });
     }
     /**
      * @returns {TodoMenuView}
      */
-    // get todoMenuView() {
-    //     return this.props.record;
-    // }
+    get todoMenuView() {
+        return this.props.record;
+    }
 }
 
 Object.assign(TodoMenuView, {

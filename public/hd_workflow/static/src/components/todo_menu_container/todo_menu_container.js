@@ -13,6 +13,10 @@ export class TodoMenuContainer extends Component {
      */
     setup() {
         super.setup();
+        this.env.services.messaging.modelManager.messagingCreatedPromise.then(() => {
+            this.todoMenuView = this.env.services.messaging.modelManager.messaging.models['TodoMenuView'].insert();
+            this.render();
+        });
     }
 }
 
