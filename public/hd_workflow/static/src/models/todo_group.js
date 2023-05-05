@@ -36,14 +36,14 @@ registerModel({
     },
     fields: {
         actions: attr(),
-        // todoGroupViews: many('TodoGroupView', {
-        //     inverse: 'todoGroup',
-        // }),
+        todoGroupViews: many('TodoGroupView', {
+            inverse: 'todoGroup',
+        }),
         domain: attr(),
-        // irModel: one('ir.model', {
-        //     identifying: true,
-        //     inverse: 'todoGroup',
-        // }),
+        irModel: one('ir.model', {
+            identifying: true,
+            inverse: 'todoGroup',
+        }),
         overdue_count: attr({
             default: 0,
         }),

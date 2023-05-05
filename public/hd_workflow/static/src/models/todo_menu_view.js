@@ -27,10 +27,10 @@ registerModel({
                 args: [],
                 kwargs: { context: session.user_context },
             });
-            // this.update({
-            //     todoGroups: data.map(vals => this.messaging.models['TodoGroup'].convertData(vals)),
-            //     extraCount: 0,
-            // });
+            this.update({
+                todoGroups: data.map(vals => this.messaging.models['TodoGroup'].convertData(vals)),
+                extraCount: 0,
+            });
         },
         /**
          * @param {MouseEvent} ev
@@ -64,24 +64,24 @@ registerModel({
         },
     },
     fields: {
-        // todoGroups: many('TodoGroup', {
-        //     sort: [['smaller-first', 'irModel.id']],
-        // }),
-        // todoGroupViews: many('TodoGroupView', {
-        //     compute() {
-        //         return this.todoGroups.map(todoGroup => {
-        //             return {
-        //                 todoGroup,
-        //             };
-        //         });
-        //     },
-        //     inverse: 'todoMenuViewOwner',
-        // }),
+        todoGroups: many('TodoGroup', {
+            sort: [['smaller-first', 'irModel.id']],
+        }),
+        todoGroupViews: many('TodoGroupView', {
+            compute() {
+                return this.todoGroups.map(todoGroup => {
+                    console.log(todoGroup)
+                    return {
+                        todoGroup,
+                    };
+                });
+            },
+            inverse: 'todoMenuViewOwner',
+        }),
         component: attr(),
         counter: attr({
             compute() {
-                return 0
-                //return this.todoGroups.reduce((total, group) => total + group.total_count, this.extraCount);
+                return this.todoGroups.reduce((total, group) => total + group.total_count, this.extraCount);
             },
         }),
         /**

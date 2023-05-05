@@ -76,13 +76,13 @@ registerModel({
         },
     },
     fields: {
-        // todoGroup: one('TodoGroup', {
-        //     identifying: true,
-        //     inverse: 'todoGroupViews',
-        // }),
-        // todoMenuViewOwner: one('TodoMenuView', {
-        //     identifying: true,
-        //     inverse: 'todoGroupViews',
-        // }),
+        todoGroup: one('TodoGroup', {
+            identifying: true,
+            inverse: 'todoGroupViews',
+        }),
+        todoMenuViewOwner: one('TodoMenuView', {
+            identifying: true,
+            inverse: 'todoGroupViews',
+        }),
     },
 });

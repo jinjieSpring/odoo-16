@@ -5,7 +5,7 @@
     'author': 'Jinjie',
     'website': '',
     'category': '公共/公共',
-    'depends' : ['base', 'hr'],
+    'depends' : ['base', 'web', 'hr', 'mail'],
     'version': '1.0',
     'data': [
         # 'security/security_chown.xml',
@@ -29,21 +29,26 @@
     'installable': True,
     'application': True,
     'auto_install': False,
-    # 'assets': {
-    #         'web.assets_qweb': [
-    #             'amos_workflow/static/src/xml/workflow_buttons.xml',
-    #             'amos_workflow/static/src/xml/todo_menu.xml',
-    #         ],
-    #         'web.assets_backend': [
-    #             'amos_workflow/static/src/js/statebar_invisible.js',
-    #             'amos_workflow/static/src/js/hide_edit_btn.js',
-    #             'amos_workflow/static/src/js/datepicker_widget.js',
-    #             'amos_workflow/static/src/js/radio_do_action.js',
-    #             'amos_workflow/static/src/css/pretty-checkbox.min.css',
-    #             'amos_workflow/static/src/js/todo_menu.js',
-    #             'amos_workflow/static/src/js/todo_all_kanban_record.js',
-    #             'amos_workflow/static/src/css/signature.css'
-    #         ]
-    # },
+    'assets': {
+            # 'web.assets_qweb': [
+            #     'amos_workflow/static/src/xml/workflow_buttons.xml',
+            #     'amos_workflow/static/src/xml/todo_menu.xml',
+            # ],
+            'web.assets_backend': [
+                'hd_workflow/static/src/components/*/*.js',
+                'hd_workflow/static/src/components/*/*.scss',
+                'hd_workflow/static/src/components/*/*.xml',
+                'hd_workflow/static/src/services/*.js',
+                'hd_workflow/static/src/models/*.js',
+                # 'amos_workflow/static/src/js/statebar_invisible.js',
+                # 'amos_workflow/static/src/js/hide_edit_btn.js',
+                # 'amos_workflow/static/src/js/datepicker_widget.js',
+                # 'amos_workflow/static/src/js/radio_do_action.js',
+                # 'amos_workflow/static/src/css/pretty-checkbox.min.css',
+                # 'amos_workflow/static/src/js/todo_menu.js',
+                # 'amos_workflow/static/src/js/todo_all_kanban_record.js',
+                # 'amos_workflow/static/src/css/signature.css'
+            ]
+    },
     'license': 'LGPL-3',
 }
