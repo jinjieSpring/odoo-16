@@ -35,6 +35,7 @@
             #     'amos_workflow/static/src/xml/todo_menu.xml',
             # ],
             'web.assets_backend': [
+                'hd_workflow/static/src/model/*.js',
                 'hd_workflow/static/src/components/*/*.js',
                 'hd_workflow/static/src/components/*/*.scss',
                 'hd_workflow/static/src/components/*/*.xml',
