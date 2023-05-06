@@ -15,7 +15,7 @@ class PersonnelProcessRecord(models.Model):
 
     @api.model
     def workflow_bus_send(self, records, mode):
-        notifications = [[r.user_id.partner_id, 'personnel.process.record/updated', {mode: True}] for r in records if r.user_id.partner_id]
+        notifications = [[r.user_id.partner_id, 'hd.personnel.process.record/updated', {mode: True}] for r in records if r.user_id.partner_id]
         self.env['bus.bus']._sendmany(notifications)
 
     @api.model_create_multi
