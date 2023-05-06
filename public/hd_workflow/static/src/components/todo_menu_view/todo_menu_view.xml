@@ -10,7 +10,7 @@
                 <div class="o_TodoMenuView_todoGroups">
                     <t t-if="todoMenuView.todoGroupViews.length === 0">
                         <div class="o_TodoMenuView_noTodo dropdown-item-text text-center d-flex justify-content-center">
-                            <span>Congratulations, you're done with your activities.</span>
+                            <span>Congratulations, you're done with your todoes.</span>
                         </div>
                     </t>
                     <t t-foreach="todoMenuView.todoGroupViews" t-as="todoGroupView" t-key="todoGroupView.localId" name="todoGroupLoop">
@@ -39,12 +39,8 @@
                                     </div>
                                 </div>
                                 <div t-if="todoGroupView.todoGroup.type == 'todo'">
-                                    <button t-if="todoGroupView.todoGroup.overdue_count" type="button" class="o_TodoMenuView_todoGroupFilterButton btn btn-link mr16" t-att-data-res_model="todoGroupView.todoGroup.irModel.model" t-att-data-model_name="todoGroupView.todoGroup.irModel.name" data-filter='overdue'><t t-esc="todoGroupView.todoGroup.overdue_count"/> Late </button>
-                                    <span t-if="!todoGroupView.todoGroup.overdue_count" class="o_TodoMenuView_todoGroupNoCount mr16 text-muted">0 Late </span>
-                                    <button t-if="todoGroupView.todoGroup.today_count" type="button" class="o_TodoMenuView_todoGroupFilterButton btn btn-link mr16" t-att-data-res_model="todoGroupView.todoGroup.irModel.model" t-att-data-model_name="todoGroupView.todoGroup.irModel.name" data-filter='today'> <t t-esc="todoGroupView.todoGroup.today_count"/> Today </button>
-                                    <span t-if="!todoGroupView.todoGroup.today_count" class="o_TodoMenuView_todoGroupNoCount mr16 text-muted">0 Today </span>
-                                    <button t-if="todoGroupView.todoGroup.planned_count" type="button" class="o_TodoMenuView_todoGroupFilterButton btn btn-link float-end" t-att-data-res_model="todoGroupView.todoGroup.irModel.model" t-att-data-model_name="todoGroupView.todoGroup.irModel.name" data-filter='upcoming_all'> <t t-esc="todoGroupView.todoGroup.planned_count"/> Future </button>
-                                    <span t-if="!todoGroupView.todoGroup.planned_count" class="o_TodoMenuView_todoGroupNoCount float-end text-muted">0 Future</span>
+                                    <button t-if="todoGroupView.todoGroup.todo_count" type="button" class="o_TodoMenuView_todoGroupFilterButton btn btn-link mr16" t-att-data-res_model="todoGroupView.todoGroup.irModel.model" t-att-data-model_name="todoGroupView.todoGroup.irModel.name" data-filter='overdue'><t t-esc="todoGroupView.todoGroup.todo_count"/> Todo </button>
+                                    <span t-if="!todoGroupView.todoGroup.todo_count" class="o_TodoMenuView_todoGroupNoCount mr16 text-muted">0 Todo </span>
                                 </div>
                             </div>
                         </div>

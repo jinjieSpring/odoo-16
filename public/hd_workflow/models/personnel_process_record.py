@@ -1,4 +1,4 @@
-from odoo import api, fields, models
+from odoo import api, fields, models, modules
 
 
 class PersonnelProcessRecord(models.Model):
@@ -29,7 +29,9 @@ class PersonnelProcessRecord(models.Model):
         return create_results
 
     def write(self, vals):
-        '''write方法只处理create方法中要修改成无效的数据, 不处理直接编辑, 直接编辑要重新点击待办按钮获取'''
+        """
+            write方法只处理create方法中要修改成无效的数据, 不处理直接编辑, 直接编辑要重新点击待办按钮获取
+        """
         if self._context.get('way'):
             self.workflow_bus_send(self, 'todo_deleted')
         return super(PersonnelProcessRecord, self).write(vals)
@@ -37,3 +39,27 @@ class PersonnelProcessRecord(models.Model):
     def unlink(self):
         self.workflow_bus_send(self, 'todo_deleted')
         return super(PersonnelProcessRecord, self).unlink()
+
+    @api.model
+    def systray_get_todoes(self):
+        todo_data = self.search([('valid', '=', '有效'), ('user_id', '=', self._uid)])
+        user_todos = {}
+        # 缓存
+        for todo in todo_data:
+            key = todo.model_id.model
+            if user_todos.get(key):
+                user_todos[key]['total_count'] = user_todos[key]['total_count'] + 1
+                user_todos[key]['todo_count'] = user_todos[key]['todo_count'] + 1
+            else:
+                module = self.env[key]._original_module
+                icon = module and modules.module.get_module_icon(module)
+                user_todos[todo['res_model']] = {
+                        'id': todo.model_id.id,
+                        'name': todo.model_id.name,
+                        'model': key,
+                        'type': 'todo',
+                        'icon': icon,
+                        'total_count': 1,
+                        'todo_count': 1
+                }
+        return list(user_todos.values())
