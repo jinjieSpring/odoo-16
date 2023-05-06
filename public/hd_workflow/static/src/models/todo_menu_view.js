@@ -22,8 +22,8 @@ registerModel({
         },
         async fetchData() {
             const data = await this.messaging.rpc({
-                model: 'res.users',
-                method: 'systray_get_activities',
+                model: 'hd.personnel.process.record',
+                method: 'systray_get_todoes',
                 args: [],
                 kwargs: { context: session.user_context },
             });
@@ -70,7 +70,6 @@ registerModel({
         todoGroupViews: many('TodoGroupView', {
             compute() {
                 return this.todoGroups.map(todoGroup => {
-                    console.log(todoGroup)
                     return {
                         todoGroup,
                     };

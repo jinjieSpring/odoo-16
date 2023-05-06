@@ -33,7 +33,7 @@ registerModel({
                     },
                     {
                         clearBreadcrumbs: true,
-                        viewType: 'activity',
+                        viewType: 'kanban',
                     },
                 );
             }
