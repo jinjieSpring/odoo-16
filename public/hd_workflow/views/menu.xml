@@ -2,10 +2,10 @@
 <odoo>
 
     <menuitem id="menu_hd_workflow" name="工作流" web_icon="hd_workflow,static/description/icon.png" groups="hd_workflow_user" sequence="27"/>
-<!--        <menuitem id="menu_ir_process_view" parent="menu_workflow" sequence="1" action="odoo_action_ir_process_view" />-->
+        <menuitem id="menu_ir_process_view" parent="menu_hd_workflow" action="action_ir_process" sequence="1"/>
 <!--        <menuitem id="menu_amos_role_list" parent="menu_workflow"  sequence="2" action="odoo_workflow_act_amos_role"/>-->
 <!--        <menuitem id="menu_odoo_amos_workflow_act" parent="menu_workflow" action="odoo_amos_workflow_admin_act" sequence="3"/>-->
-        <menuitem id="menu_amos_personnel_process_record_act" parent="menu_hd_workflow" action="action_hd_personnel_process_record" sequence="4"/>
+        <menuitem id="menu_hd_personnel_process_record" parent="menu_hd_workflow" action="action_hd_personnel_process_record" sequence="4"/>
 <!--        <menuitem name="角色设置" id="menu_workflow_setting" parent="menu_workflow" sequence="5"/>-->
 <!--        <menuitem name="群组设置" id="menu_cluster_setting" parent="menu_workflow" sequence="6"/>-->
 </odoo>
