@@ -34,24 +34,14 @@ class IrProcess(models.Model,):
             raise UserError(f'模型:{self.model_id.model}里面没有{self.depend_state}字段')
         self.process_ids.unlink()
         sequence = 1
-        ref = False
         for line in selection:
-            values = {
+            self.env['ir.process.line'].create({
                 'sequence': sequence,
                 'process_id': self.id,
-                'name': line[0]
-            }
-            if len(selection) == sequence:
-                values['is_stop'] = True
-            process = self.env['ir.process.line'].sudo().create(values)
-            if ref:
-                values = {
-                    'next_id': process.id,
-                }
-                ref.sudo().write(values)
-            ref = process
+                'name': line[0],
+                'is_stop': True if len(selection) == sequence else False
+            })
             sequence = sequence + 1
-        return True
 
 
 class IrProcessLine(models.Model):
@@ -60,21 +50,20 @@ class IrProcessLine(models.Model):
     _order = 'sequence asc'
 
     # button_name 和 domain 未使用,由workflow_minln.py的方法替代了。
-    process_id = fields.Many2one('ir.process', string='明细', required=True, ondelete='cascade', index=True, copy=False)
+    process_id = fields.Many2one('ir.process', string='明细', required=True, ondelete='cascade', index=True)
     name = fields.Char(string='节点名称')
     button_name = fields.Text(string='Python Code', default='model.custom_get_res_users()', help="配合自定义使用写成方法。")
     sequence = fields.Integer(string='排序', default=1)
-    type = fields.Selection([('权限组', '权限组'), ('固定审核人', '固定审核人'), ('自定义', '自定义'), ('角色组', '角色组'), ('节点审核人', '节点审核人')], string='审批人获取方式', default='自定义')
+    type = fields.Selection([('自定义', '自定义'), ('固定审核人', '固定审核人'), ('角色组', '角色组'), ('节点审核人', '节点审核人'), ('权限组', '权限组')], string='审批人获取方式', default='自定义')
     is_stop = fields.Boolean(default=False, string='停止工作流')
-    is_fixed = fields.Boolean(default=False, string='固定审核人')
-    domain = fields.Text(string='Python Code')
-    approve_type = fields.Selection([('串签', '串签'), ('并签', '并签'), ('汇签', '汇签')], string='审批方式', default='汇签')
-    next_id = fields.Many2one('ir.process.line', string='下级')
-    context = fields.Text('上下文', help='用于记录上下文信息与客户端同步')
+    is_fixed = fields.Boolean(default=False, string='编辑审核人')
+    domain = fields.Text(string='下拉选人domain', default='model.custom_res_users_domain()')
+    approve_type = fields.Selection([('汇签', '汇签'), ('串签', '串签'), ('并签', '并签')], string='审批方式', default='汇签')
+    context = fields.Text(string='上下文', help='用于记录上下文信息与客户端同步')
     groups_ids = fields.Many2many('res.groups', 'ir_process_line_res_groups_rel', 'process_id', 'group_id', string='权限组')
     users_ids = fields.Many2many('res.users', 'ir_process_line_res_users_rel', 'process_id', 'user_id', string='固定审核人')
-    #workflow_role = fields.Many2many('amos.role', 'ir_process_line_amos_workflow_role_rel', 'process_id', 'role_id', string='角色组')
-    before_ids = fields.Many2many('ir.process.line', 'ir_process_line_approve_rel', 'process_id', 'before_process_id', string='节点审核人', domain="['|', ('name', '=', '新建'), ('type', '=', '固定审核人'), ('process_id', '=', process_id)]", help="只支持新建节点和固定人的节点")
+    workflow_role_ids = fields.Many2many('hd.workflow.role', 'ir_process_line_hd_workflow_role_rel', 'process_id', 'role_id', string='角色组')
+    before_ids = fields.Many2many('ir.process.line', 'ir_process_line_approve_rel', 'process_id', 'before_process_id', string='节点审核人')
     is_jump = fields.Boolean(default=False, string='是否跳转')
     jump_code = fields.Text(string='Python Code', default='model.jump_condition()')
     jump_record_show = fields.Boolean(string='显示跳过记录', default=True)
