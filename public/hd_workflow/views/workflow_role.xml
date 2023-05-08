@@ -1,0 +1,41 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="HdWorkflowRoleTree">
+            <field name="model">hd.workflow.role</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="users_ids"/>
+                    <field name="remarks"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="HdWorkflowRoleForm">
+            <field name="model">hd.workflow.role</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="code" attrs="{'readonly': [('code','!=', False)]}" force_save='1'/>
+                            <field name="users_ids">
+                                 <tree>
+                                     <field name="name"></field>
+                                 </tree>
+                            </field>
+                            <field name="remarks"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_hd_workflow_role">
+            <field name="name">工作流角色</field>
+            <field name="res_model">hd.workflow.role</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+    </data>
+</odoo>
