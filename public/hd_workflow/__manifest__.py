@@ -18,7 +18,7 @@
         # 'views/todo_all_view.xml',
         'views/ir_process_view.xml',
         'views/workflow_role_view.xml',
-        # 'views/amos_workflow_view.xml',
+        'views/hd_workflow_view.xml',
         'views/personnel_process_record_view.xml',
         # 'views/basic_attachment_form_view.xml',
         # 'views/amos_approval_check_user_wizard.xml',

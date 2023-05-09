@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="HdWorkflowForm">
+            <field name="model">hd.workflow</field>
+            <field name="arch" type="xml">
+                <form string="工作流">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="create_id" options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
+                                <field name="user_id" options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
+                                <field name="model_id" options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
+                                <field name="type"/>
+                                <field name="name"/>
+                            </group>
+                            <group>
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                                <field name="res_id"/>
+                                <field name="state"/>
+                                <field name="version_id"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="is_show"/>
+                        </group>
+                        <separator string="审批意见"/>
+                        <field name="note"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="HdWorkflowTree">
+            <field name="model">hd.workflow</field>
+            <field name="arch" type="xml">
+                <tree string="审批情况" default_order="res_id,id desc">
+                    <field name="res_id" />
+                    <field name="create_id" options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
+                    <field name="start_date" />
+                    <field name="name" />
+                    <field name="state" />
+                    <field name="user_id" options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
+                    <field name="note"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="HdWorkflowSearch" model="ir.ui.view">
+            <field name="model">hd.workflow</field>
+            <field name="arch" type="xml">
+                <search string="查询">
+                    <filter string="显示" name="is_show" domain="[('is_show', '=', True)]"/>
+                    <group expand="0" string="分组">
+                        <filter string="模块" name="model_id" domain="[]" context="{'group_by':'model_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_hd_workflow" model="ir.actions.act_window">
+            <field name="name">审批记录</field>
+            <field name="res_model">hd.workflow</field>
+            <field name="view_mode">tree,form</field>
+            <field name="limit">20</field>
+            <field name="context">{'search_default_is_show':1,'search_default_model_id':1}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    还没有审批信息.
+                </p>
+                <p>
+                    即时查看消息有助于你更好的完成工作!
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>
