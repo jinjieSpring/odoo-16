@@ -9,7 +9,6 @@ def transfer_node_to_modifiers(node, modifiers, context=None):
     # Don't deal with groups, it is done by check_group().
     attrs = node.attrib.pop('attrs', None)
     if attrs:
-        attrs = node.get('attrs').strip()
         if ', uid' in attrs:
             user_id = str(context.get('uid', 1))
             user_id = ', ' + user_id
@@ -24,9 +23,9 @@ def transfer_node_to_modifiers(node, modifiers, context=None):
         states = states.split(',')
         if 'invisible' in modifiers and isinstance(modifiers['invisible'], list):
             # TODO combine with AND or OR, use implicit AND for now.
-            modifiers['invisible'].append((node.get('depend_state') if node.get('depend_state') else 'state', 'not in', node.get('states').split(',')))
+            modifiers['invisible'].append((node.get('depend_state') if node.get('depend_state') else 'state', 'not in', states))
         else:
-            modifiers['invisible'] = [(node.get('depend_state') if node.get('depend_state') else 'state', 'not in', node.get('states').split(','))]
+            modifiers['invisible'] = [(node.get('depend_state') if node.get('depend_state') else 'state', 'not in', states)]
 
     context_dependent_modifiers = {}
     for attr in ('invisible', 'readonly', 'required'):
