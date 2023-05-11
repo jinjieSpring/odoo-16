@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_repair_application_user,维修申请用户,model_repair_application,hd_repair.repair_application_user,1,1,1,1
+access_repair_application_manger,维修申请管理员,model_repair_application,hd_repair.repair_application_manger,1,1,1,1

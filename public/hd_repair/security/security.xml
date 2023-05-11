@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="module_category_repair_application" model="ir.module.category">
+        	<field name="name"> 维修申请 </field>
+    	</record>
+        <record id="repair_application_user" model="res.groups" >
+        	<field name="name"> 维修申请用户 </field>
+        	<field name="category_id" ref="module_category_repair_application"/>
+    	</record>
+        <record id="repair_application_manger" model="res.groups">
+        	<field name="name"> 维修申请管理员 </field>
+        	<field name="category_id" ref="module_category_repair_application"/>
+        	<field name="implied_ids" eval="[(4, ref('repair_application_user'))]"/>
+			<field name="users" eval="[(4, ref('base.user_admin'))]"/>
+    	</record>
+    </data>
+</odoo>

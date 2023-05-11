@@ -1,0 +1,7 @@
+<odoo>
+  <data>
+
+            <menuitem name="维修申请" id="menu_repair_application"  web_icon="hd_repair,static/description/compre.png" action="action_repair_application" sequence="5"/>
+
+  </data>
+</odoo>
