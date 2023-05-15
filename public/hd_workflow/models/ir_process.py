@@ -1,6 +1,6 @@
 from odoo import api, fields, models
 from odoo.exceptions import UserError
-from odoo.workflow_mixIn import WORKFLOW_STATE
+from .hd_workflow_mixin import WORKFLOW_STATE
 
 
 class IrProcess(models.Model,):
@@ -35,7 +35,7 @@ class IrProcess(models.Model,):
             raise UserError(f'模型:{self.model_id.model}里面没有{self.depend_state}字段')
         self.process_ids.unlink()
         sequence = 1
-        for line in selection[len(WORKFLOW_STATE):]:
+        for line in selection(self.env[self.model_id.model])[len(WORKFLOW_STATE):]:
             self.env['ir.process.line'].create({
                 'sequence': sequence,
                 'process_id': self.id,

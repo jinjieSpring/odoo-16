@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-
 from odoo.exceptions import UserError
 from odoo.tools import safe_eval
 from datetime import datetime
 from odoo import api, models, fields
+
+WORKFLOW_STATE = [('已取消', '已取消'), ('已终止', '已终止')]
 
 
 class WorkflowMixln(models.AbstractModel):
     _name = 'hd.workflow.mixin'
     _description = 'Workflow Mixin'
 
-    state = fields.Selection(selection=lambda self: self._default_states(), string='审核状态')
     workflow_ids = fields.One2many('hd.workflow', 'res_id', domain=lambda self: [('res_model', '=', self._name), ('is_show', '=', True)], string='审批记录')
     workflow_look = fields.Boolean(string='审核按钮是否可见', default=False, compute='_compute_workflow_look', help='True')
     depend_state = fields.Char(string='依赖状态', compute='_compute_depend_state', store=True, default='state')
@@ -22,7 +22,7 @@ class WorkflowMixln(models.AbstractModel):
 
     @api.model
     def _default_states(self):
-        return [('已终止', '已终止'), ('已取消', '已取消'), ('已废弃', '已废弃')]
+        return WORKFLOW_STATE
 
     def action_confirm(self):
         #self.ensure_one()
