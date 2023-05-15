@@ -24,6 +24,12 @@ class WorkflowMixln(models.AbstractModel):
     def _default_states(self):
         return WORKFLOW_STATE
 
+    def default_get(self, fields_list):
+        result = super().default_get(fields_list)
+        result['create_uid'] = self._uid
+        result['ir_process_id'] = self.env['ir.process'].search([('model', '=', self._name), ('active', '=', True)], order="id desc", limit=1).id
+        return result
+
     def action_confirm(self):
         #self.ensure_one()
         context = dict(self._context or {})
