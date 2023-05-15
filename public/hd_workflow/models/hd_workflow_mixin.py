@@ -20,6 +20,18 @@ class WorkflowMixln(models.AbstractModel):
     attachment_ids = fields.One2many('ir.attachment', 'res_id', domain=lambda self: [('res_model', '=', self._name)], string='附件')
     attachment_number = fields.Integer(compute='_compute_attachment_number', string='附件数量')
 
+    def _compute_depend_state(self):
+        for s in self:
+            s.depend_state = 'state'
+
+    def _compute_workflow_look(self):
+        for r in self:
+            appr = self.env['hd.personnel.process.record'].search([('valid', '=', True),
+                                                                   ('res_model', '=', self._name),
+                                                                   ('res_id', '=', r.id),
+                                                                   ('user_id', '=', self._uid)])
+            r.workflow_look = True if appr else False
+
     @api.model
     def _default_states(self):
         return WORKFLOW_STATE
@@ -29,6 +41,41 @@ class WorkflowMixln(models.AbstractModel):
         result['create_uid'] = self._uid
         result['ir_process_id'] = self.env['ir.process'].search([('model', '=', self._name), ('active', '=', True)], order="id desc", limit=1).id
         return result
+
+    @api.model
+    def create(self, vals):
+        result = super().create(vals)
+        self.create_workflow_new(result)
+        return result
+
+    def unlink(self):
+        for order in self:
+            if len(order.workflow_ids) > 1:
+                raise UserError('已提交的单子无法删除!')
+            else:
+                order.workflow_ids.unlink()
+                self.env['hd.personnel.process.record'].search(
+                    [('res_model', '=', self._name), ('res_id', '=', order.id)]).unlink()
+        return super().unlink()
+
+    @api.model
+    def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None):
+        logid = self.env.user.id
+        do_type = self._context.get('do_type')
+        if do_type == 'shenqing':
+            domain.append(('create_uid', '=', logid))
+        elif do_type == 'yiban':
+            domain.append(('id', 'in', [s.res_id for s in self.env['hd.personnel.process.record'].sudo().search([('user_id', '=', logid),
+                                                                                                                   ('res_model', '=', self._name),
+                                                                                                                   ('valid', '=', False)])]))
+        elif do_type == 'all':
+            pass
+        else:
+            domain.append(('id', 'in', [s.res_id for s in self.env['hd.personnel.process.record'].sudo().search([('valid', '=', True),
+                                                                            ('res_model', '=', self._name),
+                                                                            ('user_id', '=', logid)])]))
+        return super().search_read(domain=domain, fields=fields, offset=offset, limit=limit, order=order)
+
 
     def action_confirm(self):
         #self.ensure_one()
@@ -274,17 +321,6 @@ class WorkflowMixln(models.AbstractModel):
         else:
             raise UserError('警告：无法取回,当前审批流程可能已流转，请刷新当前页面查看审批记录！')
 
-    def _compute_workflow_look(self):
-        for r in self:
-            appr = self.env['hd.personnel.process.record'].sudo().search([('valid', '=', '有效'),
-                                                                     ('res_model', '=', self._name),
-                                                                     ('res_id', '=', r.id),
-                                                                     ('user_id', '=', self._uid)])
-            if appr:
-                r.workflow_look = True
-            else:
-                r.workflow_look = False
-
     def _compute_attachment_number(self):
         """附件上传"""
         attachment_data = self.env['ir.attachment'].read_group(
@@ -292,10 +328,6 @@ class WorkflowMixln(models.AbstractModel):
         attachment = dict((data['res_id'], data['res_id_count']) for data in attachment_data)
         for expense in self:
             expense.attachment_number = attachment.get(expense.id, 0)
-
-    def _compute_depend_state(self):
-        for s in self:
-            s.depend_state = 'state'
 
     @api.depends('ir_process_id.process_ids')
     def _compute_line_buttons(self):

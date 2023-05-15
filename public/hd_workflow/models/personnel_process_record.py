@@ -42,7 +42,7 @@ class PersonnelProcessRecord(models.Model):
 
     @api.model
     def systray_get_todoes(self):
-        todo_data = self.search([('valid', '=', '有效'), ('user_id', '=', self._uid)])
+        todo_data = self.search([('valid', '=', True), ('user_id', '=', self._uid)])
         user_todos = {}
         # 缓存
         for todo in todo_data:
