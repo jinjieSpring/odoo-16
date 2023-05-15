@@ -30,12 +30,13 @@ class IrProcess(models.Model,):
         """
         # 判断根据哪个state字段生成
         if hasattr(self.pool.models[self.model_id.model], self.depend_state):
-            selection = getattr(self.pool.models[self.model_id.model], self.depend_state).selection
+            func_selection = getattr(self.pool.models[self.model_id.model], self.depend_state).selection
         else:
             raise UserError(f'模型:{self.model_id.model}里面没有{self.depend_state}字段')
         self.process_ids.unlink()
         sequence = 1
-        for line in selection(self.env[self.model_id.model])[len(WORKFLOW_STATE):]:
+        selection = func_selection(self.env[self.model_id.model])[len(WORKFLOW_STATE):]
+        for line in selection:
             self.env['ir.process.line'].create({
                 'sequence': sequence,
                 'process_id': self.id,
