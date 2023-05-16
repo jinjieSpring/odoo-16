@@ -32,6 +32,14 @@ class WorkflowMixln(models.AbstractModel):
                                                                    ('user_id', '=', self._uid)])
             r.workflow_look = True if appr else False
 
+    def _compute_attachment_number(self):
+        """附件上传"""
+        attachment_data = self.env['ir.attachment'].read_group(
+            [('res_model', '=', self._name), ('res_id', 'in', self.ids)], ['res_id'], ['res_id'])
+        attachment = dict((data['res_id'], data['res_id_count']) for data in attachment_data)
+        for expense in self:
+            expense.attachment_number = attachment.get(expense.id, 0)
+
     @api.model
     def _default_states(self):
         return WORKFLOW_STATE
@@ -39,13 +47,12 @@ class WorkflowMixln(models.AbstractModel):
     def default_get(self, fields_list):
         result = super().default_get(fields_list)
         result['create_uid'] = self._uid
-        result['ir_process_id'] = self.env['ir.process'].search([('model', '=', self._name), ('active', '=', True)], order="id desc", limit=1).id
         return result
 
     @api.model
     def create(self, vals):
         result = super().create(vals)
-        self.create_workflow_new(result)
+        result.create_workflow_new()
         return result
 
     def unlink(self):
@@ -65,6 +72,7 @@ class WorkflowMixln(models.AbstractModel):
         if do_type == 'shenqing':
             domain.append(('create_uid', '=', logid))
         elif do_type == 'yiban':
+            # 后期[]太长需要改变获取已办的方式
             domain.append(('id', 'in', [s.res_id for s in self.env['hd.personnel.process.record'].sudo().search([('user_id', '=', logid),
                                                                                                                    ('res_model', '=', self._name),
                                                                                                                    ('valid', '=', False)])]))
@@ -75,7 +83,6 @@ class WorkflowMixln(models.AbstractModel):
                                                                             ('res_model', '=', self._name),
                                                                             ('user_id', '=', logid)])]))
         return super().search_read(domain=domain, fields=fields, offset=offset, limit=limit, order=order)
-
 
     def action_confirm(self):
         #self.ensure_one()
@@ -321,14 +328,6 @@ class WorkflowMixln(models.AbstractModel):
         else:
             raise UserError('警告：无法取回,当前审批流程可能已流转，请刷新当前页面查看审批记录！')
 
-    def _compute_attachment_number(self):
-        """附件上传"""
-        attachment_data = self.env['ir.attachment'].read_group(
-            [('res_model', '=', self._name), ('res_id', 'in', self.ids)], ['res_id'], ['res_id'])
-        attachment = dict((data['res_id'], data['res_id_count']) for data in attachment_data)
-        for expense in self:
-            expense.attachment_number = attachment.get(expense.id, 0)
-
     @api.depends('ir_process_id.process_ids')
     def _compute_line_buttons(self):
         for s in self:
@@ -394,25 +393,24 @@ class WorkflowMixln(models.AbstractModel):
         """
         return []
 
-    def create_workflow_new(self, record):
+    def create_workflow_new(self):
         records_model = self.env['ir.model'].sudo().search([('model', '=', self._name)], limit=1)
-        # if hasattr(record, 'depend_state'):
-        #     record.finally_show_state_desc = '新建'
-        record.workflow_ids = [(0, 0, {
-            'type': '汇签',
-            'name': '新建',
-            'model_id': records_model.id,
-            'res_id': record.id,
-            'create_id': self._uid,
-            'user_id': self._uid,
-            'state': '等待提交',
-            'sequence': 1,
-            'res_record_name': record.name
-        })]
-        self.env['hd.personnel.process.record'].with_context({'active_model': record._name, 'active_id': record.id}).sudo().create({
+        self.write({'workflow_ids': [(0, 0, {'type': '汇签',
+                                            'name': '新建',
+                                            'model_id': records_model.id,
+                                            'res_id': self.id,
+                                            'create_id': self._uid,
+                                            'user_id': self._uid,
+                                            'state': '等待提交',
+                                            'sequence': 1,
+                                            'res_record_name': self.name
+                                            })],
+                    'ir_process_id': self.env['ir.process'].search([('model', '=', self._name), ('depend_state', '=', self.depend_state), ('active', '=', True)], order="id desc", limit=1).id
+                    })
+        self.env['hd.personnel.process.record'].with_context({'active_model': self._name, 'active_id': self.id}).sudo().create({
                     'name': '新建' + '---->' + '新建',
                     'model_id': records_model.id,
-                    'res_id': record.id,
+                    'res_id': self.id,
                     'user_id': self._uid})
         # 直接提交事务，让后期主数据的workflow_ids能挂载查询
         self.env.cr.commit()
