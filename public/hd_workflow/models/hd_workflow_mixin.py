@@ -395,14 +395,14 @@ class WorkflowMixln(models.AbstractModel):
     def create_workflow_new(self):
         records_model = self.env['ir.model'].sudo().search([('model', '=', self._name)], limit=1)
         self.write({'workflow_ids': [(0, 0, {'type': '汇签',
-                                            'name': '新建',
-                                            'model_id': records_model.id,
-                                            'res_id': self.id,
-                                            'create_id': self._uid,
-                                            'user_id': self._uid,
-                                            'state': '等待提交',
-                                            'sequence': 1,
-                                            'res_record_name': self.name
+                                             'name': '新建',
+                                             'model_id': records_model.id,
+                                             'res_id': self.id,
+                                             'create_id': self._uid,
+                                             'user_id': self._uid,
+                                             'state': '等待提交',
+                                             'sequence': 1,
+                                             'res_record_name': self.name
                                             })],
                     'ir_process_id': self.env['ir.process'].search([('model', '=', self._name), ('depend_state', '=', self.depend_state), ('active', '=', True)], order="id desc", limit=1).id
                     })
