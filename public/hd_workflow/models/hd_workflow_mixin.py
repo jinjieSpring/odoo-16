@@ -21,8 +21,7 @@ class WorkflowMixln(models.AbstractModel):
     attachment_number = fields.Integer(compute='_compute_attachment_number', string='附件数量')
 
     def _compute_depend_state(self):
-        for s in self:
-            s.depend_state = 'state'
+        pass
 
     def _compute_workflow_look(self):
         for r in self:
