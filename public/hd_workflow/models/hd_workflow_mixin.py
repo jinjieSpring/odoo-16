@@ -16,7 +16,7 @@ class WorkflowMixln(models.AbstractModel):
     depend_state = fields.Char(string='依赖状态', compute='_compute_depend_state', store=True, default='state')
     finally_show_state_desc = fields.Char(string='最新状态', default='新建')
     ir_process_id = fields.Many2one('ir.process', string='流程')
-    line_buttons = fields.Json(string='button属性', compute="_compute_line_buttons", store=True, copy=True, readonly=False)
+    # line_buttons = fields.Json(string='button属性', compute="_compute_line_buttons", store=True, copy=True, readonly=False)
     attachment_ids = fields.One2many('ir.attachment', 'res_id', domain=lambda self: [('res_model', '=', self._name)], string='附件')
     attachment_number = fields.Integer(compute='_compute_attachment_number', string='附件数量')
 
@@ -327,16 +327,16 @@ class WorkflowMixln(models.AbstractModel):
         else:
             raise UserError('警告：无法取回,当前审批流程可能已流转，请刷新当前页面查看审批记录！')
 
-    @api.depends('ir_process_id.process_ids')
-    def _compute_line_buttons(self):
-        for s in self:
-            s.line_buttons = {'name': 'action_confirm',
-                              'states': '新建',
-                              'string': '提交',
-                              'type': 'object',
-                              'class': 'oe_highlight',
-                              'attrs': "{'invisible': ['|','!',('create_uid','=', uid)]}",
-                              'context': "{'to_state': state}"}
+    # @api.depends('ir_process_id.process_ids')
+    # def _compute_line_buttons(self):
+    #     for s in self:
+    #         s.line_buttons = {'name': 'action_confirm',
+    #                           'states': '新建',
+    #                           'string': '提交',
+    #                           'type': 'object',
+    #                           'class': 'oe_highlight',
+    #                           'attrs': "{'invisible': ['|','!',('create_uid','=', uid)]}",
+    #                           'context': "{'to_state': state}"}
 
     def action_get_attachment_view(self):
         """附件上传动作视图"""
