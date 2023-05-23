@@ -39,8 +39,8 @@
                                     </div>
                                 </div>
                                 <div t-if="todoGroupView.todoGroup.type == 'todo'">
-                                    <button t-if="todoGroupView.todoGroup.todo_count" type="button" class="o_TodoMenuView_todoGroupFilterButton btn btn-link mr16" t-att-data-res_model="todoGroupView.todoGroup.irModel.model" t-att-data-model_name="todoGroupView.todoGroup.irModel.name" data-filter='overdue'><t t-esc="todoGroupView.todoGroup.todo_count"/> Todo </button>
-                                    <span t-if="!todoGroupView.todoGroup.todo_count" class="o_TodoMenuView_todoGroupNoCount mr16 text-muted">0 Todo </span>
+                                    <button t-if="todoGroupView.todoGroup.todo_count" type="button" class="o_TodoMenuView_todoGroupFilterButton btn btn-link mr16" t-att-data-res_model="todoGroupView.todoGroup.irModel.model" t-att-data-model_name="todoGroupView.todoGroup.irModel.name"><t t-esc="todoGroupView.todoGroup.todo_count"/> 待办 </button>
+                                    <span t-if="!todoGroupView.todoGroup.todo_count" class="o_TodoMenuView_todoGroupNoCount mr16 text-muted">0 待办 </span>
                                 </div>
                             </div>
                         </div>
