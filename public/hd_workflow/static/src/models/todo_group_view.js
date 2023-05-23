@@ -16,6 +16,7 @@ registerModel({
             this.todoMenuViewOwner.update({ isOpen: false });
             const targetAction = $(ev.currentTarget);
             const actionXmlid = targetAction.data('action_xmlid');
+            const context = {'do_type':'daiban'};
             if (actionXmlid) {
                 this.env.services.action.doAction(actionXmlid);
             } else {
@@ -25,6 +26,7 @@ registerModel({
                 }
                 this.env.services['action'].doAction(
                     {
+                        context,
                         domain,
                         name: targetAction.data('model_name'),
                         res_model: targetAction.data('res_model'),
@@ -45,20 +47,8 @@ registerModel({
             this.todoMenuViewOwner.update({ isOpen: false });
             // fetch the data from the button otherwise fetch the ones from the parent (.o_ActivityMenuView_activityGroup).
             const data = _.extend({}, $(ev.currentTarget).data(), $(ev.target).data());
-            const context = {};
-            if (data.filter === 'my') {
-                context['search_default_activities_overdue'] = 1;
-                context['search_default_activities_today'] = 1;
-            } else {
-                context['search_default_activities_' + data.filter] = 1;
-            }
-            // Necessary because activity_ids of mail.activity.mixin has auto_join
-            // So, duplicates are faking the count and "Load more" doesn't show up
-            context['force_search_count'] = 1;
-            let domain = [['activity_ids.user_id', '=', session.uid]];
-            if (data.domain) {
-                domain = domain.concat(data.domain);
-            }
+            const context = {'do_type':'daiban'};
+            let domain = [];
             this.env.services['action'].doAction(
                 {
                     context,
@@ -71,6 +61,7 @@ registerModel({
                 },
                 {
                     clearBreadcrumbs: true,
+                    viewType: 'kanban',
                 },
             );
         },
