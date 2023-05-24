@@ -23,8 +23,8 @@ from odoo import http
 from odoo.http import request
 from odoo.tools.safe_eval import safe_eval, time
 
-from odoo.addons.http_routing.models.ir_http import slugify
-from odoo.addons.web.controllers.report import ReportController
+from addons.http_routing.models.ir_http import slugify
+from addons.web.controllers.report import ReportController
 
 
 class CxReportController(ReportController):
