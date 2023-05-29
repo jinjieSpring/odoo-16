@@ -451,3 +451,9 @@ class WorkflowMutilMixln(models.AbstractModel):
 
     def _compute_depend_state(self):
         pass
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        result = super().create(vals_list)
+        result.create_workflow_new(depend_state=result.depend_state)
+        return result
