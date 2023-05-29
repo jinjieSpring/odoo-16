@@ -6,6 +6,7 @@ from datetime import datetime
 class HdWorkflow(models.Model):
     _name = 'hd.workflow'
     _description = '工作流记录'
+    _log_access = False
     _order = 'id desc'
 
     name = fields.Char(string='所在节点', index=True)
@@ -42,34 +43,6 @@ class HdWorkflow(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         return super(HdWorkflow, self).create(vals_list)
-
-    def read(self, fields=None, load='_classic_read'):
-        """ 绕过当前ORM. """
-        self.check_access_rule('read')
-        return super(HdWorkflow, self).read(fields=fields, load=load)
-
-    def send_message(self, records, content, author_id, partner_ids):
-        #::::发送审批消息
-        url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-        lines = []
-        for partner_id in partner_ids:
-            pram = {
-                'res_partner_id': partner_id,
-            }
-            lines.append((0, 0, pram))
-
-        message = self.env['mail.message'].create({
-            'record_name': records.name,
-            'subject': '消息通知',
-            'body': content or '<a style="font-size:20px" href="%s/web#model=%s&id=%s" target="_blank">请您阅知</a><br>' % (url, records._name, records.id),
-            'message_type': 'notification',
-            'res_id': records.id,
-            'model': records._name,
-            'subtype_id': 2,  # id=2 是备注
-            'author_id': author_id,
-            'notification_ids': lines,
-        })
-        return message
 
     def _send_sys_message(self, users, record):
         url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
@@ -121,7 +94,7 @@ class HdWorkflow(models.Model):
                 })
                 pr_list.append({
                     'name': self._context.get('ir_process_line_name') + '---->' + state_name,
-                    'res_model': records._name,
+                    'model_id': records_model.id,
                     'res_id': records.id,
                     'user_id': user,
                 })
@@ -417,10 +390,10 @@ class HdWorkflow(models.Model):
             })
             pr_list.append({
                 'name':  '新建' + '---->' + state_name,
-                'res_model': records._name,
+                'model_id': records_model.id,
                 'res_id': records.id,
                 'user_id': user,
             })
         self.create(v_list)
         self.env['hd.personnel.process.record'].sudo().create(pr_list)
-        records.write({depend_state: state_name})
+        records.write({'state': state_name})

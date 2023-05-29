@@ -40,11 +40,13 @@ class WorkflowMixln(models.AbstractModel):
     def default_get(self, fields_list):
         result = super().default_get(fields_list)
         result['create_uid'] = self._uid
+        # 多流程还需要处理
+        result['ir_process_id'] = self.env['ir.process'].search([('model', '=', self._name), ('active', '=', True)],
+                                                                order="id desc", limit=1).id
         return result
 
-    @api.model_create_multi
-    def create(self, vals):
-        result = super().create(vals)
+    def create(self, vals_list):
+        result = super().create(vals_list)
         result.create_workflow_new()
         return result
 
@@ -78,36 +80,40 @@ class WorkflowMixln(models.AbstractModel):
         return super().search_read(domain=domain, fields=fields, offset=offset, limit=limit, order=order)
 
     def action_confirm(self):
-        #self.ensure_one()
-        context = dict(self._context or {})
-        # 再次赋值，应对新建一条后再创建molde变为check.user表
-        context['active_model'] = self._name
-        context['active_id'] = self.id
-        context['comfirm_state'] = '同意'
-        finally_main_record_state_desc = getattr(self, self.depend_state)
-        if getattr(self, self.depend_state) != context['to_state']:
-            raise UserError(u'警告：当前审批流程已发生改变，新刷新当前页面！')
-        # if context['to_state'] == '新建' and self.create_uid.id != self._uid:
-        #     raise UserError(u'警告：当前数据非您发起无法提交！')
-        # 取process的信息
-        jump_workflows = []
-        # 审批人员res_users
-        workflow_user_ids = []
+        context = self._context
+        if 'hd.workflow.mixin' in self._inherit:
+            main_record_finally_state = self.state
+        elif 'hd.workflow.mutil.mixin' in self._inherit:
+            main_record_finally_state = getattr(self, self.depend_state)
+        # 再次赋值，应对新建一条后再创建moldel变为check.user表
+        # context['active_model'] = self._name
+        # context['active_id'] = self.id
+        # context['comfirm_state'] = '同意'
+        if main_record_finally_state != context['to_state']:
+            raise UserError('警告：当前审批流程已发生改变，新刷新当前页面！')
+        # 取process的信息, 审批人员res_users
+        jump_workflows, workflow_user_ids = []
         if self.ir_process_id:
+            process_line_ids = self.ir_process_id.process_ids
             # 筛选process_line
-            lines = self.ir_process_id.process_ids
-            line = lines.filtered(lambda o: o.name == finally_main_record_state_desc)
-            if len(line) > 1:
+            line_count = 0
+            line = None
+            line_next = None
+            for line_id in process_line_ids:
+                if line_id.name == main_record_finally_state:
+                    line = line_id
+                    line_count += 1
+                    continue
+                if line_count == 1 and not line_next:
+                    line_next = line_id
+            if line_count > 1:
                 raise UserError(u'警告：系统流程配置错误！')
             else:
-                # 取line的下一个节点，因为配置的东西全在这个节点上
-                line_next = lines.filtered(lambda o: o.sequence == (line.sequence + 1))
-                # 判断line是不是有跳转
                 if line.is_jump:
                     #执行方法
                     globals_dict = {'model': self}
                     line_name = safe_eval.safe_eval(line.jump_code, globals_dict) or line_next.name
-                    line_next = lines.filtered(lambda o: o.name == line_name)
+                    line_next = process_line_ids.filtered(lambda o: o.name == line_name)
                     copy_line = line
                     records_model = self.env['ir.model'].sudo().search([('model', '=', self._name)], limit=1)
                     while copy_line.next_id.name != line_next.name:
@@ -241,7 +247,7 @@ class WorkflowMixln(models.AbstractModel):
                 # 读取消息发送人
                 context['user_ids'] = self.get_node_users_for_message(line_next.name)
         else:
-            raise UserError(u'错误：当前流程未配置！')
+            raise UserError('错误：未成功获取流程信息！')
         if context.get('external_create_order_next_node'):
             return self.env['hd.approval.check.user'].with_context(context).object_ok()
         # 处理审批人和多流程的时候
@@ -321,17 +327,6 @@ class WorkflowMixln(models.AbstractModel):
         else:
             raise UserError('警告：无法取回,当前审批流程可能已流转，请刷新当前页面查看审批记录！')
 
-    # @api.depends('ir_process_id.process_ids')
-    # def _compute_line_buttons(self):
-    #     for s in self:
-    #         s.line_buttons = {'name': 'action_confirm',
-    #                           'states': '新建',
-    #                           'string': '提交',
-    #                           'type': 'object',
-    #                           'class': 'oe_highlight',
-    #                           'attrs': "{'invisible': ['|','!',('create_uid','=', uid)]}",
-    #                           'context': "{'to_state': state}"}
-
     def action_get_attachment_view(self):
         """附件上传动作视图"""
         self.ensure_one()
@@ -352,8 +347,7 @@ class WorkflowMixln(models.AbstractModel):
                          'name': "超大文件上传",
                          'target': 'new',
                          'nodestroy': True,
-                         'url': '/webuploader/index?res_model=%s&res_id=%s' % (self._name, self.id),
-                        }
+                         'url': '/webuploader/index?res_model=%s&res_id=%s' % (self._name, self.id)}
         return client_action
 
     def jump_condition(self):
