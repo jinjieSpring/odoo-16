@@ -13,15 +13,9 @@ class WorkflowMixln(models.AbstractModel):
 
     workflow_ids = fields.One2many('hd.workflow', 'res_id', domain=lambda self: [('res_model', '=', self._name), ('is_show', '=', True)], string='审批记录')
     workflow_look = fields.Boolean(string='审核按钮是否可见', default=False, compute='_compute_workflow_look', help='True')
-    depend_state = fields.Char(string='依赖状态', compute='_compute_depend_state', store=True, default='state')
-    finally_show_state_desc = fields.Char(string='最新状态', default='新建')
     ir_process_id = fields.Many2one('ir.process', string='流程')
-    # line_buttons = fields.Json(string='button属性', compute="_compute_line_buttons", store=True, copy=True, readonly=False)
     attachment_ids = fields.One2many('ir.attachment', 'res_id', domain=lambda self: [('res_model', '=', self._name)], string='附件')
     attachment_number = fields.Integer(compute='_compute_attachment_number', string='附件数量')
-
-    def _compute_depend_state(self):
-        pass
 
     def _compute_workflow_look(self):
         for r in self:
@@ -454,3 +448,14 @@ class WorkflowMixln(models.AbstractModel):
         self.env['hd.personnel.process.record'].search([('res_model', '=', self._name), ('res_id', '=', self.id), ('valid', '=', '有效')]).write({
             'valid': '无效'
         })
+
+
+class WorkflowMutilMixln(models.AbstractModel):
+    _name = 'hd.workflow.mutil.mixin'
+    _inherit = 'hd.workflow.mixin'
+
+    depend_state = fields.Char(string='依赖状态', compute='_compute_depend_state', store=True, default='state')
+    finally_show_state_desc = fields.Char(string='最新状态', default='新建')
+
+    def _compute_depend_state(self):
+        pass
