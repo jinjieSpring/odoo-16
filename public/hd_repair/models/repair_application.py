@@ -34,10 +34,11 @@ class RepairApplication(models.Model):
                           ('已审核', '已审核')]
 
     @api.model_create_multi
-    def create(self, vals):
-        if not vals.get('name', 'New') == 'new':
-            vals['name'] = self.env['ir.sequence'].get('repair.application')
-        result = super(RepairApplication, self).create(vals)
+    def create(self, vals_list):
+        for vals in vals_list:
+            if not vals.get('name', 'New') == 'new':
+                vals['name'] = self.env['ir.sequence'].next_by_code('repair.application')
+        result = super(RepairApplication, self).create(vals_list)
         return result
 
     def action_confirm(self):
