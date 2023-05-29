@@ -40,11 +40,9 @@ class WorkflowMixln(models.AbstractModel):
     def default_get(self, fields_list):
         result = super().default_get(fields_list)
         result['create_uid'] = self._uid
-        # 多流程还需要处理
-        result['ir_process_id'] = self.env['ir.process'].search([('model', '=', self._name), ('active', '=', True)],
-                                                                order="id desc", limit=1).id
         return result
 
+    @api.model_create_multi
     def create(self, vals_list):
         result = super().create(vals_list)
         result.create_workflow_new()
@@ -80,7 +78,7 @@ class WorkflowMixln(models.AbstractModel):
         return super().search_read(domain=domain, fields=fields, offset=offset, limit=limit, order=order)
 
     def action_confirm(self):
-        context = self._context
+        context = dict(self._context or {})
         if 'hd.workflow.mixin' in self._inherit:
             main_record_finally_state = self.state
         elif 'hd.workflow.mutil.mixin' in self._inherit:
@@ -88,46 +86,48 @@ class WorkflowMixln(models.AbstractModel):
         # 再次赋值，应对新建一条后再创建moldel变为check.user表
         # context['active_model'] = self._name
         # context['active_id'] = self.id
-        # context['comfirm_state'] = '同意'
         if main_record_finally_state != context['to_state']:
             raise UserError('警告：当前审批流程已发生改变，新刷新当前页面！')
         # 取process的信息, 审批人员res_users
-        jump_workflows, workflow_user_ids = []
+        jump_workflows = []
+        workflow_user_ids = []
         if self.ir_process_id:
+            globals_dict = {'model': self}
             process_line_ids = self.ir_process_id.process_ids
             # 筛选process_line
             line_count = 0
-            line = None
-            line_next = None
+            line = line_next_name = line_next = None
+            records_model = self.env['ir.model'].sudo().search([('model', '=', self._name)], limit=1)
             for line_id in process_line_ids:
                 if line_id.name == main_record_finally_state:
                     line = line_id
+                    if line.is_jump:
+                        line_next_name = safe_eval.safe_eval(line.jump_code, globals_dict)
                     line_count += 1
                     continue
-                if line_count == 1 and not line_next:
-                    line_next = line_id
-            if line_count > 1:
-                raise UserError(u'警告：系统流程配置错误！')
-            else:
-                if line.is_jump:
-                    #执行方法
-                    globals_dict = {'model': self}
-                    line_name = safe_eval.safe_eval(line.jump_code, globals_dict) or line_next.name
-                    line_next = process_line_ids.filtered(lambda o: o.name == line_name)
-                    copy_line = line
-                    records_model = self.env['ir.model'].sudo().search([('model', '=', self._name)], limit=1)
-                    while copy_line.next_id.name != line_next.name:
+                if line_next_name:
+                    if line_next:
+                        continue
+                    if line_next_name != line_id.name:
                         jump_workflows.append({
-                            'name': copy_line.next_id.name,
+                            'name': line_id.name,
                             'note': '由系统跳过',
                             'model_id': records_model.id,
                             'res_id': self.id,
-                            'type': copy_line.next_id.approve_type,
+                            'type': line_id.approve_type,
                             'state': '同意',
-                            'is_show': line.jump_record_show
+                            'is_show': line_id.jump_record_show
                         })
-                        copy_line = copy_line.next_id
+                    else:
+                        line_next = line_id
+                else:
+                    if line_count == 1 and not line_next:
+                        line_next = line_id
+            if line_count > 1:
+                raise UserError('警告：系统流程配置错误！')
+            else:
                 # 设置串签、并签、汇签类型
+                context['comfirm_state'] = '同意'
                 context['workflow_type'] = line_next.approve_type
                 context['stop_flow'] = line_next.is_stop
                 context['fixed_node'] = line_next.is_fixed
@@ -251,7 +251,7 @@ class WorkflowMixln(models.AbstractModel):
         if context.get('external_create_order_next_node'):
             return self.env['hd.approval.check.user'].with_context(context).object_ok()
         # 处理审批人和多流程的时候
-        form_id = self.env.ref('hd_workflow.view_form_amos_approval_check_user_wizard_01').id
+        form_id = self.env.ref('hd_workflow.form_view_hd_approval_check_user_wizard').id
         return {'type': 'ir.actions.act_window',
                 'res_model': 'hd.approval.check.user',
                 'name': '下一阶段' + '  ⇒  ' + context['ir_process_next_line_name'],
@@ -268,21 +268,15 @@ class WorkflowMixln(models.AbstractModel):
         context['active_model'] = self._name
         context['active_id'] = self.id
         context['comfirm_state'] = '拒绝'
-        # context['form_state'] = self.state
-        #::::判断这个工作流是不是已存在存在执行提醒 并刷新 当前用户流程已存在，或已在其它地方登陆并操作
-        domain = [('model', '=', self._name), ('active', '=', True)]
-        if hasattr(self, 'depend_state'):
-            domain.append(('depend_state', '=', self.depend_state))
+        if 'hd.workflow.mixin' in self._inherit:
+            context['depend_state'] = 'state'
+            if self.state != context['to_state']:
+                raise UserError('警告：当前审批流程已发生改变，新刷新当前页面！')
+        elif 'hd.workflow.mutil.mixin' in self._inherit:
             context['depend_state'] = self.depend_state
             if getattr(self, self.depend_state) != context['to_state']:
-                raise UserError(u'警告：当前审批流程已发生改变，新刷新当前页面！')
-        else:
-            context['depend_state'] = 'state'
-            if self.state == context['to_state']:
-                pass
-            else:
-                raise UserError(u'警告：当前审批流程已发生改变，新刷新当前页面！')
-        form_id = self.env.ref('hd_workflow.view_form_amos_approval_check_user_wizard_01').id
+                raise UserError('警告：当前审批流程已发生改变，新刷新当前页面！')
+        form_id = self.env.ref('hd_workflow.form_view_hd_approval_check_user_wizard').id
         return {'type': 'ir.actions.act_window',
                 'res_model': 'hd.approval.check.user',
                 'name': '当前阶段' + '  :  ' + context['to_state'],
@@ -380,7 +374,8 @@ class WorkflowMixln(models.AbstractModel):
         """
         return []
 
-    def create_workflow_new(self):
+    def create_workflow_new(self, depend_state='state'):
+        self.ensure_one()
         records_model = self.env['ir.model'].sudo().search([('model', '=', self._name)], limit=1)
         self.write({'workflow_ids': [(0, 0, {'type': '汇签',
                                              'name': '新建',
@@ -392,9 +387,11 @@ class WorkflowMixln(models.AbstractModel):
                                              'sequence': 1,
                                              'res_record_name': self.name
                                             })],
-                    'ir_process_id': self.env['ir.process'].search([('model', '=', self._name), ('depend_state', '=', self.depend_state), ('active', '=', True)], order="id desc", limit=1).id
+                    'ir_process_id': self.env['ir.process'].search([('model', '=', self._name),
+                                                                    ('depend_state', '=', depend_state),
+                                                                    ('active', '=', True)], order="id desc", limit=1).id
                     })
-        self.env['hd.personnel.process.record'].with_context({'active_model': self._name, 'active_id': self.id}).sudo().create({
+        self.env['hd.personnel.process.record'].with_context({'active_model': self._name, 'active_id': self.id}).create({
                     'name': '新建' + '---->' + '新建',
                     'model_id': records_model.id,
                     'res_id': self.id,
