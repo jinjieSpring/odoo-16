@@ -24,10 +24,9 @@
             <field name="arch" type="xml">
                 <form rp_edit="workflow_look is True" duplicate="false">
                     <field name="create_uid" invisible="1"/>
-                    <field name="depend_state" invisible="1"/>
                     <field name="workflow_look" invisible="1"/>
                     <header>
-                        <field name='state'  widget='statusbar' statusbar_visible="新建,综合接口人,综合管理部负责人,核二院接口人,物业接口人,申请人,已审核"/>
+                        <field name='state'  widget='statusbar'/>
                         <button name='action_confirm'  states='新建' string='提交' type='object' class='oe_highlight' attrs="{'invisible': ['|','!',('create_uid','=', uid)]}"
                            context="{'to_state': state}"/>
                         <button name='action_confirm' states='综合接口人' string='同意' type='object' class='oe_highlight'
@@ -45,7 +44,6 @@
                         <button name='action_confirm' states='申请人' string='同意' type='object' class='oe_highlight'
                                 attrs="{'invisible': ['|',('workflow_look','=',False)]}"
                             context="{'to_state': state}"/>
-
                         <button name='action_confirm_refuse' string='拒绝' type='object' class='oe_highlight'
                             context="{'to_state': state}"
                                 attrs="{'invisible': ['|',('workflow_look','=',False), ('state','=', '新建')]}"/>
@@ -53,7 +51,6 @@
                             context="{'workflow_but_confirm_clicked': True,'can_back_node': {'state':['综合接口人']}}"
                                 attrs="{'invisible': ['!','&amp;', ('create_uid', '=', uid), ('state','in',['综合接口人'])]}" confirm="请是否取回!"/>
                     </header>
-
                     <sheet string="维修申请">
                         <sheet>
                             <widget name="web_ribbon"  attrs="{'invisible':[('state', '!=', '已审核')]}" title="已审核"/>
@@ -113,8 +110,6 @@
                             </notebook>
                         </sheet>
                     </sheet>
-
-
                 </form>
             </field>
         </record>
