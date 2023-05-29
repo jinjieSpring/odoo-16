@@ -42,7 +42,7 @@ class WorkflowMixln(models.AbstractModel):
         result['create_uid'] = self._uid
         return result
 
-    @api.model
+    @api.model_create_multi
     def create(self, vals):
         result = super().create(vals)
         result.create_workflow_new()
@@ -453,6 +453,7 @@ class WorkflowMixln(models.AbstractModel):
 class WorkflowMutilMixln(models.AbstractModel):
     _name = 'hd.workflow.mutil.mixin'
     _inherit = 'hd.workflow.mixin'
+    _description = 'Workflow Mutil Mixin'
 
     depend_state = fields.Char(string='依赖状态', compute='_compute_depend_state', store=True, default='state')
     finally_show_state_desc = fields.Char(string='最新状态', default='新建')
