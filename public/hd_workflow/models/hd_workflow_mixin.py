@@ -438,8 +438,8 @@ class WorkflowMixln(models.AbstractModel):
             'state': workflow_state,
             'end_date': datetime.now()
         })
-        self.env['hd.personnel.process.record'].search([('res_model', '=', self._name), ('res_id', '=', self.id), ('valid', '=', '有效')]).write({
-            'valid': '无效'
+        self.env['hd.personnel.process.record'].search([('res_model', '=', self._name), ('res_id', '=', self.id), ('valid', '=', True)]).write({
+            'valid': False
         })
 
 

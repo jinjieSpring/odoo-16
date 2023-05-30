@@ -135,24 +135,18 @@ class HdApprovalCheckUser(models.Model):
         return True
 
     def object_ok(self, main_record, record_model, context):
-        # workflow_partner_ids = []
         workflow_users_ids = context.get('workflow_user_ids') if context.get('external_create_order_next_node') else []
-        # messages_partner_ids = []
-        messages_users_ids = []
+        messages_users_ids = [n.user_id.id for n in self.users_ids]
         record_check_user_ids = self.check_user_ids
         shouquan_dict = {}
         for x in record_check_user_ids:
             if x.certigier:
-                shouquan_dict[x.certigier.id] = '由' + x.user_id.name + '授权'
+                # shouquan_dict[x.certigier.id] = '由' + x.user_id.name + '授权'
                 workflow_users_ids.append(x.certigier.id)
             else:
                 workflow_users_ids.append(x.user_id.id)
-            # workflow_partner_ids.append(x.user_id.partner_id.id)
             if x.is_message:
                 messages_users_ids.append(x.user_id.id)
-        record_message_user_ids = self.users_ids
-        for n in record_message_user_ids:
-                messages_users_ids.append(n.user_id.id)
         #::::有重复人不能提交
         if shouquan_dict:
             workflow_users_ids = list(set(workflow_users_ids))
@@ -162,27 +156,47 @@ class HdApprovalCheckUser(models.Model):
         # if messages_users_ids:
         #     messages_users_ids = list(set(messages_users_ids))
         execute_node_finish = True
+        hd_workflow_env = self.env['hd.workflow']
         if context['stop_flow'] is False:
             if context['to_state'] == '新建':
-                self.env['hd.workflow'].with_context(shouquan_dict=shouquan_dict).create_workflow_ok(main_record, self.type, self.name, context['ir_process_next_line_name'], workflow_users_ids, context.get('jump_workflows'), context.get('depend_state'))
+                hd_workflow_env.with_context(shouquan_dict=shouquan_dict).create_workflow_ok(main_record,
+                                                                                             record_model,
+                                                                                             self.type,
+                                                                                             self.name,
+                                                                                             context['ir_process_next_line_name'],
+                                                                                             workflow_users_ids,
+                                                                                             context.get('jump_workflows'),
+                                                                                             context.get('depend_state'))
             else:
                 # 判断等待审批没有则视为有拒绝，但是还要考虑全部审批过了的情况
-                workflow_record = self.env['hd.workflow'].search(
-                    [('res_model', '=', context.get('active_model')), ('res_id', '=', context.get('active_id')), ('state', '=', '等待审批')])
+                workflow_record = main_record.workflow_ids.filtered_domain([('state', '=', '等待审批')])
                 if workflow_record:
-                    execute_node_finish = self.env['hd.workflow'].with_context(shouquan_dict=shouquan_dict).create_workflow(main_record, self.type, self.name,
-                                                             context['ir_process_next_line_name'], workflow_users_ids, context.get('jump_workflows'), context.get('depend_state'))
+                    execute_node_finish = hd_workflow_env.with_context(shouquan_dict=shouquan_dict).create_workflow(main_record,
+                                                                                                                    record_model,
+                                                                                                                    self.type,
+                                                                                                                    self.name,
+                                                                                                                    context['ir_process_next_line_name'],
+                                                                                                                    workflow_users_ids,
+                                                                                                                    context.get('jump_workflows'),
+                                                                                                                    context.get('depend_state'))
                 else:
-                    execute_node_finish = self.env['hd.workflow'].with_context(shouquan_dict=shouquan_dict).create_workflow_refuse(main_record, self.type, self.name, context['ir_process_line_name'],
-                                                          context['ir_process_next_line_name'], workflow_users_ids, context.get('jump_workflows'), context.get('depend_state'))
+                    execute_node_finish = hd_workflow_env.with_context(shouquan_dict=shouquan_dict).create_workflow_refuse(main_record,
+                                                                                                                           record_model,
+                                                                                                                           self.type,
+                                                                                                                           self.name,
+                                                                                                                           context['ir_process_line_name'],
+                                                                                                                           context['ir_process_next_line_name'],
+                                                                                                                           workflow_users_ids,
+                                                                                                                           context.get('jump_workflows'),
+                                                                                                                           context.get('depend_state'))
         else:
             if context['ir_process_line_name'] == '新建':
                 main_record.close_workflow_to_state(context.get('depend_state'), context['ir_process_next_line_name'], '同意','已关闭')
             else:
-                others_count = self.env['hd.workflow'].write_workflow(main_record, self.name, datetime.now())
+                others_count = hd_workflow_env.write_workflow(main_record, self.name, datetime.now())
                 # 写入跳过记录的工作流
                 if context.get('jump_workflows'):
-                    self.env['hd.workflow'].create(context.get('jump_workflows'))
+                    hd_workflow_env.create(context.get('jump_workflows'))
                 if others_count == 0:
                     # 'workflow_end':True 原来是要写入现在新版后取消
                     main_record.write({context.get('depend_state'): context['ir_process_next_line_name']})
@@ -198,16 +212,17 @@ class HdApprovalCheckUser(models.Model):
         if execute_node_finish:
             main_record.process_node_finish(context['ir_process_line_name'])
         # 发送消息，后期考虑是否及时发送
-        self.env['hd.workflow']._send_sys_message(messages_users_ids, main_record)
+        hd_workflow_env._send_sys_message(messages_users_ids, main_record)
         return True
 
     def object_no(self, main_record, record_model, original_state, context):
         if main_record.workflow_ids[0].state == '拒绝':
             # 连续拒绝
-            self.env['hd.workflow'].write_workflow_refuse_repeatedly(main_record, self.name, self.refuse_state)
+            self.env['hd.workflow'].write_workflow_refuse_repeatedly(main_record, record_model, self.name, self.refuse_state)
         else:
             # 单次拒绝
-            self.env['hd.workflow'].write_workflow_refuse(main_record,  self.name, self.refuse_state)
+            self.env['hd.workflow'].write_workflow_refuse(main_record, record_model, self.name, self.refuse_state)
+        # 先写入状态
         main_record.write({context.get('depend_state'): self.refuse_state})
         # 执行拒绝至某个节点后，执行回滚某些数据的操作
         main_record.refuse_to_node_finish(self.refuse_state, original_state)
