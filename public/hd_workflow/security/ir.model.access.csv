@@ -4,3 +4,7 @@ access_ir_process,ir_process_user,model_ir_process,base.group_user,1,1,1,1
 access_ir_process_line,ir_process_line_user,model_ir_process_line,base.group_user,1,1,1,1
 access_workflow_role,hd_workflow_role_user,model_hd_workflow_role,base.group_user,1,1,1,1
 access_hd_workflow,hd_workflow_user,model_hd_workflow,base.group_user,1,1,1,1
+access_hd_workflow_together,hd_workflow_together_user,model_hd_workflow_together,base.group_user,1,1,1,1
+access_approval_check_user,hd_approval_check_user,model_hd_approval_check_user,base.group_user,1,1,1,1
+access_approval_check_user_line,hd_approval_check_user_line_user,model_hd_approval_check_user_line,base.group_user,1,1,1,1
+access_approval_message_user,hd_approval_message_user,model_hd_approval_message_user,base.group_user,1,1,1,1
