@@ -21,12 +21,15 @@ class HdApprovalCheckUser(models.Model):
     send_email = fields.Boolean(string='已发过邮件', default=False)
     res_model = fields.Char(string='模块名')
     res_id = fields.Integer(string='数据id')
-
-    @api.model_create_multi
-    def create(self, vals_list):
-        if not vals_list.get('name'):
-            vals_list['name'] = '同意'
-        return super(HdApprovalCheckUser, self).create(vals_list)
+    refuse_state = fields.Selection(selection=lambda self: self._selection_refuse_state(), string='退回至')
+    # type记录的是next_state的审批方式
+    type = fields.Selection([('串签', '串签'), ('并签', '并签'), ('汇签', '汇签')], string='审批类型', default='汇签', help="""这个字段是存储下一个状态的审批规则,串签、并签、汇签，也就是
+        串流、并流、择流。
+        假设一份文件需要A、B两个主管来审批，那么，
+        串签：A签完，才轮到B来签；一般A是小领导，B是大领导；
+        并签：A和B是并列的，可同时签，但必须2人都要签；一般A和B是同一层级但不同部门领导
+        汇签：A和B是并列的，但只需一个签就可以了；此处A、B就是完全等价的了""")
+    fixed_node = fields.Boolean(string='固定审批人')
 
     @api.constrains('check_user_ids')
     def _check_check_user_ids(self):
@@ -39,34 +42,26 @@ class HdApprovalCheckUser(models.Model):
             self.name = ''
 
     def _selection_refuse_state(self):
-            active_id = self._context.get('active_id')
-            model = self._context.get('active_model')
-            state = self._context.get('to_state')
-            if not active_id or not model:
-                return []
-            selection_records = self.env['ir.model.fields']._get(model, self._context.get('depend_state')).selection_ids
-            state_sequence = selection_records.filtered_domain([('name', '=', state)]).sequence
-            result = []
-            state_list = self.env[model].sudo().search([('id', '=', active_id)]).workflow_ids
-            for rec in state_list:
-                rec_squence = selection_records.filtered_domain([('name', '=', rec.name)]).sequence
-                if rec_squence < state_sequence:
-                    if not (rec['name'], rec['name']) in result:
-                        if rec.user_id:
-                            if rec.name == '新建':
-                                result.append((rec['name'], rec['name']))
-                                break
-                            result.append((rec.name, rec.name))
-            return result
-    refuse_state = fields.Selection(selection=_selection_refuse_state, string='退回至')
-    # type记录的是next_state的审批方式
-    type = fields.Selection([('串签', '串签'), ('并签', '并签'), ('汇签', '汇签')], string=u'审批类型', default=u'汇签', help="""这个字段是存储下一个状态的审批规则,串签、并签、汇签，也就是
-        串流、并流、择流。
-        假设一份文件需要A、B两个主管来审批，那么，
-        串签：A签完，才轮到B来签；一般A是小领导，B是大领导；
-        并签：A和B是并列的，可同时签，但必须2人都要签；一般A和B是同一层级但不同部门领导
-        汇签：A和B是并列的，但只需一个签就可以了；此处A、B就是完全等价的了""")
-    fixed_node = fields.Boolean(string='固定审批人')
+        active_id = self._context.get('active_id')
+        model = self._context.get('active_model')
+        state = self._context.get('to_state')
+        if not active_id or not model:
+            return []
+        main_record = self.env[model].sudo().search([('id', '=', active_id)])
+        selection_records = main_record.ir_process_id.process_ids
+        state_sequence = selection_records.filtered_domain([('name', '=', state)]).sequence
+        result = []
+        state_list = main_record.workflow_ids
+        for rec in state_list:
+            rec_squence = selection_records.filtered_domain([('name', '=', rec.name)]).sequence
+            if rec_squence < state_sequence:
+                if not (rec['name'], rec['name']) in result:
+                    if rec.user_id:
+                        if rec.name == '新建':
+                            result.append((rec['name'], rec['name']))
+                            break
+                        result.append((rec.name, rec.name))
+        return result
 
     @api.model
     def default_get(self, fields):
@@ -110,6 +105,13 @@ class HdApprovalCheckUser(models.Model):
                 }))
         return res
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        for val in vals_list:
+            if not val.get('name'):
+                vals_list['name'] = '同意'
+        return super(HdApprovalCheckUser, self).create(vals_list)
+
     def but_confirm(self):
         if self.sumbit_user_id.psignature is False:
             raise UserError('请先设置个人签名!')
@@ -120,14 +122,19 @@ class HdApprovalCheckUser(models.Model):
         return {'type': 'ir.actions.act_window_close'}
 
     def common_confirm(self):
+        context = self._context
+        main_record = self.env[context.get('active_model')].sudo().search([('id', '=', context.get('active_id'))])
+        original_state = (getattr(main_record, context.get('depend_state')) if context.get('depend_state') else main_record.state)
+        record_model = self.env['ir.model'].sudo().search([('model', '=', main_record._name)], limit=1)
+        if context['to_state'] != original_state:
+            raise UserError('警告：当前审批流程已发生改变，请刷新当前页面！')
         if self.state == '同意':
-            self.object_ok()
+            self.object_ok(main_record, record_model, context)
         elif self.state == '拒绝':
-            self.object_no()
+            self.object_no(main_record, record_model, original_state, context)
         return True
 
-    def object_ok(self):
-        context = self._context
+    def object_ok(self, main_record, record_model, context):
         # workflow_partner_ids = []
         workflow_users_ids = context.get('workflow_user_ids') if context.get('external_create_order_next_node') else []
         # messages_partner_ids = []
@@ -155,9 +162,6 @@ class HdApprovalCheckUser(models.Model):
         # if messages_users_ids:
         #     messages_users_ids = list(set(messages_users_ids))
         execute_node_finish = True
-        main_record = self.env[context.get('active_model')].with_context(do_type='all').sudo().search([('id', '=', context.get('active_id'))])
-        if context['to_state'] != (getattr(main_record, context.get('depend_state')) if context.get('depend_state') else main_record.state):
-            raise UserError(u'警告：当前审批流程已发生改变，请刷新当前页面！')
         if context['stop_flow'] is False:
             if context['to_state'] == '新建':
                 self.env['hd.workflow'].with_context(shouquan_dict=shouquan_dict).create_workflow_ok(main_record, self.type, self.name, context['ir_process_next_line_name'], workflow_users_ids, context.get('jump_workflows'), context.get('depend_state'))
@@ -197,16 +201,12 @@ class HdApprovalCheckUser(models.Model):
         self.env['hd.workflow']._send_sys_message(messages_users_ids, main_record)
         return True
 
-    def object_no(self):
-        context = self._context
-        main_record = self.env[context.get('active_model')].with_context(do_type='all').sudo().search([('id', '=', context.get('active_id'))])
-        original_state = (getattr(main_record, context.get('depend_state')) if context.get('depend_state') else main_record.state)
-        if context['to_state'] != original_state:
-            raise UserError('警告：当前审批流程已发生改变，请刷新当前页面！')
-        # 处理多次拒绝和单独一次拒绝
+    def object_no(self, main_record, record_model, original_state, context):
         if main_record.workflow_ids[0].state == '拒绝':
+            # 连续拒绝
             self.env['hd.workflow'].write_workflow_refuse_repeatedly(main_record, self.name, self.refuse_state)
         else:
+            # 单次拒绝
             self.env['hd.workflow'].write_workflow_refuse(main_record,  self.name, self.refuse_state)
         main_record.write({context.get('depend_state'): self.refuse_state})
         # 执行拒绝至某个节点后，执行回滚某些数据的操作

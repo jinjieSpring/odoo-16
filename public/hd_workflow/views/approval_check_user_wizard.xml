@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="form_view_hd_approval_check_user_wizard" model="ir.ui.view">
+            <field name="model">hd.approval.check.user</field>
+            <field name="arch" type="xml">
+                <form string="审批">
+                    <sheet>
+                        <field name="fixed_node" invisible="1"/>
+                        <field name="type" invisible="1"/>
+                        <field name="form_state" invisible="1"/>
+                        <field name="stop_flow" invisible="1"/>
+                        <group col="4" attrs="{'invisible': [('form_state','=','新建')]}">
+                            <field name="state" required="1" readonly="1"/>
+                            <field name="refuse_state" attrs="{'required': [('state','=','拒绝')],'invisible': [('state','!=','拒绝')]}"/>
+                        </group>
+                        <group>
+                            <field name="name" placeholder="给审核的人留点什么 =^_^= "  attrs="{'required': [('state','=','拒绝')]}"/>
+                        </group>
+                        <group string="" attrs="{'invisible': [('form_state','=','新建')]}">
+                            <field name="sumbit_user_id" invisible="1"/>
+                            <field name="sumbit_psignature" widget="signature" readonly="1"/>
+                        </group>
+                        <group attrs="{'invisible': ['|', ('state', '=', '拒绝'), ('stop_flow', '=', True)]}">
+                            <field name="check_user_ids" attrs="{'readonly': [('fixed_node', '=', True)]}" options="{'no_open': True}">
+                                <tree string="列表" editable="bottom">
+                                    <field name="user_id" required='1' options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
+                                    <field name="certigier" readonly="1" force_save='1' options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group>
+                            <field name="users_ids">
+                                <tree string="列表" editable="bottom">
+                                    <field name="user_id" options="{'no_open': True, 'no_create': True, 'no_create_edit': True}" required="1"/>
+                                    <field name="send_email"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="but_confirm" string="提交" type="object" class="oe_highlight" context="{'workflow_but_confirm_clicked': True, 'form_state':form_state}"/>
+                        or
+                        <button string="取消" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>
+
