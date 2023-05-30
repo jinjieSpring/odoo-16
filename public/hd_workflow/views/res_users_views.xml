@@ -7,7 +7,8 @@
             <field name="inherit_id" ref="base.view_users_form_simple_modif"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='signature']" position="before">
-                    <field name="psignature" widget="signature" readonly="0" />
+                    <field name="hd_weight"/>
+                    <field name="psignature" widget="signature"/>
                 </xpath>
             </field>
         </record>
