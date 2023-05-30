@@ -71,7 +71,7 @@ class HdWorkflow(models.Model):
         if others_count == 0:
             v_list = jump_workflows
             # 还要读取together的表取出其他人提交的人进行去重
-            bingqian_records = self.env['hd.workflow.together'].sudo().search([('res_model', '=', main_record._name),
+            bingqian_records = self.env['hd.workflow.together'].search([('res_model', '=', main_record._name),
                                                                                ('res_id', '=', main_record.id),
                                                                                ('name', '=', state_name),
                                                                                ('version_id', '=', None)])
@@ -236,7 +236,7 @@ class HdWorkflow(models.Model):
         # 在处理拒绝后把version_id刷成当前拒绝后的id
         if new_flows:
             new_flows.write({'version_id': new_flows.ids[-1]})
-        self.env['hd.personnel.process.record'].sudo().create(pr_list)
+        self.env['hd.personnel.process.record'].create(pr_list)
         return True
 
     def create_workflow_refuse(self, main_record, record_model, type='汇签', message='同意', state_name='', state_next_name='', workflow_users_ids=[], jump_workflows=[], depend_state='state'):
@@ -323,9 +323,9 @@ class HdWorkflow(models.Model):
                         'res_id': main_record.id,
                         'user_id': workflow_users_id,
                     })
-                self.env['hd.personnel.process.record'].sudo().create(pr_list)
+                self.env['hd.personnel.process.record'].create(pr_list)
         else:
-            self.env['hd.personnel.process.record'].sudo().search([('res_model', '=', main_record._name),
+            self.env['hd.personnel.process.record'].search([('res_model', '=', main_record._name),
                                                                      ('res_id', '=', main_record.id),
                                                                      ('valid', '=', True), ('user_id', '=', self._uid)]).write({'valid': False})
         self.create(v_list)
@@ -371,7 +371,7 @@ class HdWorkflow(models.Model):
                 'user_id': user,
             })
         self.create(jump_workflows)
-        self.env['hd.personnel.process.record'].sudo().create(pr_list)
+        self.env['hd.personnel.process.record'].create(pr_list)
         main_record.write({depend_state: state_name})
 
 
