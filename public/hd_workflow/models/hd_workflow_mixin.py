@@ -81,8 +81,10 @@ class WorkflowMixln(models.AbstractModel):
         context = dict(self._context or {})
         if 'hd.workflow.mixin' in self._inherit:
             main_record_finally_state = self.state
+            context['depend_state'] = 'state'
         elif 'hd.workflow.mutil.mixin' in self._inherit:
             main_record_finally_state = getattr(self, self.depend_state)
+            context['depend_state'] = self.depend_state
         # 再次赋值，应对新建一条后再创建moldel变为check.user表
         # context['active_model'] = self._name
         # context['active_id'] = self.id
