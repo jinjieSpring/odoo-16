@@ -55,7 +55,7 @@ class IrProcessLine(models.Model):
     # button_name 和 domain 未使用,由workflow_minln.py的方法替代了。
     process_id = fields.Many2one('ir.process', string='明细', required=True, ondelete='cascade', index=True)
     name = fields.Char(string='节点名称')
-    button_name = fields.Text(string='Python Code', default='model.custom_get_res_users()', help="配合自定义使用写成方法。")
+    button_name = fields.Text(string='Custom Python Code', default='model.custom_get_res_users()', help="配合自定义使用写成方法。")
     sequence = fields.Integer(string='排序', default=1)
     type = fields.Selection([('自定义', '自定义'), ('固定审核人', '固定审核人'), ('角色组', '角色组'), ('节点审核人', '节点审核人'), ('权限组', '权限组')], string='审批人获取方式', default='自定义')
     is_stop = fields.Boolean(default=False, string='停止工作流')
@@ -68,6 +68,6 @@ class IrProcessLine(models.Model):
     workflow_role_ids = fields.Many2many('hd.workflow.role', 'ir_process_line_hd_workflow_role_rel', 'process_id', 'role_id', string='角色组')
     before_ids = fields.Many2many('ir.process.line', 'ir_process_line_approve_rel', 'process_id', 'before_process_id', string='节点审核人')
     is_jump = fields.Boolean(default=False, string='是否跳转')
-    jump_code = fields.Text(string='Python Code', default='model.jump_condition()')
+    jump_code = fields.Text(string='Jump Python Code', default='model.jump_condition()')
     jump_record_show = fields.Boolean(string='显示跳过记录', default=True)
     can_back = fields.Boolean(string='允许撤回', default=True)
