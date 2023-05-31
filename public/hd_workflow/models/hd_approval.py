@@ -204,7 +204,7 @@ class HdApprovalCheckUser(models.Model):
                                 'name': context['ir_process_line_name'] + '---->' + context['ir_process_next_line_name'],
                                 'res_model': main_record._name,
                                 'res_id': main_record.id,
-                                'valid': '无效',
+                                'valid': False,
                             })
                 else:
                     execute_node_finish = False
