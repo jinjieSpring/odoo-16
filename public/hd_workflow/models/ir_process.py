@@ -41,6 +41,7 @@ class IrProcess(models.Model,):
                 'sequence': sequence,
                 'process_id': self.id,
                 'name': line[0],
+                'can_back': False if line[0] == '新建' or len(selection) == sequence else True,
                 'is_stop': True if len(selection) == sequence else False
             })
             sequence = sequence + 1
@@ -69,3 +70,4 @@ class IrProcessLine(models.Model):
     is_jump = fields.Boolean(default=False, string='是否跳转')
     jump_code = fields.Text(string='Python Code', default='model.jump_condition()')
     jump_record_show = fields.Boolean(string='显示跳过记录', default=True)
+    can_back = fields.Boolean(string='允许撤回', default=True)
