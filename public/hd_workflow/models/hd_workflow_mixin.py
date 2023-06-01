@@ -394,13 +394,11 @@ class WorkflowMixln(models.AbstractModel):
                                                                     ('depend_state', '=', depend_state),
                                                                     ('active', '=', True)], order="id desc", limit=1).id
                     })
-        self.env['hd.personnel.process.record'].with_context({'active_model': self._name, 'active_id': self.id}).create({
+        self.env['hd.personnel.process.record'].create({
                     'name': '新建' + '---->' + '新建',
                     'model_id': records_model.id,
                     'res_id': self.id,
                     'user_id': self._uid})
-        # 直接提交事务，让后期主数据的workflow_ids能挂载查询
-        self.env.cr.commit()
 
     def get_print_workflow(self, state_desc):
         """

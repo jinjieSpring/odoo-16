@@ -71,35 +71,37 @@ class HdWorkflow(models.Model):
         others_count = self.write_workflow(main_record, message, now)
         if others_count == 0:
             v_list = jump_workflows
-            # 还要读取together的表取出其他人提交的人进行去重
-            bingqian_records = self.env['hd.workflow.together'].search([('res_model', '=', main_record._name),
-                                                                               ('res_id', '=', main_record.id),
-                                                                               ('name', '=', state_name),
-                                                                               ('version_id', '=', None)])
-            bingqian_workflow_users_ids = [b.user_id.id for b in bingqian_records]
-            pr_list = []
-            for user in set(workflow_users_ids+bingqian_workflow_users_ids):
-                v_list.append({
-                    'type': type,
-                    'name': state_name,
-                    'model_id': record_model.id,
-                    'res_id': main_record.id,
-                    'create_id': self._uid,
-                    'start_date': now,
-                    'user_id': user,
-                    'state': '等待审批',
-                    'accredit': self._context.get('shouquan_dict').get(user) or '无',
-                    'sequence': 3,
-                    'res_record_name': main_record.name
-                })
-                pr_list.append({
-                    'name': self._context.get('ir_process_line_name') + '---->' + state_name,
-                    'model_id': record_model.id,
-                    'res_id': main_record.id,
-                    'user_id': user,
-                })
-            self.create(v_list)
-            self.env['hd.personnel.process.record'].create(pr_list)
+            # 停止后不做并签查询动作
+            if not self._context.get('stop_flow'):
+                # 还要读取together的表取出其他人提交的人进行去重
+                bingqian_records = self.env['hd.workflow.together'].search([('res_model', '=', main_record._name),
+                                                                                   ('res_id', '=', main_record.id),
+                                                                                   ('name', '=', state_name),
+                                                                                   ('version_id', '=', None)])
+                bingqian_workflow_users_ids = [b.user_id.id for b in bingqian_records]
+                pr_list = []
+                for user in set(workflow_users_ids+bingqian_workflow_users_ids):
+                    v_list.append({
+                        'type': type,
+                        'name': state_name,
+                        'model_id': record_model.id,
+                        'res_id': main_record.id,
+                        'create_id': self._uid,
+                        'start_date': now,
+                        'user_id': user,
+                        'state': '等待审批',
+                        'accredit': self._context.get('shouquan_dict').get(user) or '无',
+                        'sequence': 3,
+                        'res_record_name': main_record.name
+                    })
+                    pr_list.append({
+                        'name': self._context.get('ir_process_line_name') + '---->' + state_name,
+                        'model_id': record_model.id,
+                        'res_id': main_record.id,
+                        'user_id': user,
+                    })
+                self.create(v_list)
+                self.env['hd.personnel.process.record'].with_context(active_id=False).create(pr_list)
             main_record.write({depend_state: state_name})
             return True
         else:
@@ -119,17 +121,18 @@ class HdWorkflow(models.Model):
         if workflow_record:
             # others_count标识并签自己那条记录刷掉后还没有其他记录，有则不创建
             others_count = 0
+            workflow_other_records = workflow_ids.filtered_domain(
+                [('state', '=', '等待审批'), ('id', '!=', workflow_record.id)])
+            domain = [('res_model', '=', main_record._name),
+                      ('res_id', '=', main_record.id),
+                      ('valid', '=', True)]
             if workflow_record.type == '汇签':
-                workflow_other_records = workflow_ids.filtered_domain([('state', '=', '等待审批'), ('id', '!=', workflow_record.id)])
                 workflow_other_records.write({'state': '已关闭', 'note': '由 %s 汇签' % workflow_record.user_id.name, 'end_date': t})
             elif workflow_record.type == '并签' or workflow_record.type == '串签':
-                workflow_other_records = workflow_ids.filtered_domain([('state', '=', '等待审批'), ('id', '!=', workflow_record.id)])
                 others_count = len(workflow_other_records)
+                domain.append(('user_id', '=', self._uid))
             workflow_record.write({'state': '同意', 'note': message, 'end_date': t})
-            self.env['hd.personnel.process.record'].search([('res_model', '=', main_record._name),
-                                                            ('res_id', '=', main_record.id),
-                                                            ('valid', '=', True),
-                                                            ('user_id', '=', self._uid)]).write({'valid': False})
+            self.env['hd.personnel.process.record'].search(domain).with_context(way='create').write({'valid': False})
             return others_count
 
     def write_workflow_refuse(self, main_record, record_model, message='同意', refuse_to=''):
@@ -163,7 +166,6 @@ class HdWorkflow(models.Model):
                 'res_id': main_record.id,
                 'user_id': b.user_id.id,
             })
-            # other_version_id = b.version_id
             pick_times += 1
         self.env['hd.personnel.process.record'].create(pr_list)
         return True
