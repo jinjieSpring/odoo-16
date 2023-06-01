@@ -16,6 +16,7 @@ class PersonnelProcessRecord(models.Model):
     @api.model
     def workflow_bus_send(self, records, mode):
         notifications = [[r.user_id.partner_id, 'hd.personnel.process.record/updated', {mode: True}] for r in records if r.user_id.partner_id]
+        # print(notifications)
         self.env['bus.bus']._sendmany(notifications)
 
     @api.model_create_multi
@@ -46,7 +47,8 @@ class PersonnelProcessRecord(models.Model):
         user_todos = {}
         # 缓存
         for todo in todo_data:
-            key = todo.model_id.model
+            ir_model_sudo = todo.model_id.sudo()
+            key = todo.res_model
             if user_todos.get(key):
                 user_todos[key]['total_count'] = user_todos[key]['total_count'] + 1
                 user_todos[key]['todo_count'] = user_todos[key]['todo_count'] + 1
@@ -54,8 +56,8 @@ class PersonnelProcessRecord(models.Model):
                 module = self.env[key]._original_module
                 icon = module and modules.module.get_module_icon(module)
                 user_todos[todo['res_model']] = {
-                        'id': todo.model_id.id,
-                        'name': todo.model_id.name,
+                        'id': ir_model_sudo.id,
+                        'name': ir_model_sudo.name,
                         'model': key,
                         'type': 'todo',
                         'icon': icon,
