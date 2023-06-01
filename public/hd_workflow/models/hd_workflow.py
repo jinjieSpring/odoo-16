@@ -155,7 +155,7 @@ class HdWorkflow(models.Model):
         for b in workflow_ids.filtered_domain([('state', '!=', '取回'), ('name', '=', refuse_to)]):
             if pick_times == 0:
                 other_version_id = b.version_id
-            if other_version_id != b.version_id:
+            if other_version_id != b.version_id or b.name == '新建':
                 break
             pr_list.append({
                 'name': self._context.get('to_state') + '---->' + refuse_to,
