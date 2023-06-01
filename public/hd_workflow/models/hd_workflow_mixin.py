@@ -292,6 +292,7 @@ class WorkflowMixln(models.AbstractModel):
         """
         开始进行撤销,包含多流程, 并签的话则有个审批就不能退回
         """
+        record_model = self.env['ir.model'].sudo().search([('model', '=', self._name)], limit=1)
         can_back_node = self._context.get('can_back_node')
         depend_state = 'state'
         if hasattr(self, 'depend_state'):
@@ -314,7 +315,7 @@ class WorkflowMixln(models.AbstractModel):
                     write_records.write({'refuse_to': '新建', 'state': '取回', 'note': '由发起人取回'})
                     self.env['hd.personnel.process.record'].with_context(active_model=self._name, active_id=self.id).sudo().create({
                         'name': workflows[0].name + '---->' + '新建',
-                        'res_model': self._name,
+                        'model_id': record_model.id,
                         'res_id': self.id,
                         'user_id': self._uid,
                     })

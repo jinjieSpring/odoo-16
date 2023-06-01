@@ -86,7 +86,7 @@ class HdApprovalCheckUser(models.Model):
             n = datetime.now()
             for user_id in context.get('workflow_user_ids'):
                 pram = {
-                    'user_id': user_id,
+                    'user_id': user_id
                 }
                 # shouquan_records = self.env['chown.model'].sudo().search(
                 #     [('change_start', '<=', n), ('change_end', '>=', n),
@@ -95,7 +95,7 @@ class HdApprovalCheckUser(models.Model):
                 # if shouquan_records:
                 #     pram['certigier'] = shouquan_records.chowner.user_id.id
                 #     pram['is_message'] = True
-                # lines.append((0, 0, pram))
+                lines.append((0, 0, pram))
             res['check_user_ids'] = lines
         if context.get('user_ids'):
             res['users_ids'] = []
@@ -109,7 +109,7 @@ class HdApprovalCheckUser(models.Model):
     def create(self, vals_list):
         for val in vals_list:
             if not val.get('name'):
-                vals_list['name'] = '同意'
+                val['name'] = '同意'
         return super(HdApprovalCheckUser, self).create(vals_list)
 
     def but_confirm(self):
@@ -235,18 +235,19 @@ class HdApprovalCheckUserLine(models.Model):
     _order = 'sequence asc'
 
     sequence = fields.Integer(string=u'排序', default=1)
-    user_id = fields.Many2one('res.users', string=u'用户')
-    order_id = fields.Many2one('hd.approval.check.user', string=u'明细', ondelete='cascade', index=True, copy=False)
+    user_id = fields.Many2one('res.users', string='用户')
+    hd_weight = fields.Integer(string='权重')
+    order_id = fields.Many2one('hd.approval.check.user', string='明细', ondelete='cascade', index=True, copy=False)
     is_message = fields.Boolean(default=False, string='是否发送消息')
     certigier = fields.Many2one('res.users', string='被授权人')
 
-    # @api.onchange('user_id')
-    # def _compute_certigier(self):
-    #     n = datetime.now()
-    #     shouquan_records = self.env['chown.model'].sudo().search([('change_start', '<=', n), ('change_end', '>=', n), ('owner.user_id', '=', self.user_id.id), ('type', '=', '有效')], limit=1)
-    #     if self._context['active_model']:
-    #         now_shouquan_model = shouquan_records.chown_details.filtered(lambda t: t.desc == self._context['active_model'])
-    #         self.certigier = now_shouquan_model.chowner.user_id
+    @api.onchange('user_id')
+    def _compute_certigier(self):
+        n = datetime.now()
+        # shouquan_records = self.env['chown.model'].sudo().search([('change_start', '<=', n), ('change_end', '>=', n), ('owner.user_id', '=', self.user_id.id), ('type', '=', '有效')], limit=1)
+        # if self._context['active_model']:
+        #     now_shouquan_model = shouquan_records.chown_details.filtered(lambda t: t.desc == self._context['active_model'])
+        #     self.certigier = now_shouquan_model.chowner.user_id
 
 
 class HdApprovalMessageUser(models.Model):

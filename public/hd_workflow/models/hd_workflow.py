@@ -34,6 +34,7 @@ class HdWorkflow(models.Model):
         ('等待提交', '等待提交'),
         ('已提交', '已提交'),
         ('同意', '同意'),
+        ('取回', '取回'),
         ('拒绝', '拒绝'),
         ('等待审批', '等待审批'),
         ('已关闭', '已关闭')], string='审批状态', default='等待审批', index=True)
@@ -378,6 +379,7 @@ class HdWorkflow(models.Model):
 class HdWorkFlowTogether(models.Model):
     _name = 'hd.workflow.together'
     _inherit = 'hd.workflow'
+    _description = '工作流并签和串签记录'
 
     def create_workflow(self, main_record, record_model, type='汇签', state_name='', workflow_users_ids=[]):
         """
