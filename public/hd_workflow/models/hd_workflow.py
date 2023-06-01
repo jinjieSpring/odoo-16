@@ -298,7 +298,7 @@ class HdWorkflow(models.Model):
                         'sequence': 3,
                         'res_record_name': main_record.name
                 })
-                self.env['hd.workflow.together'].create_workflow(main_record, type, message, state_next_name,
+                self.env['hd.workflow.together'].create_workflow(main_record, record_model, type, state_next_name,
                                                                    workflow_users_ids)
                 workflow_type_count += 1
             pick_times += 1
