@@ -147,98 +147,58 @@ class WorkflowMixln(models.AbstractModel):
                     for r in line_next.groups_ids:
                         workflow_user_ids = workflow_user_ids + r.users.ids
                 elif line_next.type == '角色组':
-                    hr_model = self.env['hr.employee'].sudo()
-                    for w in line_next.workflow_role:
-                        if w.code == 'total_applicant_first_leader':
-                            # 申请人-科室领导
-                            if self.create_uid.employee_ids.department_id:
-                                dept_arr = self.create_uid.employee_ids.department_id.complete_name.split(' / ')
-                                if len(dept_arr) == 3:
-                                    leader = self.env['hr.employee'].search(
-                                        [('department_id.complete_name', 'ilike', dept_arr[0] + ' / ' + dept_arr[1]),
-                                         ('hr_keshi_leader', '=', True)], limit=1)
-                                    if leader:
-                                        workflow_user_ids = workflow_user_ids + [leader.user_id.id]
-                                else:
-                                    workflow_user_ids = workflow_user_ids + [hr.user_id.id for hr in hr_model.search([('department_id', 'parent_of', self.create_uid.employee_ids.department_id.id), ('hr_keshi_leader', '=', True)])]
-                        elif w.code == 'total_applicant_dept_leader':
-                            # 申请人-部门领导
-                            if self.create_uid.employee_ids.department_id:
-                                first_name = self.create_uid.employee_ids.department_id.complete_name.split(' / ')[0]
-                                if first_name == '调试部':
-                                    workflow_user_ids = workflow_user_ids + [hr.user_id.id for hr in hr_model.search([('department_id.complete_name', '=', first_name+' / ' + '部门办'),
-                                                                                                                      ('hr_bumen_leader', '=', True)])]
-                                else:
-                                    workflow_user_ids = workflow_user_ids + [hr.user_id.id for hr in hr_model.search([('department_id.complete_name', 'ilike', self.create_uid.employee_ids.department_id.complete_name.split(' / ')[0]), ('hr_bumen_leader', '=', True)])]
-                        elif w.code == 'total_applicant_inchargeof_leader':
-                            # 申请人-分管领导
-                            if self.create_uid.employee_ids.department_id:
-                                fengguan_leaders = hr_model.search([('hr_fengguan_leader', '=', True)])
-                                dept_id = self.create_uid.employee_ids.department_id.id
-                                for fl in fengguan_leaders:
-                                   if fl.hr_mdept_ids.filtered_domain([('id', 'parent_of', dept_id)]):
-                                       workflow_user_ids.append(fl.user_id.id)
-                        elif w.code == 'total_before_node_applicant_inchargeof_leader':
-                            # 上个节点-分管领导
-                            fengguan_leaders = hr_model.search([('hr_fengguan_leader', '=', True)])
-                            dept_id = self.env.user.employee_ids.department_id.id
-                            for fl in fengguan_leaders:
-                               if fl.hr_mdept_ids.filtered_domain([('id', 'parent_of', dept_id)]):
-                                   workflow_user_ids.append(fl.user_id.id)
-                        elif w.name in ['人力资源-请销假申请-部门考勤员', '部门预算员', '部门安全员']:
-                            if self.create_uid.employee_ids.department_id:
-                                if self._name == 'personnel.tpost':
-                                    com_name = self.callin_department.complete_name.split(' / ')[0]
-                                else:
-                                    com_name = self.create_uid.employee_ids.department_id.complete_name.split(' / ')[0]
-                                for u in w.maintain_ids:
-                                    if u.employee_ids.department_id and (com_name == u.employee_ids.department_id.complete_name.split(' / ')[0]):
-                                        workflow_user_ids.append(u.id)
-                                        break
-                        elif w.name in ['人力资源-资质津贴-人力经办人',
-                                        '人力资源领域负责人',
-                                        '综合行政-会务活动申请-综合管理部经办人',
-                                        '综合行政-办公用品-办公用品管理员',
-                                        '综合行政-宿舍申请-宿舍申请管理员',
-                                        '综合行政-疫情防控员工外出-接口人',
-                                        '综合行政-一卡通申请-制卡人',
-                                        '综合行政-一卡通申请-经办人',
-                                        '综合行政-一卡通申请-财务部',
-                                        '综合行政-总办会-议题管理者',
-                                        '综合行政-疫情防控外来人员-接口人',
-                                        '综合行政-综合管理-接待用酒申请经办人',
-                                        '综合行政-车证申请-车证管理员',
-                                        '综合行政-行政管理-公文管理员',
-                                        '综合行政-印章使用申请-印章管理者',
-                                        '维修申请-办公区接口人',
-                                        '维修申请-生活区接口人',
-                                        '文档管理-函文处理单-函文管理员',
-                                        '信息化-功能开发-开发需求申请-组织研发评审',
-                                        '文档管理-图书管理-图书管理员',
-                                        '文档管理-图书管理-图书采购员',
-                                        '文档管理-图书管理-预算管理员',
-                                        '文档管理-图书管理-财务科',
-                                        '会议室预定处理人',
-                                        '综合管理部主任',
-                                        'HSE管理-劳保台账-物资管理员',
-                                        '安全质量与技术部主任',
-                                        '党建管理-意见征集-党务专员',
-                                        '党建管理-意见征集-分公司党委',
-                                        '党委会议题管理者',
-                                        '党费负责人及验收人',
-                                        '会计--党费',
-                                        '核二院',
-                                        '财务审核',
-                                        '财务部负责人',
-                                        '物业',
-                                        '党群工作部负责人',
-                                        '计划合同部负责人',
-                                        '分公司安专费预算员',
-                                        '分公司计划管理员',
-                                        '合同管理-营业执照-计划合同部经办人',
-                                        '分公司总经理',
-                                        '财务管理-汇款申请-经办会计']:
-                            workflow_user_ids = workflow_user_ids + w.maintain_ids.ids
+                    # hr_model = self.env['hr.employee'].sudo()
+                    for w in line_next.workflow_role_ids:
+                        if w.users_ids:
+                            workflow_user_ids += w.users_ids.ids
+                        else:
+                            pass
+                            # if w.code == 'total_applicant_first_leader':
+                            #     # 申请人-科室领导
+                            #     if self.create_uid.employee_ids.department_id:
+                            #         dept_arr = self.create_uid.employee_ids.department_id.complete_name.split(' / ')
+                            #         if len(dept_arr) == 3:
+                            #             leader = self.env['hr.employee'].search(
+                            #                 [('department_id.complete_name', 'ilike', dept_arr[0] + ' / ' + dept_arr[1]),
+                            #                  ('hr_keshi_leader', '=', True)], limit=1)
+                            #             if leader:
+                            #                 workflow_user_ids = workflow_user_ids + [leader.user_id.id]
+                            #         else:
+                            #             workflow_user_ids = workflow_user_ids + [hr.user_id.id for hr in hr_model.search([('department_id', 'parent_of', self.create_uid.employee_ids.department_id.id), ('hr_keshi_leader', '=', True)])]
+                            # elif w.code == 'total_applicant_dept_leader':
+                            #     # 申请人-部门领导
+                            #     if self.create_uid.employee_ids.department_id:
+                            #         first_name = self.create_uid.employee_ids.department_id.complete_name.split(' / ')[0]
+                            #         if first_name == '调试部':
+                            #             workflow_user_ids = workflow_user_ids + [hr.user_id.id for hr in hr_model.search([('department_id.complete_name', '=', first_name+' / ' + '部门办'),
+                            #                                                                                               ('hr_bumen_leader', '=', True)])]
+                            #         else:
+                            #             workflow_user_ids = workflow_user_ids + [hr.user_id.id for hr in hr_model.search([('department_id.complete_name', 'ilike', self.create_uid.employee_ids.department_id.complete_name.split(' / ')[0]), ('hr_bumen_leader', '=', True)])]
+                            # elif w.code == 'total_applicant_inchargeof_leader':
+                            #     # 申请人-分管领导
+                            #     if self.create_uid.employee_ids.department_id:
+                            #         fengguan_leaders = hr_model.search([('hr_fengguan_leader', '=', True)])
+                            #         dept_id = self.create_uid.employee_ids.department_id.id
+                            #         for fl in fengguan_leaders:
+                            #            if fl.hr_mdept_ids.filtered_domain([('id', 'parent_of', dept_id)]):
+                            #                workflow_user_ids.append(fl.user_id.id)
+                            # elif w.code == 'total_before_node_applicant_inchargeof_leader':
+                            #     # 上个节点-分管领导
+                            #     fengguan_leaders = hr_model.search([('hr_fengguan_leader', '=', True)])
+                            #     dept_id = self.env.user.employee_ids.department_id.id
+                            #     for fl in fengguan_leaders:
+                            #        if fl.hr_mdept_ids.filtered_domain([('id', 'parent_of', dept_id)]):
+                            #            workflow_user_ids.append(fl.user_id.id)
+                            # elif w.name in ['人力资源-请销假申请-部门考勤员', '部门预算员', '部门安全员']:
+                            #     if self.create_uid.employee_ids.department_id:
+                            #         if self._name == 'personnel.tpost':
+                            #             com_name = self.callin_department.complete_name.split(' / ')[0]
+                            #         else:
+                            #             com_name = self.create_uid.employee_ids.department_id.complete_name.split(' / ')[0]
+                            #         for u in w.maintain_ids:
+                            #             if u.employee_ids.department_id and (com_name == u.employee_ids.department_id.complete_name.split(' / ')[0]):
+                            #                 workflow_user_ids.append(u.id)
+                            #                 break
                 elif line_next.type == '节点审核人':
                     for r in line_next.before_ids:
                         if r.name == '新建':

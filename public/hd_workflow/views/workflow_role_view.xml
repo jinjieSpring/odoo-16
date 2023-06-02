@@ -30,9 +30,9 @@
                                      </tree>
                                 </field>
                             </page>
-                            <page string="Python Code">
-                                <field name="code_function" widget="ace" options="{'mode': 'python'}"/>
-                            </page>
+<!--                            <page string="Python Code">-->
+<!--                                <field name="code_function" widget="ace" options="{'mode': 'python'}"/>-->
+<!--                            </page>-->
                         </notebook>
                     </sheet>
                 </form>
