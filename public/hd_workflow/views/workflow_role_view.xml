@@ -19,14 +19,21 @@
                     <sheet>
                         <group>
                             <field name="name"/>
-                            <field name="code" attrs="{'readonly': [('code','!=', False)]}" force_save='1'/>
-                            <field name="users_ids">
-                                 <tree>
-                                     <field name="name"></field>
-                                 </tree>
-                            </field>
+                            <field name="code"/>
                             <field name="remarks"/>
                         </group>
+                        <notebook>
+                            <page string="人员">
+                                <field name="users_ids">
+                                     <tree>
+                                         <field name="name"></field>
+                                     </tree>
+                                </field>
+                            </page>
+                            <page string="Python Code">
+                                <field name="code_function" widget="ace" options="{'mode': 'python'}"/>
+                            </page>
+                        </notebook>
                     </sheet>
                 </form>
             </field>
