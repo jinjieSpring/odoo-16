@@ -2,7 +2,6 @@
 <odoo>
         <record id="module_category_hd_workflow" model="ir.module.category">
         	<field name="name">工作流</field>
-            <field name="parent_id" ref="module_category_hd_public"/>
     	</record>
 		<record id="hd_workflow_user" model="res.groups">
         	<field name="name">管理用户</field>
