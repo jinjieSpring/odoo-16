@@ -66,13 +66,13 @@ class WorkflowMixln(models.AbstractModel):
             domain.append(('create_uid', '=', logid))
         elif do_type == 'yiban':
             # 后期[]太长需要改变获取已办的方式
-            domain.append(('id', 'in', [s.res_id for s in self.env['hd.personnel.process.record'].sudo().search([('user_id', '=', logid),
+            domain.append(('id', 'in', [s.res_id for s in self.env['hd.personnel.process.record'].search([('user_id', '=', logid),
                                                                                                                    ('res_model', '=', self._name),
                                                                                                                    ('valid', '=', False)])]))
         elif do_type == 'all':
             pass
         else:
-            domain.append(('id', 'in', [s.res_id for s in self.env['hd.personnel.process.record'].sudo().search([('valid', '=', True),
+            domain.append(('id', 'in', [s.res_id for s in self.env['hd.personnel.process.record'].search([('valid', '=', True),
                                                                             ('res_model', '=', self._name),
                                                                             ('user_id', '=', logid)])]))
         return super().search_read(domain=domain, fields=fields, offset=offset, limit=limit, order=order)
@@ -262,18 +262,18 @@ class WorkflowMixln(models.AbstractModel):
         if workflows[0].state == '等待审批' and workflows[0].name in finally_can_back_node:
                 # 处理在跳转后的节点与正常推动节点一样时,判断能否取回
                 last_xinjian_record = workflows.filtered_domain([('name', '=', '新建')])
-                after_records = self.env['hd.workflow'].sudo().search([('res_model', '=', self._name), ('res_id', '=', self.id), ('id', '>', last_xinjian_record[0].id), ('user_id', '=', False), ('name', '!=', workflows[0].name)])
+                after_records = self.env['hd.workflow'].search([('res_model', '=', self._name), ('res_id', '=', self.id), ('id', '>', last_xinjian_record[0].id), ('user_id', '=', False), ('name', '!=', workflows[0].name)])
                 if len(after_records) == (finally_can_back_node.index(workflows[0].name)):
                     # 等于0并且为并签的时候要看是否有同意的情况
                     if len(after_records) == 0:
                        records = workflows.filtered_domain([('id', '>', last_xinjian_record[0].id), ('name', '=', workflows[0].name), ('state', '=', '同意')])
                        if records:
                            raise UserError('警告：无法取回,当前审批流程可能已流转，请刷新当前页面查看审批记录！')
-                    write_records = self.env['hd.workflow'].sudo().search(
+                    write_records = self.env['hd.workflow'].search(
                             [('res_model', '=', self._name), ('res_id', '=', self.id), ('state', '=', '等待审批')])
                     self.write({depend_state: '新建'})
                     write_records.write({'refuse_to': '新建', 'state': '取回', 'note': '由发起人取回'})
-                    self.env['hd.personnel.process.record'].with_context(active_model=self._name, active_id=self.id).sudo().create({
+                    self.env['hd.personnel.process.record'].with_context(active_model=self._name, active_id=self.id).create({
                         'name': workflows[0].name + '---->' + '新建',
                         'model_id': record_model.id,
                         'res_id': self.id,
@@ -385,7 +385,7 @@ class WorkflowMixln(models.AbstractModel):
                        if sr.version_id == first_version_id:
                            record_ids.append(sr.id)
                    return search_record.filtered_domain(([('id', 'in', record_ids)]))
-        return self.env['hd.workflow'].sudo()
+        return self.env['hd.workflow']
 
     def close_workflow_to_state(self, depend_state, state, note, workflow_state):
         """
