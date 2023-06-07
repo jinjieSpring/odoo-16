@@ -23,7 +23,7 @@
             <field name="model">repair.application</field>
             <field name="arch" type="xml">
                 <form rp_edit="workflow_look is True" duplicate="false">
-                    <field name="create_uid"/>
+                    <field name="create_uid" invisible="1"/>
                     <field name="workflow_look" invisible="1"/>
                     <header>
                         <field name='state'  widget='statusbar' statusbar_visible="新建,综合接口人,综合管理部负责人,核二院接口人,物业接口人,申请人,已审核"/>
