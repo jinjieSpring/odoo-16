@@ -23,11 +23,11 @@
             <field name="model">repair.application</field>
             <field name="arch" type="xml">
                 <form rp_edit="workflow_look is True" duplicate="false">
-                    <field name="create_uid" invisible="1"/>
+                    <field name="create_uid"/>
                     <field name="workflow_look" invisible="1"/>
                     <header>
                         <field name='state'  widget='statusbar' statusbar_visible="新建,综合接口人,综合管理部负责人,核二院接口人,物业接口人,申请人,已审核"/>
-                        <button name='action_confirm'  states='新建' string='提交' type='object' class='oe_highlight' attrs="{'invisible': ['|','!',('create_uid','=', uid)]}"
+                        <button name='action_confirm'  states='新建' string='提交' type='object' class='oe_highlight' attrs="{'invisible': ['|',('workflow_look','=',False)]}"
                            context="{'to_state': state}"/>
                         <button name='action_confirm' states='综合接口人' string='同意' type='object' class='oe_highlight'
                                 attrs="{'invisible': ['|',('workflow_look','=',False)]}"
