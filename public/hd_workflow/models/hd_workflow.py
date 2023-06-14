@@ -80,7 +80,8 @@ class HdWorkflow(models.Model):
                                                                                    ('version_id', '=', None)])
                 bingqian_workflow_users_ids = [b.user_id.id for b in bingqian_records]
                 pr_list = []
-                for user in set(workflow_users_ids+bingqian_workflow_users_ids):
+                users = self.env['res.users'].sudo().search([('id', 'in', workflow_users_ids+bingqian_workflow_users_ids)], order='hd_weight asc')
+                for user in users:
                     v_list.append({
                         'type': type,
                         'name': state_name,
@@ -88,18 +89,22 @@ class HdWorkflow(models.Model):
                         'res_id': main_record.id,
                         'create_id': self._uid,
                         'start_date': now,
-                        'user_id': user,
+                        'user_id': user.id,
                         'state': '等待审批',
-                        'accredit': self._context.get('shouquan_dict').get(user) or '无',
+                        'accredit': self._context.get('shouquan_dict').get(user.id) or '无',
                         'sequence': 3,
                         'res_record_name': main_record.name
                     })
-                    pr_list.append({
+                    workflow_dict = {
                         'name': self._context.get('ir_process_line_name') + '---->' + state_name,
                         'model_id': record_model.id,
                         'res_id': main_record.id,
-                        'user_id': user,
-                    })
+                        'user_id': user.id,
+                        'valid': False if type == '串签' and user.hd_weight != users[0].hd_weight else True
+                    }
+                    if type == '串签':
+                        workflow_dict['series_wound'] = True if type == '串签' and user.hd_weight == users[-1].hd_weight else False
+                    pr_list.append(workflow_dict)
                 self.create(v_list)
                 self.env['hd.personnel.process.record'].with_context(active_id=False).create(pr_list)
             main_record.write({depend_state: state_name})
@@ -123,16 +128,24 @@ class HdWorkflow(models.Model):
             others_count = 0
             workflow_other_records = workflow_ids.filtered_domain(
                 [('state', '=', '等待审批'), ('id', '!=', workflow_record.id)])
-            domain = [('res_model', '=', main_record._name),
-                      ('res_id', '=', main_record.id),
-                      ('valid', '=', True)]
+            domain = [('valid', '=', True)]
+            process_record_ids = self.env['hd.personnel.process.record'].search([('res_model', '=', main_record._name),
+                                                                                 ('res_id', '=', main_record.id)], order='id asc')
             if workflow_record.type == '汇签':
                 workflow_other_records.write({'state': '已关闭', 'note': '由 %s 汇签' % workflow_record.user_id.name, 'end_date': t})
-            elif workflow_record.type == '并签' or workflow_record.type == '串签':
+            elif workflow_record.type == '并签':
                 others_count = len(workflow_other_records)
                 domain.append(('user_id', '=', self._uid))
+            elif workflow_record.type == '串签':
+                others_count = len(workflow_other_records)
+                domain.append(('user_id', '=', self._uid))
+                # 将下一个审批人的待办刷出来
+                c_records = process_record_ids.filtered_domain(domain)
+                c_records = process_record_ids.filtered_domain([('id', '>', c_records.id), ('valid', '=', False), ('user_id.hd_weight', '>', c_records[0].user_id.hd_weight)])
+                if c_records:
+                    c_records.filtered_domain([('valid', '=', False), ('user_id.hd_weight', '=', c_records[0].user_id.hd_weight)]).with_context(way='create', mode='todo_created').write({'valid': True})
             workflow_record.write({'state': '同意', 'note': message, 'end_date': t})
-            self.env['hd.personnel.process.record'].search(domain).with_context(way='create').write({'valid': False})
+            process_record_ids.filtered_domain(domain).with_context(way='create', mode='todo_deleted').write({'valid': False})
             return others_count
 
     def write_workflow_refuse(self, main_record, record_model, message='同意', refuse_to=''):
@@ -153,21 +166,20 @@ class HdWorkflow(models.Model):
                                                    ('res_id', '=', main_record.id),
                                                    ('version_id', '=', None)]).write({'version_id': my_refuse_id})
         # 插入hd.personnel.process.record
-        other_version_id = my_refuse_id
-        pick_times = 0
-        for b in workflow_ids.filtered_domain([('state', 'not in', ['取回', '拒绝']), ('name', '=', refuse_to)]):
-            if pick_times == 0:
-                other_version_id = b.version_id
-            if other_version_id != b.version_id:
-                break
-            pr_list.append({
+        filter_workflow_ids = workflow_ids.filtered_domain([('state', 'not in', ['取回', '拒绝']), ('name', '=', refuse_to)])
+        filter_workflow_ids = filter_workflow_ids.filtered_domain([('version_id', '=', filter_workflow_ids[0].version_id)])
+        for b in filter_workflow_ids:
+            workflow_dict = {
                 'name': self._context.get('to_state') + '---->' + refuse_to,
                 'model_id': record_model.id,
                 'res_id': main_record.id,
                 'user_id': b.user_id.id,
-            })
-            pick_times += 1
-        self.env['hd.personnel.process.record'].create(pr_list)
+            }
+            if b.type == '串签':
+                workflow_dict['valid'] = False if b.user_id.hd_weight != filter_workflow_ids[-1].user_id.hd_weight else True
+                workflow_dict['series_wound'] = True if b.user_id.hd_weight == filter_workflow_ids[0].user_id.hd_weight else False
+            pr_list.append(workflow_dict)
+        self.env['hd.personnel.process.record'].create(pr_list[::-1])
         return True
 
     def write_workflow_refuse_repeatedly(self, main_record, record_model, message='同意', refuse_to=''):
@@ -185,9 +197,7 @@ class HdWorkflow(models.Model):
         v_list_other = []
         v_list_my = []
         pr_list = []
-        refuse_to_version_id = ''
-        for r in workflow_ids:
-            if r.name == node_state and r.version_id == first_refuse_id:
+        for r in workflow_ids.filtered_domain([('name', '=', node_state), ('version_id', '=', first_refuse_id)]):
                 if r.user_id.id == self._uid:
                     v_list_my.append({
                         'type': r.type,
@@ -224,22 +234,24 @@ class HdWorkflow(models.Model):
                         'res_record_name': r.res_record_name,
                         'version_id': False
                     })
-            if r.name == refuse_to:
-                if not refuse_to_version_id:
-                    refuse_to_version_id = r.version_id
-                if r.version_id != refuse_to_version_id:
-                    break
-                pr_list.append({
-                    'name': self._context.get('to_state') + '---->' + refuse_to,
-                    'model_id': record_model.id,
-                    'res_id': main_record.id,
-                    'user_id': r.user_id.id,
-                })
+        filter_workflow_ids = workflow_ids.filtered_domain([('name', '=', refuse_to)])
+        filter_workflow_ids = filter_workflow_ids.filtered_domain([('version_id', '=', filter_workflow_ids[0].version_id)])
+        for b in filter_workflow_ids:
+            workflow_dict = {
+                'name': self._context.get('to_state') + '---->' + refuse_to,
+                'model_id': record_model.id,
+                'res_id': main_record.id,
+                'user_id': b.user_id.id,
+            }
+            if b.type == '串签':
+                workflow_dict['valid'] = False if b.user_id.hd_weight != filter_workflow_ids[-1].user_id.hd_weight else True
+                workflow_dict['series_wound'] = True if b.user_id.hd_weight == filter_workflow_ids[0].user_id.hd_weight else False
+            pr_list.append(workflow_dict)
         new_flows = self.create(v_list_other + v_list_my)
         # 在处理拒绝后把version_id刷成当前拒绝后的id
         if new_flows:
             new_flows.write({'version_id': new_flows.ids[-1]})
-        self.env['hd.personnel.process.record'].create(pr_list)
+        self.env['hd.personnel.process.record'].create(pr_list[::-1])
         return True
 
     def create_workflow_refuse(self, main_record, record_model, type='汇签', message='同意', state_name='', state_next_name='', workflow_users_ids=[], jump_workflows=[], depend_state='state'):
@@ -330,8 +342,8 @@ class HdWorkflow(models.Model):
         else:
             self.env['hd.personnel.process.record'].search([('res_model', '=', main_record._name),
                                                                      ('res_id', '=', main_record.id),
-                                                                     ('valid', '=', True), ('user_id', '=', self._uid)]).write({'valid': False})
-        self.create(v_list)
+                                                                     ('valid', '=', True), ('user_id', '=', self._uid)]).with_context(way='create', mode='todo_deleted').write({'valid': False})
+        self.create(v_list[::-1])
         return execute_node_finish
 
     def create_workflow_ok(self, main_record, record_model, type='汇签', message='同意', state_name='', workflow_users_ids=[], jump_workflows=[], depend_state='state'):
@@ -353,7 +365,8 @@ class HdWorkflow(models.Model):
                                       'note': message or '同意', 'state': '已提交', 'sequence': 1,
                                       'res_record_name': main_record.name})
         pr_list = []
-        for user in workflow_users_ids:
+        users = self.env['res.users'].sudo().search([('id', 'in', workflow_users_ids)], order='hd_weight asc')
+        for user in users:
             jump_workflows.append({
                 'type': type,
                 'name': state_name,
@@ -361,9 +374,9 @@ class HdWorkflow(models.Model):
                 'res_id': main_record.id,
                 'create_id': self._uid,
                 'start_date': now,
-                'user_id': user,
+                'user_id': user.id,
                 'state': '等待审批',
-                'accredit': self._context.get('shouquan_dict').get(user) or '无',
+                'accredit': self._context.get('shouquan_dict').get(user.id) or '无',
                 'sequence': 2,
                 'res_record_name': main_record.name
             })
@@ -371,7 +384,9 @@ class HdWorkflow(models.Model):
                 'name':  '新建' + '---->' + state_name,
                 'model_id': record_model.id,
                 'res_id': main_record.id,
-                'user_id': user,
+                'user_id': user.id,
+                'valid': False if type == '串签' and user.hd_weight != users[0].hd_weight else True,
+                'series_wound': True if type == '串签' and user.hd_weight == users[-1].hd_weight else False
             })
         self.create(jump_workflows)
         self.env['hd.personnel.process.record'].create(pr_list)

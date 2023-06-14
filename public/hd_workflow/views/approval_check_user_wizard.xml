@@ -46,6 +46,36 @@
                 </form>
             </field>
         </record>
+
+        <record id="form_view_hd_approval_check_user_wizard_02" model="ir.ui.view">
+            <field name="model">hd.approval.check.user</field>
+            <field name="arch" type="xml">
+                <form string="审批">
+                    <sheet>
+                        <field name="fixed_node" invisible="1"/>
+                        <field name="type" invisible="1"/>
+                        <field name="form_state" invisible="1"/>
+                        <field name="stop_flow" invisible="1"/>
+                        <group col="4" attrs="{'invisible': [('form_state','=','新建')]}">
+                            <field name="state" required="1" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="name" placeholder="给审核的人留点什么 =^_^= "  attrs="{'required': [('state','=','拒绝')]}"/>
+                        </group>
+                        <group string="" attrs="{'invisible': [('form_state','=','新建')]}">
+                            <field name="sumbit_user_id" invisible="1"/>
+                            <field name="sumbit_psignature" widget="signature" readonly="1"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="but_confirm" string="提交" type="object" class="oe_highlight" context="{'workflow_but_confirm_clicked': True, 'form_state':form_state}"/>
+                        or
+                        <button string="取消" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
     </data>
 </odoo>
 

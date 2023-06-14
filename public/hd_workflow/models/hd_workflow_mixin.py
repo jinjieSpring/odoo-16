@@ -39,7 +39,7 @@ class WorkflowMixln(models.AbstractModel):
 
     def default_get(self, fields_list):
         result = super().default_get(fields_list)
-        result['create_uid'] = self._uid
+        result['workflow_look'] = True
         return result
 
     @api.model_create_multi
@@ -100,9 +100,23 @@ class WorkflowMixln(models.AbstractModel):
             line_count = 0
             line = line_next_name = line_next = None
             records_model = self.env['ir.model'].sudo().search([('model', '=', self._name)], limit=1)
+            cq_form = False
             for line_id in process_line_ids:
                 if line_id.name == main_record_finally_state:
                     line = line_id
+                    if line.approve_type == '串签':
+                        c_records = self.env['hd.personnel.process.record'].search([('res_model', '=', self._name),
+                                                                                    ('res_id', '=', self.id),
+                                                                                    ('valid', '=', True)])
+                        if len(c_records) > 1:
+                            cq_form = True
+                            line_next = line_id
+                            break
+                        else:
+                            if not c_records.series_wound:
+                                line_next = line_id
+                                cq_form = True
+                                break
                     if line.is_jump:
                         line_next_name = safe_eval.safe_eval(line.jump_code, globals_dict)
                     line_count += 1
@@ -130,14 +144,25 @@ class WorkflowMixln(models.AbstractModel):
             else:
                 # 设置串签、并签、汇签类型
                 context['comfirm_state'] = '同意'
+                context['ir_process_line_name'] = line.name
+                # context['is_jump'] = line.is_jump
+                context['jump_record_show'] = line.jump_record_show
                 context['workflow_type'] = line_next.approve_type
                 context['stop_flow'] = line_next.is_stop
                 context['fixed_node'] = line_next.is_fixed
-                context['ir_process_line_name'] = line.name
                 context['ir_process_next_line_name'] = line_next.name
-                context['is_jump'] = line.is_jump
-                context['jump_record_show'] = line.jump_record_show
                 context['jump_workflows'] = jump_workflows
+                context['cq_form'] = cq_form
+                if cq_form:
+                    form_id = self.env.ref('hd_workflow.form_view_hd_approval_check_user_wizard_02').id
+                    return {'type': 'ir.actions.act_window',
+                            'res_model': 'hd.approval.check.user',
+                            'name': '当前节点' + '  :  ' + context['ir_process_line_name'],
+                            'view_mode': 'form',
+                            'views': [(form_id, 'form')],
+                            'target': 'new',
+                            'context': context,
+                            'flags': {'form': {'action_buttons': True}}}
                 if line_next.type == '自定义':
                     workflow_user_ids = self.get_node_users(line_next.name)
                 elif line_next.type == '固定审核人':

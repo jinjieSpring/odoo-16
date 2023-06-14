@@ -12,6 +12,7 @@ class PersonnelProcessRecord(models.Model):
     res_id = fields.Integer(string='记录ID', group_operator=False)
     user_id = fields.Many2one('res.users', string='人员')
     valid = fields.Boolean(string='有效性', default=True)
+    series_wound = fields.Boolean(string='跳出串签节点', help='''串签用来记录当前人提交的是不是进入下一节点''')
 
     @api.model
     def workflow_bus_send(self, records, mode):
@@ -24,17 +25,17 @@ class PersonnelProcessRecord(models.Model):
         if self._context.get('active_model') and self._context.get('active_id'):
             self.search([('res_id', '=', self._context.get('active_id')),
                          ('res_model', '=', self._context.get('active_model')),
-                         ('valid', '=', True)]).with_context(way='create').write({'valid': False})
+                         ('valid', '=', True)]).with_context(way='create', mode='todo_deleted').write({'valid': False})
         create_results = super(PersonnelProcessRecord, self).create(val_list)
-        self.workflow_bus_send(create_results, 'todo_created')
+        self.workflow_bus_send(create_results.filtered_domain([('valid', '=', True)]), 'todo_created')
         return create_results
 
     def write(self, vals):
         """
             write方法只处理create方法中要修改成无效的数据, 不处理直接编辑, 直接编辑要重新点击待办按钮获取
         """
-        if self._context.get('way'):
-            self.workflow_bus_send(self, 'todo_deleted')
+        if self._context.get('way') and self._context.get('mode'):
+            self.workflow_bus_send(self, self._context.get('mode'))
         return super(PersonnelProcessRecord, self).write(vals)
 
     def unlink(self):

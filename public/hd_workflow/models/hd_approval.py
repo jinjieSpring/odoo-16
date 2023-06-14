@@ -116,7 +116,7 @@ class HdApprovalCheckUser(models.Model):
         if self.sumbit_user_id.psignature is False:
             raise UserError('请先设置个人签名!')
         else:
-            if not self.check_user_ids and self._context.get('stop_flow') is False:
+            if not self.check_user_ids and self._context.get('stop_flow') is False and (not self._context.get('cq_form')):
                 raise ValidationError("请添加下级审核人!")
             self.common_confirm()
         return {'type': 'ir.actions.act_window_close'}
