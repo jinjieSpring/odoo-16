@@ -41,7 +41,8 @@ class IrProcess(models.Model,):
                 'sequence': sequence,
                 'process_id': self.id,
                 'name': line[0],
-                'can_back': False if line[0] == '新建' or len(selection) == sequence else True,
+                'can_back': True if sequence == 2 else False,
+                #'can_back': False if line[0] == '新建' or len(selection) == sequence else True,
                 'is_stop': True if len(selection) == sequence else False
             })
             sequence = sequence + 1
