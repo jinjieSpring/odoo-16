@@ -39,7 +39,7 @@ class PersonnelProcessRecord(models.Model):
         return super(PersonnelProcessRecord, self).write(vals)
 
     def unlink(self):
-        self.workflow_bus_send(self, 'todo_deleted')
+        self.workflow_bus_send(self, self.filtered_domain([('valid', '=', True)]), 'todo_deleted')
         return super(PersonnelProcessRecord, self).unlink()
 
     @api.model
