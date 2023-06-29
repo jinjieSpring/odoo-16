@@ -45,7 +45,7 @@ class WorkflowMixln(models.AbstractModel):
     @api.model_create_multi
     def create(self, vals_list):
         result = super().create(vals_list)
-        result.create_workflow_new()
+        result.create_workflow_new(users=self._context.get('users', None))
         return result
 
     def unlink(self):
@@ -275,11 +275,10 @@ class WorkflowMixln(models.AbstractModel):
         开始进行撤销,包含多流程, 并签的话则有个审批就不能退回
         """
         record_model = self.env['ir.model'].sudo().search([('model', '=', self._name)], limit=1)
-        can_back_node = self._context.get('can_back_node')
         depend_state = 'state'
         if 'hd.workflow.mutil.mixin' in self._inherit:
             depend_state = self.depend_state
-        finally_can_back_node = can_back_node.get(depend_state)
+        finally_can_back_node = [r.name for r in self.ir_process_id.process_ids.filtered_domain([('can_back', '=', True)])]
         workflows = self.workflow_ids
         first_workflow = workflows[0]
         if first_workflow.state == '等待审批' and first_workflow.name in finally_can_back_node:
@@ -297,13 +296,15 @@ class WorkflowMixln(models.AbstractModel):
                        if records:
                            raise UserError('警告：无法取回,当前审批流程可能已流转，请刷新当前页面查看审批记录！')
                     self.write({depend_state: '新建'})
+                    # 多人可提交的情况需要考虑
                     workflows.filtered_domain([('state', '=', '等待审批')]).write({'refuse_to': '新建', 'state': '取回', 'note': '由发起人取回'})
-                    self.env['hd.personnel.process.record'].with_context(active_model=self._name, active_id=self.id).create({
+                    process_record = [{
                         'name': first_workflow.name + '---->' + '新建',
                         'model_id': record_model.id,
                         'res_id': self.id,
-                        'user_id': self._uid,
-                    })
+                        'user_id': pr.user_id.id,
+                    } for pr in workflows.filtered_domain([('name', '=', '新建'), ('start_date', '=', last_xinjian_record[0].start_date)])]
+                    self.env['hd.personnel.process.record'].with_context(active_model=self._name, active_id=self.id).create(process_record)
                 else:
                     raise UserError('警告：无法取回,当前审批流程可能已流转，请刷新当前页面查看审批记录！')
         else:
@@ -362,28 +363,45 @@ class WorkflowMixln(models.AbstractModel):
         """
         return []
 
-    def create_workflow_new(self, depend_state='state'):
+    def create_workflow_new(self, depend_state='state', users=None):
         self.ensure_one()
         records_model = self.env['ir.model'].sudo().search([('model', '=', self._name)], limit=1)
-        self.write({'workflow_ids': [(0, 0, {'type': '汇签',
-                                             'name': '新建',
-                                             'model_id': records_model.id,
-                                             'res_id': self.id,
-                                             'create_id': self._uid,
-                                             'user_id': self._uid,
-                                             'state': '等待提交',
-                                             'sequence': 1,
-                                             'res_record_name': self.name
-                                            })],
+        workflow_ids = [(0, 0, {'type': '汇签',
+                                'name': '新建',
+                                'model_id': records_model.id,
+                                'res_id': self.id,
+                                'create_id': self._uid,
+                                'user_id': self._uid,
+                                'state': '等待提交',
+                                'sequence': 1,
+                                'res_record_name': self.name})]
+        process_record_ids = [{'name': '新建' + '---->' + '新建',
+                               'model_id': records_model.id,
+                               'res_id': self.id,
+                               'user_id': self._uid}]
+        if users:
+            workflow_ids = []
+            process_record_ids = []
+            for user in users:
+                workflow_ids.append((0, 0, {'type': '汇签',
+                                'name': '新建',
+                                'model_id': records_model.id,
+                                'res_id': self.id,
+                                'create_id': self._uid,
+                                'user_id': user.id,
+                                'state': '等待提交',
+                                'sequence': 1,
+                                'res_record_name': self.name}))
+                process_record_ids.append({'name': '新建' + '---->' + '新建',
+                               'model_id': records_model.id,
+                               'res_id': self.id,
+                               'user_id': user.id})
+        self.write({'workflow_ids': workflow_ids,
                     'ir_process_id': self.env['ir.process'].search([('model', '=', self._name),
                                                                     ('depend_state', '=', depend_state),
                                                                     ('active', '=', True)], order="id desc", limit=1).id
                     })
-        self.env['hd.personnel.process.record'].create({
-                    'name': '新建' + '---->' + '新建',
-                    'model_id': records_model.id,
-                    'res_id': self.id,
-                    'user_id': self._uid})
+        self.env['hd.personnel.process.record'].create(process_record_ids)
 
     def get_print_workflow(self, state_desc):
         """

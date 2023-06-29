@@ -18,7 +18,7 @@ class HdWorkflow(models.Model):
     user_id = fields.Many2one('res.users', string='审批人')
     accredit = fields.Char(string='授权信息', default='无')
     create_id = fields.Many2one('res.users', string='记录创建人')
-    start_date = fields.Datetime(string='记录申请时间', default=fields.Datetime.now)
+    start_date = fields.Datetime(string='记录申请时间', default=fields.Datetime.now, index=True)
     end_date = fields.Datetime(string='审批日期')
     note = fields.Text('审批意见')
     refuse_to = fields.Char(string='退回至')
@@ -167,7 +167,8 @@ class HdWorkflow(models.Model):
                                                    ('version_id', '=', None)]).write({'version_id': my_refuse_id})
         # 插入hd.personnel.process.record
         filter_workflow_ids = workflow_ids.filtered_domain([('state', 'not in', ['取回', '拒绝']), ('name', '=', refuse_to)])
-        filter_workflow_ids = filter_workflow_ids.filtered_domain([('version_id', '=', filter_workflow_ids[0].version_id)])
+        filter_workflow_ids = filter_workflow_ids.filtered_domain([('version_id', '=', filter_workflow_ids[0].version_id),
+                                                                   ('start_date', '=', filter_workflow_ids[0].start_date)])
         for b in filter_workflow_ids:
             workflow_dict = {
                 'name': self._context.get('to_state') + '---->' + refuse_to,
@@ -354,16 +355,21 @@ class HdWorkflow(models.Model):
         :return:
         """
         now = datetime.now()
-        if main_record.workflow_ids and main_record.workflow_ids[0].state == '等待提交':
-            main_record.workflow_ids[0].write({'start_date': now,
-                                               'end_date': now,
-                                               'note': message,
-                                               'state': '已提交'})
+        workflow_ids = main_record.workflow_ids
+        if workflow_ids and workflow_ids[0].state == '等待提交':
+            for r in main_record.workflow_ids.filtered_domain([('state', '=', '等待提交'), ('version_id', '=', False)]):
+                r.write({'start_date': now,
+                         'end_date': now,
+                         'note': message if r.user_id.id == self._uid else '由' + self.env.user.name + '提交',
+                         'state': '已提交'})
         else:
-            jump_workflows.insert(0, {'type': '汇签', 'name': '新建', 'model_id': record_model.id, 'res_id': main_record.id,
-                                      'create_id': self._uid, 'start_date': now, 'user_id': self._uid, 'end_date': now,
-                                      'note': message or '同意', 'state': '已提交', 'sequence': 1,
-                                      'res_record_name': main_record.name})
+            # 如果提交人为多个的情况需要改进
+            last_xinjian_record = workflow_ids.filtered_domain([('name', '=', '新建')])
+            for pr in workflow_ids.filtered_domain([('name', '=', '新建'), ('start_date', '=', last_xinjian_record[0].start_date)]):
+                jump_workflows.insert(0, {'type': '汇签', 'name': '新建', 'model_id': record_model.id, 'res_id': main_record.id,
+                                          'create_id': self._uid, 'start_date': now, 'user_id': pr.user_id.id, 'end_date': now,
+                                          'note': (message or '同意') if pr.user_id.id == self._uid else '由' + self.env.user.partner_id.name + '提交', 'state': '已提交', 'sequence': 1,
+                                          'res_record_name': main_record.name})
         pr_list = []
         users = self.env['res.users'].sudo().search([('id', 'in', workflow_users_ids)], order='hd_weight asc')
         for user in users:
