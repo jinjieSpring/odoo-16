@@ -4,7 +4,7 @@
             <field name="name">RepairApplication tree</field>
             <field name="model">repair.application</field>
             <field name="arch" type="xml">
-                <tree js_class="radio_do_action" default_order=" id desc">
+                <tree default_order=" id desc">
                     <field name="name"/>
                     <field name="apply_user"/>
                     <field name="user_dept"/>
@@ -22,7 +22,7 @@
             <field name="name">RepairApplication form</field>
             <field name="model">repair.application</field>
             <field name="arch" type="xml">
-                <form rp_edit="workflow_look is True" duplicate="false">
+                <form duplicate="false">
                     <field name="create_uid" invisible="1"/>
                     <field name="workflow_look" invisible="1"/>
                     <header>
@@ -48,7 +48,6 @@
                             context="{'to_state': state}"
                                 attrs="{'invisible': ['|',('workflow_look','=',False), ('state','=', '新建')]}"/>
                         <button name='action_back' string='取回' type='object' class='oe_highlight'
-                            context="{'workflow_but_confirm_clicked': True,'can_back_node': {'state':['综合接口人']}}"
                                 attrs="{'invisible': ['!','&amp;', ('create_uid', '=', uid), ('state','in',['综合接口人'])]}" confirm="请是否取回!"/>
                     </header>
                     <sheet string="维修申请">
