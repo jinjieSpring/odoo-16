@@ -274,12 +274,14 @@ class WorkflowMixln(models.AbstractModel):
         """
         开始进行撤销,包含多流程, 并签的话则有个审批就不能退回
         """
+        workflows = self.workflow_ids
+        if not workflows.filtered_domain([('name', '=', '新建'), ('user_id', '=', self._uid)]):
+            raise UserError('警告：无法取回,您并非提交人！')
         record_model = self.env['ir.model'].sudo().search([('model', '=', self._name)], limit=1)
         depend_state = 'state'
         if 'hd.workflow.mutil.mixin' in self._inherit:
             depend_state = self.depend_state
         finally_can_back_node = [r.name for r in self.ir_process_id.process_ids.filtered_domain([('can_back', '=', True)])]
-        workflows = self.workflow_ids
         first_workflow = workflows[0]
         if first_workflow.state == '等待审批' and first_workflow.name in finally_can_back_node:
                 # 处理在跳转后的节点与正常推动节点一样时,判断能否取回
