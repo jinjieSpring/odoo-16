@@ -53,6 +53,7 @@
                                                    options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
                                             <field name="button_name" widget="ace" options="{'mode': 'python'}" placeholder="Enter Python code here. Help about Python expression is available in the help tab of this document." invisible="1" />
                                             <field name="approve_type" options="{'horizontal': true}" widget="radio"/>
+                                            <field name="can_back" attrs="{'readonly': ['|', ('name', '=', '新建'), ('is_stop', '=', True)]}"/>
                                             <field name="is_stop"/>
                                             <field name="is_fixed"/>
                                             <field name="is_jump"/>
@@ -72,7 +73,7 @@
                                 <field name="is_fixed"/>
                                 <field name="is_jump"/>
                                 <field name="jump_record_show"/>
-                                <field name="can_back"/>
+                                <field name="can_back" />
                             </tree>
                         </field>
                     </sheet>
