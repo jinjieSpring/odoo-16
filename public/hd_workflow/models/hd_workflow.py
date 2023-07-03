@@ -13,7 +13,7 @@ class HdWorkflow(models.Model):
     model_id = fields.Many2one('ir.model', string='对象')
     res_model_id = fields.Integer(string='对象ID', related='model_id.id', store=True)
     res_model = fields.Char(string='对象名称', related='model_id.model', store=True)
-    res_id = fields.Integer(string='记录ID', group_operator=False)
+    res_id = fields.Integer(string='记录ID', group_operator=False, required=True)
     res_record_name = fields.Char(string='数据名称', help="该字段用于总待办的时候查询")
     user_id = fields.Many2one('res.users', string='审批人')
     accredit = fields.Char(string='授权信息', default='无')
