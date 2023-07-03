@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding="UTF-8" ?>
+<odoo>
+    <data>
+            <record id="module_category_hd_chown" model="ir.module.category">
+                <field name="name">工作流审批授权</field>
+            </record>
+            <record id="hd_chown_user" model="res.groups">
+                <field name="name">审批授权用户</field>
+                <field name="category_id" ref="module_category_hd_chown"/>
+            </record>
+            <record id="hd_chown_manager" model="res.groups">
+                <field name="name">审批授权管理员</field>
+                <field name="category_id" ref="module_category_hd_chown"/>
+                <field name="implied_ids" eval="[(4, ref('hd_chown_user'))]"/>
+                <field name="users" eval="[(4, ref('base.user_admin'))]"/>
+            </record>
+                <record model="ir.rule" id="chown_user_see_myself">
+                    <field name="name">我的授权单</field>
+                    <field name="model_id" ref="model_hd_chown"/>
+                    <field name="domain_force">[('owner.user_id','=',user.id)]</field>
+                    <field name="groups" eval="[(4,ref('hd_chown_user'))]"/>
+                    <field name="perm_read" eval="1" />
+                    <field name="perm_write" eval="1" />
+                    <field name="perm_create" eval="1" />
+                    <field name="perm_unlink" eval="1" />
+                </record>
+                <record model="ir.rule" id="chown_user_see_all">
+                    <field name="name">管理员的授权单</field>
+                    <field name="model_id" ref="model_hd_chown"/>
+                    <field name="domain_force">[(1,'=', 1)]</field>
+                    <field name="groups" eval="[(4,ref('hd_chown_manager'))]"/>
+                    <field name="perm_read" eval="1" />
+                    <field name="perm_write" eval="1" />
+                    <field name="perm_create" eval="1" />
+                    <field name="perm_unlink" eval="1" />
+                </record>
+    </data>
+</odoo>

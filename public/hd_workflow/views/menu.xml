@@ -6,6 +6,7 @@
         <menuitem id="menu_workflow_role_list" parent="menu_hd_workflow" action="action_hd_workflow_role"  sequence="2"/>
         <menuitem id="menu_workflow_list" parent="menu_hd_workflow" action="action_hd_workflow" sequence="3"/>
         <menuitem id="menu_personnel_process_record_list" parent="menu_hd_workflow" action="action_hd_personnel_process_record" sequence="4"/>
+        <menuitem id="menu_hd_chown" parent="menu_hd_workflow" action="action_hd_chown" sequence="5"/>
 <!--        <menuitem name="角色设置" id="menu_workflow_setting" parent="menu_workflow" sequence="5"/>-->
 <!--        <menuitem name="群组设置" id="menu_cluster_setting" parent="menu_workflow" sequence="6"/>-->
 </odoo>

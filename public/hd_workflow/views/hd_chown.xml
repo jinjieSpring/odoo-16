@@ -1,0 +1,69 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="HdChownTree">
+            <field name="model">hd.chown</field>
+            <field name="arch" type="xml">
+                <tree default_order="change_end desc">
+                    <field name="owner"/>
+                    <field name="change_start"/>
+                    <field name="change_end"/>
+                    <field name="change_reason"/>
+                    <field name="type"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="HdChownForm">
+          <field name="model">hd.chown</field>
+          <field name="arch" type="xml">
+            <form>
+              <header>
+                    <button name='button_state' string='生成授权明细' type='object' class='oe_highlight'/>
+                    <button name='button_shouquan' string='一键授权' type='object' class='oe_highlight'/>
+              </header>
+              <sheet>
+                    <group>
+                        <group>
+                            <field name="owner" options="{'no_open':True,'no_create':True,'no_create_edit':True}"  readonly="1"/>
+                            <field name="change_start"/>
+                        </group>
+                        <group>
+                            <field name="type"/>
+                            <field name="change_end"/>
+                        </group>
+                    </group>
+                    <group>
+                          <field name="change_reason"/>
+                    </group>
+                    <field name="chown_details">
+                        <tree string="授权明细" create="0" editable="bottom">
+                            <field name="name" readonly="1"/>
+                            <field name="chowner" options="{'no_open':True,'no_create':True,'no_create_edit':True}" />
+                        </tree>
+                    </field>
+              </sheet>
+            </form>
+          </field>
+        </record>
+
+        <record id="HdChownSearch" model="ir.ui.view">
+            <field name="name">search</field>
+            <field name="model">hd.chown</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="type"/>
+                    <filter name="type_b" string="有效的授权单" domain="[('type','=','有效')]"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_hd_chown">
+            <field name="name">审批授权</field>
+            <field name="res_model">hd.chown</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="HdChownSearch"/>
+            <field name="context">{'search_default_type_b':1}</field>
+        </record>
+    </data>
+</odoo>

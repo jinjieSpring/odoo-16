@@ -1,0 +1,23 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="HdChownBanForm">
+            <field name="name">form</field>
+            <field name="model">hd.chown.ban</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="ban_person" options="{'no_open':True,'no_create':True,'no_create_edit':True}" />
+                        </group>
+                    </sheet>
+                    <footer>
+                    <button name='button_shouquan' string='确认' type='object' class='oe_highlight'/>
+                        or
+                        <button string="取消" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>
+

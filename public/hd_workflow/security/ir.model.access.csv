@@ -8,3 +8,6 @@ access_hd_workflow_together,hd_workflow_together_user,model_hd_workflow_together
 access_approval_check_user,hd_approval_check_user,model_hd_approval_check_user,base.group_user,1,1,1,1
 access_approval_check_user_line,hd_approval_check_user_line_user,model_hd_approval_check_user_line,base.group_user,1,1,1,1
 access_approval_message_user,hd_approval_message_user,model_hd_approval_message_user,base.group_user,1,1,1,1
+access_hd_chown_user,hd_chown_user,model_hd_chown,hd_chown_user,1,1,1,1
+access_hd_chown_details_user,hd_chown_details_user,model_hd_chown_details,hd_chown_user,1,1,1,1
+access_hd_chown_ban_user,hd_chown_ban_user,model_hd_chown_ban,hd_chown_user,1,1,1,1
