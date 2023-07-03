@@ -88,13 +88,13 @@ class HdApprovalCheckUser(models.Model):
                 pram = {
                     'user_id': user_id
                 }
-                # shouquan_records = self.env['chown.model'].sudo().search(
-                #     [('change_start', '<=', n), ('change_end', '>=', n),
-                #      ('owner.user_id', '=', user_id), ('type', '=', '有效')], limit=1).chown_details.filtered(
-                #     lambda t: t.desc == self._context['active_model'])
-                # if shouquan_records:
-                #     pram['certigier'] = shouquan_records.chowner.user_id.id
-                #     pram['is_message'] = True
+                shouquan_records = self.env['hd.chown'].sudo().search(
+                    [('change_start', '<=', n), ('change_end', '>=', n),
+                     ('owner.user_id', '=', user_id), ('type', '=', '有效')], limit=1).chown_details.filtered(
+                    lambda t: t.desc == self._context['active_model'])
+                if shouquan_records:
+                    pram['certigier'] = shouquan_records.chowner.user_id.id
+                    pram['is_message'] = True
                 lines.append((0, 0, pram))
             res['check_user_ids'] = lines
         if context.get('user_ids'):
@@ -141,7 +141,7 @@ class HdApprovalCheckUser(models.Model):
         shouquan_dict = {}
         for x in record_check_user_ids:
             if x.certigier:
-                # shouquan_dict[x.certigier.id] = '由' + x.user_id.name + '授权'
+                shouquan_dict[x.certigier.id] = '由' + x.user_id.name + '授权'
                 workflow_users_ids.append(x.certigier.id)
             else:
                 workflow_users_ids.append(x.user_id.id)
@@ -228,10 +228,10 @@ class HdApprovalCheckUserLine(models.Model):
     @api.onchange('user_id')
     def _compute_certigier(self):
         n = datetime.now()
-        # shouquan_records = self.env['chown.model'].sudo().search([('change_start', '<=', n), ('change_end', '>=', n), ('owner.user_id', '=', self.user_id.id), ('type', '=', '有效')], limit=1)
-        # if self._context['active_model']:
-        #     now_shouquan_model = shouquan_records.chown_details.filtered(lambda t: t.desc == self._context['active_model'])
-        #     self.certigier = now_shouquan_model.chowner.user_id
+        shouquan_records = self.env['hd.chown'].sudo().search([('change_start', '<=', n), ('change_end', '>=', n), ('owner.user_id', '=', self.user_id.id), ('type', '=', '有效')], limit=1)
+        if self._context['active_model']:
+            now_shouquan_model = shouquan_records.chown_details.filtered(lambda t: t.desc == self._context['active_model'])
+            self.certigier = now_shouquan_model.chowner.user_id
 
 
 class HdApprovalMessageUser(models.Model):

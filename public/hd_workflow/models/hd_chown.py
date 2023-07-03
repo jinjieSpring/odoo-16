@@ -44,7 +44,7 @@ class HdChown(models.Model):
                     'desc': m['res_model'],
                     'parent_id': self.id
                 }
-                self.sudo().create(values)
+                self.env['hd.chown.details'].sudo().create(values)
         return True
 
     def button_shouquan(self):
