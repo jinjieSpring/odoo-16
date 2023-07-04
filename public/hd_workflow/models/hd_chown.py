@@ -71,7 +71,7 @@ class HdChown(models.Model):
                 'type': '无效'
             })
 
-    @api.model
+    @api.model_create_multi
     def create(self, vals_list):
         # 先处理时间应该要显示多加8小时
         start_records = self.search([('change_start', '<=', vals_list['change_start']),
