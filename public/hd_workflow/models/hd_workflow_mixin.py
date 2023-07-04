@@ -50,7 +50,7 @@ class WorkflowMixln(models.AbstractModel):
 
     def unlink(self):
         for order in self:
-            if len(order.workflow_ids) > 1:
+            if order.workflow_ids.filtered_domain([('name', '!=', '新建')]):
                 raise UserError('已提交的单子无法删除!')
             else:
                 order.workflow_ids.unlink()
