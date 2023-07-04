@@ -20,7 +20,7 @@
         'views/workflow_role_view.xml',
         'views/hd_workflow_view.xml',
         'views/personnel_process_record_view.xml',
-        # 'views/basic_attachment_form_view.xml',
+        'views/basic_attachment_form_view.xml',
         'views/approval_check_user_wizard.xml',
         'views/hd_chown.xml',
         'wizard/chown_ban.xml',
