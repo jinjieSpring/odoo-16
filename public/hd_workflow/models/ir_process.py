@@ -72,3 +72,4 @@ class IrProcessLine(models.Model):
     jump_code = fields.Text(string='Jump Python Code', default='model.jump_condition()')
     jump_record_show = fields.Boolean(string='显示跳过记录', default=True)
     can_back = fields.Boolean(string='允许取回', default=True)
+    refuse_to_commit = fields.Boolean(string='来源拒绝', default=False)

@@ -349,7 +349,7 @@ class WorkflowMixln(models.AbstractModel):
 
     def refuse_to_node_finish(self, state, original_state):
         """
-            该方法是在state写入后执行的,所以state为拒绝至节点的名字，即B拒绝到A中的A
+            该方法是在state写入后执行的,所以state为拒绝至节点的名字，original_state为未执行拒绝前的表单状态，即B拒绝到A中的A
         """
         print('拒绝至%s节点,开始操作' % state)
 

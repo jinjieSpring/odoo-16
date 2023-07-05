@@ -54,6 +54,7 @@
                                             <field name="button_name" widget="ace" options="{'mode': 'python'}" placeholder="Enter Python code here. Help about Python expression is available in the help tab of this document." invisible="1" />
                                             <field name="approve_type" options="{'horizontal': true}" widget="radio"/>
                                             <field name="can_back" attrs="{'readonly': ['|', ('name', '=', '新建'), ('is_stop', '=', True)]}"/>
+                                            <field name="refuse_to_commit" attrs="{'readonly': ['|', ('name', '=', '新建'), ('is_stop', '=', True)]}"/>
                                             <field name="is_stop"/>
                                             <field name="is_fixed"/>
                                             <field name="is_jump"/>
@@ -74,6 +75,7 @@
                                 <field name="is_jump"/>
                                 <field name="jump_record_show"/>
                                 <field name="can_back" />
+                                <field name="refuse_to_commit" />
                             </tree>
                         </field>
                     </sheet>

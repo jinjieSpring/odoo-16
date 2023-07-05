@@ -49,7 +49,8 @@ class HdApprovalCheckUser(models.Model):
             return []
         main_record = self.env[model].sudo().search([('id', '=', active_id)])
         selection_records = main_record.ir_process_id.process_ids
-        state_sequence = selection_records.filtered_domain([('name', '=', state)]).sequence
+        filter_selection_records = selection_records.filtered_domain([('name', '=', state)])
+        state_sequence, refuse_to_commit = (filter_selection_records.sequence, filter_selection_records.refuse_to_commit)
         result = []
         state_list = main_record.workflow_ids
         for rec in state_list:
@@ -61,7 +62,7 @@ class HdApprovalCheckUser(models.Model):
                             result.append((rec['name'], rec['name']))
                             break
                         result.append((rec.name, rec.name))
-        return result
+        return result[:1] if refuse_to_commit else result
 
     @api.model
     def default_get(self, fields):
