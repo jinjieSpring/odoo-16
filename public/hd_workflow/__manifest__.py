@@ -30,10 +30,6 @@
     'application': True,
     'auto_install': False,
     'assets': {
-            # 'web.assets_qweb': [
-            #     'amos_workflow/static/src/xml/workflow_buttons.xml',
-            #     'amos_workflow/static/src/xml/todo_menu.xml',
-            # ],
             'web.assets_backend': [
                 'hd_workflow/static/src/model/*.js',
                 'hd_workflow/static/src/components/*/*.js',
@@ -41,14 +37,8 @@
                 'hd_workflow/static/src/components/*/*.xml',
                 'hd_workflow/static/src/models/*.js',
                 'hd_workflow/static/src/services/*.js',
-                # 'amos_workflow/static/src/js/statebar_invisible.js',
-                # 'amos_workflow/static/src/js/hide_edit_btn.js',
-                # 'amos_workflow/static/src/js/datepicker_widget.js',
-                # 'amos_workflow/static/src/js/radio_do_action.js',
-                # 'amos_workflow/static/src/css/pretty-checkbox.min.css',
-                # 'amos_workflow/static/src/js/todo_menu.js',
-                # 'amos_workflow/static/src/js/todo_all_kanban_record.js',
-                # 'amos_workflow/static/src/css/signature.css'
+                # 'hd_workflow/static/src/views/*/*.js',
+                # 'hd_workflow/static/src/xml/rp_curd.xml',
             ]
     },
     'license': 'LGPL-3',

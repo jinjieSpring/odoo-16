@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-inherit="web.FormView" t-inherit-mode="extension">
+        <xpath expr="//t[@t-if='canEdit']" position="replace">
+            <t t-if="canEdit and state.rpEdit">
+                <FormStatusIndicator model="model" discard.bind="discard" save.bind="saveButtonClicked" isDisabled="state.isDisabled" fieldIsDirty="state.fieldIsDirty" />
+            </t>
+        </xpath>
+        <xpath expr="//t[@t-if='canCreate']" position="replace">
+            <t t-if="canCreate and state.rpCreate">
+                <button type="button" class="btn btn-outline-primary o_form_button_create" data-hotkey="c" t-on-click.stop="create" t-att-disabled="state.isDisabled">New</button>
+            </t>
+        </xpath>
+    </t>
+</templates>
