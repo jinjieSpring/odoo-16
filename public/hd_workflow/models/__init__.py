@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from . import ir_ui_view
+# from . import ir_ui_view
 from . import res_users
 from . import ir_attachment
 from . import hd_workflow_mixin
