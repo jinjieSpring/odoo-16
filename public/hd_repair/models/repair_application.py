@@ -19,10 +19,6 @@ class RepairApplication(models.Model):
     format_year_test_date = fields.Integer(string='只选择年', help="format_year前缀是针对list和form把inter显示成年，要配合widet='year_datepick'使用")
     state = fields.Selection(selection=lambda self: self._get_state(), string='状态', default='新建')
 
-    # @api.model
-    # def get_views(self,  views, options=None):
-    #     return super().get_view(views, options)
-
     @api.model
     def _get_state(self):
         return super()._default_states() + [('新建', '新建'),

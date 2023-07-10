@@ -15,9 +15,9 @@
         'views/menu.xml'
     ],
     'assets': {
-        'web.report_assets_common': [
-            'amos_workflow/static/src/css/pdf_table.css',
-        ]
+        # 'web.report_assets_common': [
+        #     'amos_workflow/static/src/css/pdf_table.css',
+        # ]
     },
     'installable': True,
     'application': True,
