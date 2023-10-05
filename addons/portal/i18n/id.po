@@ -94,7 +94,7 @@ msgstr "<i title=\"Dokumentasi\" class=\"fa fa-fw o_button_icon fa-info-circle\"
 #. module: portal
 #: model_terms:ir.ui.view,arch_db:portal.portal_my_details_fields
 msgid "<option value=\"\">Country...</option>"
-msgstr ""
+msgstr "<option value=\"\">Negara...</option>"
 
 #. module: portal
 #: model_terms:ir.ui.view,arch_db:portal.portal_my_details_fields
@@ -283,7 +283,7 @@ msgstr ""
 #: code:addons/portal/controllers/mail.py:0
 #, python-format
 msgid "An access token must be provided for each attachment."
-msgstr ""
+msgstr "Token akses harus disediakan untuk setiap lampiran."
 
 #. module: portal
 #: model_terms:ir.ui.view,arch_db:portal.portal_my_security
