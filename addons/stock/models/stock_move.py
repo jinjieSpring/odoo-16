@@ -1017,7 +1017,7 @@ Please change the quantity done or the rounding precision of your unit of measur
             moves_to_unlink.sudo().unlink()
 
         if moves_to_cancel:
-            moves_to_cancel._action_cancel()
+            moves_to_cancel.filtered(lambda m: float_is_zero(m.quantity_done, precision_rounding=m.product_uom.rounding))._action_cancel()
 
         return (self | merged_moves) - moves_to_unlink
 
@@ -1797,7 +1797,7 @@ Please change the quantity done or the rounding precision of your unit of measur
 
         # Create extra moves where necessary
         for move in moves:
-            if move.state == 'cancel' or (move.quantity_done <= 0 and not move.is_inventory):
+            if not move.exists() or move.state == 'cancel' or (move.quantity_done <= 0 and not move.is_inventory):
                 continue
 
             moves_ids_todo |= move._create_extra_move().ids
