@@ -3605,9 +3605,9 @@ class TestMrpOrder(TestMrpCommon):
         mo_form = Form(self.env['mrp.production'])
         mo_form.product_id = finished
         mo_form.product_qty = 1
-        for product in (component, component):
+        for _ in range(3):
             with mo_form.move_raw_ids.new() as line:
-                line.product_id = product
+                line.product_id = component
         mo = mo_form.save()
         mo.action_confirm()
 
@@ -3615,10 +3615,38 @@ class TestMrpOrder(TestMrpCommon):
         mo_form.qty_producing = 1.0
         mo = mo_form.save()
 
-        mo.move_raw_ids[0].move_line_ids.qty_done = 1.5
+        mo.move_raw_ids[1].move_line_ids.qty_done = 1.5
         mo.button_mark_done()
 
         self.assertEqual(mo.state, 'done')
 
         compo_raws = mo.move_raw_ids.filtered(lambda m: m.product_id == component)
-        self.assertEqual(sum(compo_raws.mapped('quantity_done')), 2.5)
+        self.assertEqual(sum(compo_raws.mapped('quantity_done')), 3.5)
+
+    def test_use_kit_as_component_in_production_without_bom(self):
+        """
+        Test that a MO is not cancelled when a kit is added in a MO without a BoM.
+        """
+        finished, component, kit = self.env['product.product'].create([{
+            'name': 'Product %s' % (i + 1),
+            'type': 'product',
+        } for i in range(3)])
+        self.env['mrp.bom'].create({
+            'product_id': kit.id,
+            'product_tmpl_id': kit.product_tmpl_id.id,
+            'type': 'phantom',
+            'bom_line_ids': [(0, 0, {
+                'product_id': component.id,
+                'product_qty': 1,
+            })],
+        })
+
+        mo_form = Form(self.env['mrp.production'])
+        mo_form.product_id = finished
+        mo_form.product_qty = 1
+        with mo_form.move_raw_ids.new() as line:
+            line.product_id = kit
+        mo = mo_form.save()
+        mo.action_confirm()
+        self.assertEqual(mo.state, 'confirmed')
+        self.assertEqual(mo.move_raw_ids.product_id, component)
