@@ -1221,7 +1221,6 @@ class WebsiteSale(payment_portal.PaymentPortal):
         values, errors = {}, {}
 
         partner_id = int(kw.get('partner_id', -1))
-
         if order._is_public_order():
             mode = ('new', 'billing')
             can_edit_vat = True
@@ -1235,9 +1234,9 @@ class WebsiteSale(payment_portal.PaymentPortal):
                 else:
                     address_mode = kw.get('mode')
                     if not address_mode:
-                        if partner_id == order.partner_invoice_id:
+                        if partner_id == order.partner_invoice_id.id:
                             address_mode = 'billing'
-                        elif partner_id == order.partner_shipping_id:
+                        elif partner_id == order.partner_shipping_id.id:
                             address_mode = 'shipping'
 
                     # Make sure the address exists and belongs to the customer of the SO
@@ -1249,13 +1248,11 @@ class WebsiteSale(payment_portal.PaymentPortal):
                     if address_mode == 'billing':
                         billing_partners = partners_sudo.filtered(lambda p: p.type != 'delivery')
                         if partner_sudo not in billing_partners:
-                            kw.pop('partner_id')
-                            mode = ('new', address_mode)
+                            raise Forbidden()
                     elif address_mode == 'shipping':
                         shipping_partners = partners_sudo.filtered(lambda p: p.type != 'invoice')
                         if partner_sudo not in shipping_partners:
-                            kw.pop('partner_id')
-                            mode = ('new', address_mode)
+                            raise Forbidden()
 
                     can_edit_vat = partner_sudo.can_edit_vat()
 
