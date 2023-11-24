@@ -541,6 +541,13 @@ class OrderLine(models.Model):
     order_id = fields.Many2one('test_new_api.order', required=True, ondelete='cascade')
     product = fields.Char()
     reward = fields.Boolean()
+    has_been_rewarded = fields.Char(compute='_compute_has_been_rewarded', store=True)
+
+    @api.depends('reward')
+    def _compute_has_been_rewarded(self):
+        for rec in self:
+            if rec.reward:
+                rec.has_been_rewarded = 'Yes'
 
     def unlink(self):
         # also delete associated reward lines
@@ -622,6 +629,45 @@ class ComputeRecursiveTree(models.Model):
         for rec in self:
             children_names = rec.mapped('children_ids.display_name')
             rec.display_name = '%s(%s)' % (rec.name, ', '.join(children_names))
+
+
+class ComputeRecursiveOrder(models.Model):
+    _name = _description = 'test_new_api.recursive.order'
+
+    value = fields.Integer()
+
+
+class ComputeRecursiveLine(models.Model):
+    _name = _description = 'test_new_api.recursive.line'
+
+    order_id = fields.Many2one('test_new_api.recursive.order')
+    task_ids = fields.One2many('test_new_api.recursive.task', 'line_id')
+    task_number = fields.Integer(compute='_compute_task_number', store=True)
+
+    # line.task_number indirectly depends on recursive field task.line_id, and
+    # is triggered by the recursion in modified() on field task.line_id
+    @api.depends('task_ids')
+    def _compute_task_number(self):
+        for record in self:
+            record.task_number = len(record.task_ids)
+
+
+class ComputeRecursiveTask(models.Model):
+    _name = _description = 'test_new_api.recursive.task'
+
+    value = fields.Integer()
+    line_id = fields.Many2one('test_new_api.recursive.line',
+                              compute='_compute_line_id', recursive=True, store=True)
+
+    # the recursive nature of task.line_id is a bit artificial, but it makes
+    # line.task_number be triggered by a recursive call in modified()
+    @api.depends('value', 'line_id.order_id.value')
+    def _compute_line_id(self):
+        # this assignment forces the new value of record.line_id to be dirty in cache
+        self.line_id = False
+        for record in self:
+            domain = [('order_id.value', '=', record.value)]
+            record.line_id = record.line_id.search(domain, order='id desc', limit=1)
 
 
 class ComputeCascade(models.Model):
