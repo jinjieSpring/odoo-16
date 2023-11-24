@@ -50,7 +50,7 @@ const tldWhitelist = [
     'ug', 'uk', 'um', 'us', 'uy', 'uz', 'va', 'vc', 've', 'vg', 'vi', 'vn',
     'vu', 'wf', 'ws', 'ye', 'yt', 'yu', 'za', 'zm', 'zr', 'zw', 'co\\.uk'];
 
-const urlRegexBase = `|(?:[-a-zA-Z0-9@:%._\\+~#=]{1,64}\\.))[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-zA-Z][a-zA-Z0-9]{1,62}|(?:[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.(?:${tldWhitelist.join('|')})\\b))(?:\\/[^\\s.,'")}\\]]*[?#.,)}\\]'"]?[^\\s.,'")}\\]]+|(?:[^!(){}.,\\[\\]'"\\s]+)|\\/[^\\s.,'")}\\]]*[^\\s?#.,'")}\\]]*)?`;
+const urlRegexBase = `|(?:www.))[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-zA-Z][a-zA-Z0-9]{1,62}|(?:[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.(?:${tldWhitelist.join('|')})\\b))(?:(?:[/?#])[^\\s]*[^!.,})\\]'"\\s]|(?:[^!(){}.,[\\]'"\\s]+))?`;
 const httpCapturedRegex= `(https?:\\/\\/)`;
 
 export const URL_REGEX = new RegExp(`((?:(?:${httpCapturedRegex}${urlRegexBase})`, 'i');
@@ -1242,13 +1242,13 @@ export function isBlock(node) {
         return false;
     }
     // The node might not be in the DOM, in which case it has no CSS values.
-    if (window.document !== node.ownerDocument) {
+    if (!node.isConnected) {
         return blockTagNames.includes(tagName);
     }
     // We won't call `getComputedStyle` more than once per node.
     let style = computedStyles.get(node);
     if (!style) {
-        style = window.getComputedStyle(node);
+        style = node.ownerDocument.defaultView.getComputedStyle(node);
         computedStyles.set(node, style);
     }
     if (style.display) {
@@ -1410,13 +1410,24 @@ export function containsUnbreakable(node) {
     }
     return isUnbreakable(node) || containsUnbreakable(node.firstChild);
 }
+// TODO rename this function in master: it also handles Odoo icons, not only
+// font awesome ones. Also maybe just use the ICON_SELECTOR and `matches`?
+const iconTags = ['I', 'SPAN'];
+const iconClasses = ['fa', 'fab', 'fad', 'far', 'oi'];
 export function isFontAwesome(node) {
+    // See ICON_SELECTOR
     return (
         node &&
-        (node.nodeName === 'I' || node.nodeName === 'SPAN') &&
-        ['fa', 'fab', 'fad', 'far'].some(faClass => node.classList.contains(faClass))
+        iconTags.includes(node.nodeName) &&
+        iconClasses.some(cls => node.classList.contains(cls))
     );
 }
+export const ICON_SELECTOR = iconTags.map(tag => {
+    return iconClasses.map(cls => {
+        return `${tag}.${cls}`;
+    }).join(', ');
+}).join(', ');
+
 export function isZWS(node) {
     return (
         node &&

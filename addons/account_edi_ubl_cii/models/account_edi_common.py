@@ -1,5 +1,5 @@
 from odoo import _, models, Command
-from odoo.tools import float_repr
+from odoo.tools import float_repr, find_xml_value
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools.float_utils import float_round
 from odoo.tools.misc import formatLang
@@ -63,6 +63,7 @@ EAS_MAPPING = {
     'IE': {'9935': 'vat'},
     'IS': {'0196': 'vat'},
     'IT': {'0211': 'vat', '0210': 'l10n_it_codice_fiscale'},
+    'JP': {'0221': 'vat'},
     'LI': {'9936': 'vat'},
     'LT': {'9937': 'vat'},
     'LU': {'9938': 'vat'},
@@ -115,6 +116,11 @@ class AccountEdiCommon(models.AbstractModel):
         if xmlid and line.product_uom_id.id in xmlid:
             return UOM_TO_UNECE_CODE.get(xmlid[line.product_uom_id.id], 'C62')
         return 'C62'
+
+    def _find_value(self, xpath, tree):
+        # avoid 'TypeError: empty namespace prefix is not supported in XPath'
+        nsmap = {k: v for k, v in tree.nsmap.items() if k is not None}
+        return find_xml_value(xpath, tree, nsmap)
 
     # -------------------------------------------------------------------------
     # TAXES
