@@ -303,12 +303,12 @@ class PosConfig(models.Model):
                 if pm.journal_id and pm.journal_id.currency_id and pm.journal_id.currency_id != config.currency_id:
                     raise ValidationError(_("All payment methods must be in the same currency as the Sales Journal or the company currency if that is not set."))
 
-        if any(self.available_pricelist_ids.mapped(lambda pricelist: pricelist.currency_id != self.currency_id)):
-            raise ValidationError(_("All available pricelists must be in the same currency as the company or"
-                                    " as the Sales Journal set on this point of sale if you use"
-                                    " the Accounting application."))
-        if self.invoice_journal_id.currency_id and self.invoice_journal_id.currency_id != self.currency_id:
-            raise ValidationError(_("The invoice journal must be in the same currency as the Sales Journal or the company currency if that is not set."))
+            if config.use_pricelist and config.pricelist_id and any(config.available_pricelist_ids.mapped(lambda pricelist: pricelist.currency_id != config.currency_id)):
+                raise ValidationError(_("All available pricelists must be in the same currency as the company or"
+                                        " as the Sales Journal set on this point of sale if you use"
+                                        " the Accounting application."))
+            if config.invoice_journal_id.currency_id and config.invoice_journal_id.currency_id != config.currency_id:
+                raise ValidationError(_("The invoice journal must be in the same currency as the Sales Journal or the company currency if that is not set."))
 
     @api.constrains('iface_start_categ_id', 'iface_available_categ_ids')
     def _check_start_categ(self):
@@ -640,10 +640,12 @@ class PosConfig(models.Model):
             cash_journal = self.env['account.journal'].search([
                 *self.env['account.journal']._check_company_domain(company),
                 ('type', '=', 'cash'),
+                ('currency_id', 'in', [pos_config.currency_id.id, False]),
             ], limit=1)
             bank_journal = self.env['account.journal'].search([
                 *self.env['account.journal']._check_company_domain(company),
                 ('type', '=', 'bank'),
+                ('currency_id', 'in', [pos_config.currency_id.id, False]),
             ], limit=1)
             payment_methods = self.env['pos.payment.method']
             if cash_journal and len(cash_journal.pos_payment_method_ids.ids) == 0:
@@ -752,13 +754,21 @@ class PosConfig(models.Model):
                       COALESCE(pm.date, product_product.write_date) DESC
                 LIMIT %s
         """
-        self.env.cr.execute(query, params + [20000])
+        self.env.cr.execute(query, params + [self.get_limited_product_count()])
         product_ids = self.env.cr.fetchall()
         products = self.env['product.product'].search([('id', 'in', product_ids)])
         product_combo = products.filtered(lambda p: p['detailed_type'] == 'combo')
         product_in_combo = product_combo.combo_ids.combo_line_ids.product_id
         products_available = products | product_in_combo
         return products_available.read(fields)
+
+    def get_limited_product_count(self):
+        default_limit = 20000
+        config_param = self.env['ir.config_parameter'].sudo().get_param('point_of_sale.limited_product_count', default_limit)
+        try:
+            return int(config_param)
+        except (TypeError, ValueError, OverflowError):
+            return default_limit
 
     def get_limited_partners_loading(self):
         self.env.cr.execute("""

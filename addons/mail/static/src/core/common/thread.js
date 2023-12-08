@@ -88,7 +88,7 @@ export class Thread extends Component {
                     this.threadService.fetchMoreMessages(this.props.thread);
                 }
             },
-            { init: null }
+            { init: null, ready: false }
         );
         this.loadNewerState = useVisible(
             "load-newer",
@@ -97,7 +97,7 @@ export class Thread extends Component {
                     this.threadService.fetchMoreMessages(this.props.thread, "newer");
                 }
             },
-            { init: null }
+            { init: null, ready: false }
         );
         this.presentThresholdState = useVisible(
             "present-treshold",
@@ -141,10 +141,24 @@ export class Thread extends Component {
             },
             () => [this.state.mountedAndLoaded]
         );
-        onMounted(async () => {
-            await this.threadService.fetchNewMessages(this.props.thread);
-            this.state.mountedAndLoaded = true;
+        onMounted(() => {
+            if (!this.env.chatter || this.env.chatter?.fetchMessages) {
+                if (this.env.chatter) {
+                    this.env.chatter.fetchMessages = false;
+                }
+                this.threadService.fetchNewMessages(this.props.thread);
+            }
         });
+        useEffect(
+            (isLoaded) => {
+                this.state.mountedAndLoaded = isLoaded;
+                if (!isLoaded) {
+                    this.loadOlderState.ready = false;
+                    this.loadNewerState.ready = false;
+                }
+            },
+            () => [this.props.thread.isLoaded]
+        );
         useBus(this.env.bus, "MAIL:RELOAD-THREAD", ({ detail }) => {
             const { model, id } = this.props.thread;
             if (detail.model === model && detail.id === id) {
@@ -155,7 +169,12 @@ export class Thread extends Component {
             if (nextProps.thread.notEq(this.props.thread)) {
                 this.lastJumpPresent = nextProps.jumpPresent;
             }
-            this.threadService.fetchNewMessages(nextProps.thread);
+            if (!this.env.chatter || this.env.chatter?.fetchMessages) {
+                if (this.env.chatter) {
+                    this.env.chatter.fetchMessages = false;
+                }
+                this.threadService.fetchNewMessages(nextProps.thread);
+            }
         });
     }
 
@@ -229,9 +248,8 @@ export class Thread extends Component {
             saveScroll();
         };
         const applyScroll = () => {
-            if (this.state.mountedAndLoaded) {
-                loadedAndPatched = true;
-            } else {
+            if (!this.props.thread.isLoaded || !this.state.mountedAndLoaded) {
+                loadedAndPatched = false;
                 return;
             }
             // Use toRaw() to prevent scroll check from triggering renders.
@@ -266,6 +284,11 @@ export class Thread extends Component {
             newestPersistentMessage = thread.newestPersistentMessage;
             oldestPersistentMessage = thread.oldestPersistentMessage;
             loadNewer = thread.loadNewer;
+            if (!loadedAndPatched) {
+                loadedAndPatched = true;
+                this.loadOlderState.ready = true;
+                this.loadNewerState.ready = true;
+            }
         };
         onWillPatch(() => {
             if (!loadedAndPatched) {

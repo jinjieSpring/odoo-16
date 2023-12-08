@@ -621,7 +621,6 @@ Please change the quantity done or the rounding precision of your unit of measur
         if 'product_uom' in vals and any(move.state == 'done' for move in self):
             raise UserError(_('You cannot change the UoM for a stock move that has been set to \'Done\'.'))
         if 'product_uom_qty' in vals:
-            move_to_unreserve = self.env['stock.move']
             for move in self.filtered(lambda m: m.state not in ('done', 'draft') and m.picking_id):
                 if float_compare(vals['product_uom_qty'], move.product_uom_qty, precision_rounding=move.product_uom.rounding):
                     self.env['stock.move.line']._log_message(move.picking_id, move, 'stock.track_move_template', vals)
@@ -1566,7 +1565,7 @@ Please change the quantity done or the rounding precision of your unit of measur
                 quantity += ml.product_uom_id._compute_quantity(ml.quantity, ml.product_id.uom_id)
             grouped_move_lines_out[k] = quantity
         for k, g in groupby(move_lines_out_reserved, key=_keys_out_groupby):
-            grouped_move_lines_out[k] = sum(self.env['stock.move.line'].concat(*list(g)).mapped('quantity'))
+            grouped_move_lines_out[k] = sum(self.env['stock.move.line'].concat(*list(g)).mapped('quantity_product_uom'))
 
         return grouped_move_lines_out
 
@@ -1684,11 +1683,11 @@ Please change the quantity done or the rounding precision of your unit of measur
                     available_move_lines = move._get_available_move_lines(assigned_moves_ids, partially_available_moves_ids)
                     if not available_move_lines:
                         continue
-                    for move_line in move.move_line_ids.filtered(lambda m: m.quantity):
+                    for move_line in move.move_line_ids.filtered(lambda m: m.quantity_product_uom):
                         if available_move_lines.get((move_line.location_id, move_line.lot_id, move_line.result_package_id, move_line.owner_id)):
-                            available_move_lines[(move_line.location_id, move_line.lot_id, move_line.result_package_id, move_line.owner_id)] -= move_line.quantity
+                            available_move_lines[(move_line.location_id, move_line.lot_id, move_line.result_package_id, move_line.owner_id)] -= move_line.quantity_product_uom
                     for (location_id, lot_id, package_id, owner_id), quantity in available_move_lines.items():
-                        need = move.product_qty - sum(move.move_line_ids.mapped('quantity'))
+                        need = move.product_qty - sum(move.move_line_ids.mapped('quantity_product_uom'))
                         # `quantity` is what is brought by chained done move lines. We double check
                         # here this quantity is available on the quants themselves. If not, this
                         # could be the result of an inventory adjustment that removed totally of
@@ -1955,7 +1954,7 @@ Please change the quantity done or the rounding precision of your unit of measur
         moves_state_to_write = defaultdict(set)
         for move in self:
             rounding = move.product_uom.rounding
-            if move.state in ('cancel', 'done'):
+            if move.state in ('cancel', 'done') or (move.state == 'draft' and not move.quantity):
                 continue
             elif float_compare(move.quantity, move.product_uom_qty, precision_rounding=rounding) >= 0:
                 moves_state_to_write['assigned'].add(move.id)

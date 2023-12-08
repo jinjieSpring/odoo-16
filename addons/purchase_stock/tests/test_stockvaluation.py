@@ -2,7 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from freezegun import freeze_time
 from unittest.mock import patch
 
@@ -763,6 +763,76 @@ class TestStockValuationWithCOA(AccountTestInvoicingCommon):
         self.assertAlmostEqual(payable_aml.amount_currency, 100, msg="Total debit value should be equal to the original PO price of the product.")
         self.assertAlmostEqual(picking_aml.amount_currency, -20, msg="credit value for stock should be equal to the standard price of the product.")
         self.assertAlmostEqual(diff_aml.amount_currency, -80, msg="credit value for price difference")
+
+    def test_valuation_rounding(self):
+        company = self.env.user.company_id
+        company.anglo_saxon_accounting = True
+        company.currency_id = self.usd_currency
+
+        self.product1.product_tmpl_id.categ_id.property_cost_method = 'fifo'
+        self.product1.product_tmpl_id.categ_id.property_valuation = 'real_time'
+
+        self.env.ref('product.decimal_price').digits = 5
+
+        po = self.env['purchase.order'].create({
+            'partner_id': self.partner_id.id,
+            'order_line': [
+                (0, 0, {
+                    'name': self.product1.name,
+                    'product_id': self.product1.id,
+                    'product_qty': 1500.0,
+                    'product_uom': self.product1.uom_po_id.id,
+                    'price_unit': 3.30125,
+                }),
+            ],
+        })
+        po.button_confirm()
+
+        # Receive the goods
+        receipt = po.picking_ids
+        receipt.button_validate()
+
+        self._bill(po)
+        layers = self.env['stock.valuation.layer'].search([('product_id', '=', self.product1.id)])
+        self.assertEqual(len(layers), 1)
+        self.assertEqual(layers.quantity, 1500)
+        self.assertEqual(layers.value, 4951.88)
+
+    def test_valuation_rounding_price_diff(self):
+        company = self.env.user.company_id
+        company.anglo_saxon_accounting = True
+        company.currency_id = self.usd_currency
+
+        self.product1.product_tmpl_id.categ_id.property_cost_method = 'fifo'
+        self.product1.product_tmpl_id.categ_id.property_valuation = 'real_time'
+
+        self.env.ref('product.decimal_price').digits = 5
+
+        po = self.env['purchase.order'].create({
+            'partner_id': self.partner_id.id,
+            'order_line': [
+                (0, 0, {
+                    'name': self.product1.name,
+                    'product_id': self.product1.id,
+                    'product_qty': 1500.0,
+                    'product_uom': self.product1.uom_po_id.id,
+                    'price_unit': 3.30125,
+                }),
+            ],
+        })
+        po.button_confirm()
+
+        # Receive the goods
+        receipt = po.picking_ids
+        receipt.button_validate()
+
+        self._bill(po, price=3.31125)
+        layers = self.env['stock.valuation.layer'].search([('product_id', '=', self.product1.id)])
+        self.assertEqual(len(layers), 2)
+        self.assertEqual(layers[0].quantity, 1500)
+        self.assertEqual(layers[1].quantity, 0)
+        self.assertEqual(layers[0].value, 4951.88)
+        self.assertEqual(round(layers[1].value, company.currency_id.decimal_places), 15)
 
     def test_valuation_multicurrency_with_tax(self):
         """ Check that the amount_currency does not include the tax.
@@ -2553,6 +2623,85 @@ class TestStockValuationWithCOA(AccountTestInvoicingCommon):
         svls = self.product1.stock_valuation_layer_ids
         self.assertEqual(svls.mapped('remaining_value'), [13.0, 12.0, 0.0, 0.0, 0.0, 0.0])
         self.assertEqual(svls.mapped('value'), [10.0, 10.0, 1.0, 2.0, -1.0, 3.0])
+
+    def test_pdiff_multi_curr_and_rates(self):
+        """
+        Company in USD.
+        Today: 100 EUR = 150 USD
+        One day ago: 100 EUR = 130 USD
+        Two days ago: 100 EUR = 125 USD
+        Buy and receive one auto-AVCO product at 100 EUR. Bill it with:
+        - Bill date: two days ago (125 USD)
+        - Accounting date: one day ago (130 USD)
+        The value at bill date should be used for both bill value and price
+        diff value.
+        """
+        usd_currency = self.env.ref('base.USD')
+        eur_currency = self.env.ref('base.EUR')
+
+        today = fields.Date.today()
+        one_day_ago = today - timedelta(days=1)
+        two_days_ago = today - timedelta(days=2)
+
+        self.env.company.currency_id = usd_currency.id
+
+        self.env['res.currency.rate'].search([]).unlink()
+        self.env['res.currency.rate'].create([{
+            'name': day.strftime('%Y-%m-%d'),
+            'rate': 1 / rate,
+            'currency_id': eur_currency.id,
+            'company_id': self.env.company.id,
+        } for (day, rate) in [
+            (today, 1.5),
+            (one_day_ago, 1.3),
+            (two_days_ago, 1.25),
+        ]])
+
+        self.product1.product_tmpl_id.categ_id.property_cost_method = 'average'
+
+        po = self.env['purchase.order'].create({
+            'partner_id': self.partner_id.id,
+            'currency_id': eur_currency.id,
+            'order_line': [
+                (0, 0, {
+                    'name': self.product1.name,
+                    'product_id': self.product1.id,
+                    'product_qty': 1.0,
+                    'product_uom': self.product1.uom_po_id.id,
+                    'price_unit': 100.0,
+                    'taxes_id': False,
+                }),
+            ],
+        })
+        po.button_confirm()
+
+        receipt = po.picking_ids
+        receipt.move_ids.move_line_ids.quantity = 1.0
+        receipt.button_validate()
+
+        layer = receipt.move_ids.stock_valuation_layer_ids
+        self.assertEqual(layer.value, 150)
+
+        action = po.action_create_invoice()
+        bill = self.env["account.move"].browse(action["res_id"])
+        bill.invoice_date = two_days_ago
+        bill.date = one_day_ago
+        bill.action_post()
+
+        pdiff_layer = layer.stock_valuation_layer_ids
+        self.assertEqual(pdiff_layer.value, -25)
+        self.assertEqual(layer.remaining_value, 125)
+
+        in_stock_amls = self.env['account.move.line'].search([
+            ('product_id', '=', self.product1.id),
+            ('account_id', '=', self.stock_input_account.id),
+        ], order='id')
+        self.assertRecordValues(in_stock_amls, [
+            # pylint: disable=bad-whitespace
+            {'date': today,         'debit': 0,     'credit': 150,  'reconciled': True},
+            {'date': one_day_ago,   'debit': 125,   'credit': 0,    'reconciled': True},
+            {'date': one_day_ago,   'debit': 25,    'credit': 0,    'reconciled': True},
+        ])
 
     def test_invoice_on_ordered_qty_with_backorder_and_different_currency_automated(self):
         """Create a PO with currency different from the company currency. Set the

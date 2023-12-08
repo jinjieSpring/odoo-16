@@ -688,9 +688,6 @@ class MrpProduction(models.Model):
             if order.state in ['confirmed', 'progress', 'to_close'] and order.product_id.tracking == 'serial' and \
                     float_compare(order.product_qty, 1, precision_rounding=order.product_uom_id.rounding) > 0 and \
                     float_compare(order.qty_producing, order.product_qty, precision_rounding=order.product_uom_id.rounding) < 0:
-                moves_with_tracking = order.move_raw_ids.filtered(lambda m: m.has_tracking)
-                if any(len(m.move_line_ids.lot_id) > 1 for m in moves_with_tracking):
-                    continue
                 order.show_serial_mass_produce = True
 
     @api.depends('state', 'move_finished_ids')
@@ -1839,19 +1836,19 @@ class MrpProduction(models.Model):
             product_uom = initial_move.product_id.uom_id
             if not initial_move.picked:
                 for move_line in initial_move.move_line_ids:
-                    available_qty = move_line.product_uom_id._compute_quantity(move_line.quantity, product_uom)
-                    if float_compare(available_qty, 0, precision_rounding=move_line.product_uom_id.rounding) <= 0:
+                    available_qty = move_line.product_uom_id._compute_quantity(move_line.quantity, product_uom, rounding_method="HALF-UP")
+                    if float_compare(available_qty, 0, precision_rounding=product_uom.rounding) <= 0:
                         continue
                     ml_by_move.append((available_qty, move_line, move_line.copy_data()[0]))
 
             moves = list(initial_move | backorder_moves)
 
             move = moves and moves.pop(0)
-            move_qty_to_reserve = move.product_qty
+            move_qty_to_reserve = move.product_qty  # Product UoM
 
             for index, (quantity, move_line, ml_vals) in enumerate(ml_by_move):
                 taken_qty = min(quantity, move_qty_to_reserve)
-                taken_qty_uom = product_uom._compute_quantity(taken_qty, move_line.product_uom_id)
+                taken_qty_uom = product_uom._compute_quantity(taken_qty, move_line.product_uom_id, rounding_method="HALF-UP")
                 if float_is_zero(taken_qty_uom, precision_rounding=move_line.product_uom_id.rounding):
                     continue
                 move_line.write({
@@ -1870,7 +1867,7 @@ class MrpProduction(models.Model):
                 while float_compare(quantity, 0, precision_rounding=product_uom.rounding) > 0 and move:
                     # Do not create `stock.move.line` if there is no initial demand on `stock.move`
                     taken_qty = min(move_qty_to_reserve, quantity)
-                    taken_qty_uom = product_uom._compute_quantity(taken_qty, move_line.product_uom_id)
+                    taken_qty_uom = product_uom._compute_quantity(taken_qty, move_line.product_uom_id, rounding_method="HALF-UP")
                     if move == initial_move:
                         move_line.quantity += taken_qty_uom
                     elif not float_is_zero(taken_qty_uom, precision_rounding=move_line.product_uom_id.rounding):
@@ -2286,8 +2283,7 @@ class MrpProduction(models.Model):
         if 'confirmed' in self.mapped('state'):
             production.move_raw_ids._adjust_procure_method()
             (production.move_raw_ids | production.move_finished_ids).write({'state': 'confirmed'})
-            production.workorder_ids._action_confirm()
-            production.state = 'confirmed'
+            production.action_confirm()
 
         self.with_context(skip_activity=True)._action_cancel()
         # set the new deadline of origin moves (stock to pre prod)

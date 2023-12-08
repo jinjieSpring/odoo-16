@@ -645,7 +645,7 @@ class BaseModel(metaclass=MetaModel):
             isinstance(getattr(model, name, None), fields.Field)
             for model in [cls] + [self.env.registry[inherit] for inherit in cls._inherits]
         )
-        if not (is_class_field or name.startswith('x_')):
+        if not (is_class_field or self.env['ir.model.fields']._is_manual_name(name)):
             raise ValidationError(
                 f"The field `{name}` is not defined in the `{cls._name}` Python class and does not start with 'x_'"
             )
@@ -2454,7 +2454,13 @@ class BaseModel(metaclass=MetaModel):
                     row[group] = (value.id, value.sudo().display_name) if value else False
                     value = value.id
 
-                additional_domain = [(field_name, '=', value)]
+                if not value and field.type == 'many2many':
+                    other_values = [other_row[group][0] if isinstance(other_row[group], tuple)
+                                    else other_row[group].id if isinstance(value, BaseModel)
+                                    else other_row[group] for other_row in rows_dict if other_row[group]]
+                    additional_domain = [(field_name, 'not in', other_values)]
+                else:
+                    additional_domain = [(field_name, '=', value)]
 
                 if field.type in ('date', 'datetime'):
                     if value and isinstance(value, (datetime.date, datetime.datetime)):

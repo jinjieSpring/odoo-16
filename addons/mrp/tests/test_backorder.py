@@ -273,7 +273,7 @@ class TestMrpProductionBackorder(TestMrpCommon):
         p2_bo_mls = production.procurement_group_id.mrp_production_ids[-1].move_raw_ids.filtered(lambda m: m.product_id == p2).move_line_ids
         self.assertEqual(len(p2_bo_mls), 1)
         self.assertEqual(p2_bo_mls.lot_id, lot1)
-        self.assertEqual(p2_bo_mls.quantity, 2)
+        self.assertEqual(p2_bo_mls.quantity_product_uom, 2)
 
     def test_uom_backorder(self):
         """
@@ -322,6 +322,35 @@ class TestMrpProductionBackorder(TestMrpCommon):
         # 300 Grams consumed and 700 reserved
         self.assertAlmostEqual(self.env['stock.quant']._gather(product_component, self.stock_location).reserved_quantity, 0.7)
 
+    def test_rounding_backorder(self):
+        """test backorder component rounding doesn't introduce reservation issues"""
+        production, _, _, p1, p2 = self.generate_mo(qty_final=5, qty_base_1=1, qty_base_2=1)
+
+        self.env['stock.quant']._update_available_quantity(p1, self.stock_location, 100)
+        self.env['stock.quant']._update_available_quantity(p2, self.stock_location, 100)
+
+        production.action_assign()
+
+        production_form = Form(production)
+        production_form.qty_producing = 3.1
+        production = production_form.save()
+
+        details_operation_form = Form(production.move_raw_ids.filtered(lambda m: m.product_id == p1), view=self.env.ref('stock.view_stock_move_operations'))
+        with details_operation_form.move_line_ids.edit(0) as ml:
+            ml.quantity = 3.09
+
+        details_operation_form.save()
+
+        action = production.button_mark_done()
+        backorder_form = Form(self.env['mrp.production.backorder'].with_context(**action['context']))
+        backorder_form.save().action_backorder()
+        backorder = production.procurement_group_id.mrp_production_ids[-1]
+        # 3.09 consumed and 1.9 reserved
+        self.assertAlmostEqual(self.env['stock.quant']._gather(p1, self.stock_location).reserved_quantity, 1.9)
+        self.assertAlmostEqual(backorder.move_raw_ids.filtered(lambda m: m.product_id == p1).move_line_ids.quantity, 1.9)
+
+        # Make sure we don't have an unreserve errors
+        backorder.do_unreserve()
 
     def test_tracking_backorder_series_serial_1(self):
         """ Create a MO of 4 tracked products (serial) with pbm_sam.
@@ -446,6 +475,25 @@ class TestMrpProductionBackorder(TestMrpCommon):
         backorder_ids = production.procurement_group_id.mrp_production_ids[1]
         self.assertEqual(production.name.split('-')[0], backorder_ids.name.split('-')[0])
         self.assertEqual(int(production.name.split('-')[1]) + 1, int(backorder_ids.name.split('-')[1]))
+
+    def test_split_draft(self):
+        mo_form = Form(self.env['mrp.production'])
+        mo_form.product_id = self.bom_1.product_id
+        mo_form.bom_id = self.bom_1
+        mo_form.product_qty = 2
+        mo = mo_form.save()
+        self.assertEqual(mo.state, 'draft')
+
+        action = mo.action_split()
+        wizard = Form(self.env[action['res_model']].with_context(action['context']))
+        wizard.counter = 2
+        wizard.save().action_split()
+        self.assertEqual(len(mo.procurement_group_id.mrp_production_ids), 2)
+
+        mo1 = mo.procurement_group_id.mrp_production_ids[0]
+        mo2 = mo.procurement_group_id.mrp_production_ids[1]
+        self.assertEqual(mo1.move_raw_ids.mapped('state'), ['draft', 'draft'])
+        self.assertEqual(mo2.move_raw_ids.mapped('state'), ['draft', 'draft'])
 
     def test_split_merge(self):
         # Change 'Units' rounding to 1 (integer only quantities)

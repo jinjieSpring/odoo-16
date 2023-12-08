@@ -506,7 +506,7 @@ export class Orderline extends PosModel {
      *    @param {Object} modifiedPackLotLines key-value pair of String (the cid) & String (the new lot_name)
      *    @param {Array} newPackLotLines array of { lot_name: String }
      */
-    setPackLotLines({ modifiedPackLotLines, newPackLotLines }) {
+    setPackLotLines({ modifiedPackLotLines, newPackLotLines , setQuantity = true }) {
         // Set the new values for modified lot lines.
         const lotLinesToRemove = [];
         for (const lotLine of this.pack_lot_lines) {
@@ -534,7 +534,7 @@ export class Orderline extends PosModel {
         }
 
         // Set the quantity of the line based on number of pack lots.
-        if (!this.product.to_weight) {
+        if (!this.product.to_weight && setQuantity) {
             this.set_quantity_by_lot();
         }
     }
@@ -1079,7 +1079,10 @@ export class Orderline extends PosModel {
     getDisplayData() {
         return {
             productName: this.get_full_product_name(),
-            price: this.env.utils.formatCurrency(this.get_display_price()),
+            price:
+                this.get_discount_str() === "100"
+                    ? "free"
+                    : this.env.utils.formatCurrency(this.get_display_price()),
             qty: this.get_quantity_str(),
             unit: this.get_unit().name,
             unitPrice: this.env.utils.formatCurrency(this.get_unit_display_price()),
@@ -1089,6 +1092,7 @@ export class Orderline extends PosModel {
             internalNote: this.getNote(),
             comboParent: this.comboParent?.get_full_product_name(),
             pack_lot_lines: this.get_lot_lines(),
+            price_without_discount: this.env.utils.formatCurrency(this.getUnitDisplayPriceBeforeDiscount()),
         };
     }
 }
@@ -1542,7 +1546,7 @@ export class Order extends PosModel {
             shippingDate:
                 this.shippingDate && formatDate(DateTime.fromJSDate(new Date(this.shippingDate))),
             headerData: {
-                ...this.pos.getReceiptHeaderData(),
+                ...this.pos.getReceiptHeaderData(this),
                 trackingNumber: this.trackingNumber,
             },
         };
@@ -2063,7 +2067,7 @@ export class Order extends PosModel {
         }
 
         if (options.draftPackLotLines) {
-            this.selected_orderline.setPackLotLines(options.draftPackLotLines);
+            this.selected_orderline.setPackLotLines({ ...options.draftPackLotLines, setQuantity: options.quantity === undefined });
         }
 
         if (options.comboLines?.length) {

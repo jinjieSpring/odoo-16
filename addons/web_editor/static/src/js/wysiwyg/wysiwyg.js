@@ -1974,7 +1974,9 @@ export class Wysiwyg extends Component {
         if (color && !isCSSColor(color) && !weUtils.isColorGradient(color)) {
             color = (colorType === "text" ? 'text-' : 'bg-') + color;
         }
-        const coloredElements = this.odooEditor.execCommand('applyColor', color, colorType === 'text' ? 'color' : 'backgroundColor', this.lastMediaClicked);
+        let coloredElements = this.odooEditor.execCommand('applyColor', color, colorType === 'text' ? 'color' : 'backgroundColor', this.lastMediaClicked);
+        // Some nodes returned by applyColor can be removed of the document by the sanitization in historyStep
+        coloredElements = coloredElements.filter(element => this.odooEditor.document.contains(element));
 
         const coloredTds = coloredElements && coloredElements.length && Array.isArray(coloredElements) && coloredElements.filter(coloredElement => coloredElement.classList.contains('o_selected_td'));
         if (coloredTds.length) {
@@ -2176,9 +2178,7 @@ export class Wysiwyg extends Component {
                 }
                 // Tooltips need to be cleared before leaving the editor.
                 this.saving_mutex.exec(() => {
-                    this.odooEditor.observerUnactive();
                     const removeTooltip = this.popover.add(e.target, Tooltip, { tooltip: _t('Double-click to edit') });
-                    this.odooEditor.observerActive();
                     this.tooltipTimeouts.push(setTimeout(() => removeTooltip(), 800));
                 });
             }, 400));
@@ -2706,7 +2706,9 @@ export class Wysiwyg extends Component {
         ], {
             context: {
                 ...context,
-                delay_translations: true,
+                // TODO: Restore the delay translation feature once it's fixed,
+                //       see commit msg for more info.
+                delay_translations: false,
             },
         });
         return result;
@@ -2747,9 +2749,10 @@ export class Wysiwyg extends Component {
         }
     }
     _onSelectionChange() {
-        if (this.odooEditor.autohideToolbar) {
-            const isVisible = this.linkPopover && this.linkPopover.el.offsetParent;
-            if (isVisible && !this.odooEditor.document.getSelection().isCollapsed) {
+        if (this.odooEditor.autohideToolbar && this.linkPopover) {
+            const selectionInLink = getInSelection(this.odooEditor.document, 'a') === this.linkPopover.target;
+            const isVisible = this.linkPopover.el.offsetParent;
+            if (isVisible && !selectionInLink) {
                 this.linkPopover.hide();
             }
         }

@@ -62,13 +62,13 @@ registry.category("web_tour.tours").add("ProductScreenTour", {
             ProductScreen.orderIsEmpty(),
 
             // Check different subcategories
-            ProductScreen.clickSubcategory("Desks"),
+            ProductScreen.clickSubcategory("Desk test"),
             ProductScreen.productIsDisplayed("Desk Pad"),
             ProductScreen.clickHomeCategory(),
-            ProductScreen.clickSubcategory("Misc"),
+            ProductScreen.clickSubcategory("Misc test"),
             ProductScreen.productIsDisplayed("Whiteboard Pen"),
             ProductScreen.clickHomeCategory(),
-            ProductScreen.clickSubcategory("Chairs"),
+            ProductScreen.clickSubcategory("Chair test"),
             ProductScreen.productIsDisplayed("Letter Tray"),
             ProductScreen.clickHomeCategory(),
 
@@ -180,6 +180,25 @@ registry.category("web_tour.tours").add("ShowTaxExcludedTour", {
             ProductScreen.clickDisplayedProduct("Test Product"),
             ProductScreen.selectedOrderlineHas("Test Product", "1.0", "100.0"),
             ProductScreen.totalAmountIs("110.0"),
+            Chrome.endTour(),
+        ].flat(),
+});
+
+registry.category("web_tour.tours").add("limitedProductPricelistLoading", { 
+    test: true, 
+    url: "/pos/ui", 
+    steps: () =>
+        [
+            ProductScreen.confirmOpeningPopup(),
+
+            ProductScreen.scan_barcode("0100100"),
+            ProductScreen.selectedOrderlineHas('Test Product 1', '1.0', '80.0'),
+
+            ProductScreen.scan_barcode("0100200"),
+            ProductScreen.selectedOrderlineHas('Test Product 2', '1.0', '100.0'),
+
+            ProductScreen.scan_barcode("0100300"),
+            ProductScreen.selectedOrderlineHas('Test Product 3', '1.0', '50.0'),
             Chrome.endTour(),
         ].flat(),
 });

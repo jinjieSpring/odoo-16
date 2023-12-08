@@ -1,7 +1,6 @@
 /* @odoo-module */
 
-import { Record, modelRegistry } from "@mail/core/common/record";
-import { BaseStore, makeStore } from "@mail/core/common/store_service";
+import { BaseStore, Record, makeStore, modelRegistry } from "@mail/core/common/record";
 
 import { registry } from "@web/core/registry";
 import { clearRegistryWithCleanup, makeTestEnv } from "@web/../tests/helpers/mock_env";
@@ -113,10 +112,59 @@ QUnit.test("Assign & Delete on fields with inverses", async (assert) => {
     assert.ok(thread.messages.length === 0);
 });
 
-QUnit.test("Computed relational field", async (assert) => {
+QUnit.test("onAdd/onDelete hooks on relational with inverse", async (assert) => {
+    let logs = [];
     (class Thread extends Record {
         static id = "name";
         name;
+        members = Record.many("Member", {
+            inverse: "thread",
+            onAdd: (member) => logs.push(`Thread.onAdd(${member.name})`),
+            onDelete: (member) => logs.push(`Thread.onDelete(${member.name})`),
+        });
+    }).register();
+    (class Member extends Record {
+        static id = "name";
+        name;
+        thread = Record.one("Thread");
+    }).register();
+    const store = await start();
+    const thread = store.Thread.insert("General");
+    const [john, marc] = store.Member.insert(["John", "Marc"]);
+    thread.members.add(john);
+    assert.deepEqual(logs, ["Thread.onAdd(John)"]);
+    logs = [];
+    thread.members.add(john);
+    assert.deepEqual(logs, []);
+    marc.thread = thread;
+    assert.deepEqual(logs, ["Thread.onAdd(Marc)"]);
+    logs = [];
+    thread.members.delete(marc);
+    assert.deepEqual(logs, ["Thread.onDelete(Marc)"]);
+    logs = [];
+    thread.members.delete(marc);
+    assert.deepEqual(logs, []);
+    john.thread = undefined;
+    assert.deepEqual(logs, ["Thread.onDelete(John)"]);
+});
+
+QUnit.test("Computed fields", async (assert) => {
+    (class Thread extends Record {
+        static id = "name";
+        name;
+        type = Record.attr("", {
+            compute() {
+                if (this.members.length === 0) {
+                    return "empty chat";
+                } else if (this.members.length === 1) {
+                    return "self-chat";
+                } else if (this.members.length === 2) {
+                    return "dm chat";
+                } else {
+                    return "group chat";
+                }
+            },
+        });
         admin = Record.one("Persona", {
             compute() {
                 return this.members[0];
@@ -130,11 +178,78 @@ QUnit.test("Computed relational field", async (assert) => {
     }).register();
     const store = await start();
     const thread = store.Thread.insert("General");
-    const [john, marc] = store.Persona.insert(["John", "Marc"]);
+    const [john, marc, antony] = store.Persona.insert(["John", "Marc", "Antony"]);
     Object.assign(thread, { members: [john, marc] });
     assert.ok(thread.admin.eq(john));
+    assert.strictEqual(thread.type, "dm chat");
     thread.members.delete(john);
     assert.ok(thread.admin.eq(marc));
+    assert.strictEqual(thread.type, "self-chat");
+    thread.members.unshift(antony, john);
+    assert.ok(thread.admin.eq(antony));
+    assert.strictEqual(thread.type, "group chat");
+});
+
+QUnit.test("Computed fields: lazy (default) vs. eager", async (assert) => {
+    let logs = [];
+    (class Thread extends Record {
+        static id = "name";
+        name;
+        computeType() {
+            if (this.members.length === 0) {
+                return "empty chat";
+            } else if (this.members.length === 1) {
+                return "self-chat";
+            } else if (this.members.length === 2) {
+                return "dm chat";
+            } else {
+                return "group chat";
+            }
+        }
+        typeLazy = Record.attr("", {
+            compute() {
+                logs.push("LAZY");
+                return this.computeType();
+            },
+        });
+        typeEager = Record.attr("", {
+            compute() {
+                logs.push("EAGER");
+                return this.computeType();
+            },
+            eager: true,
+        });
+        members = Record.many("Persona");
+    }).register();
+    (class Persona extends Record {
+        static id = "name";
+        name;
+    }).register();
+    const store = await start();
+    const thread = store.Thread.insert("General");
+    assert.deepEqual(logs, ["EAGER"]);
+    logs = [];
+    assert.strictEqual(thread.typeEager, "empty chat");
+    assert.deepEqual(logs, []);
+    assert.strictEqual(thread.typeLazy, "empty chat");
+    assert.deepEqual(logs, ["LAZY"]);
+    logs = [];
+    thread.members.add("John");
+    assert.deepEqual(logs, ["LAZY", "EAGER"]); // lazy-needed field are re-computed/sorted again at least once, because no track of "unread"
+    logs = [];
+    assert.strictEqual(thread.typeEager, "self-chat");
+    assert.deepEqual(logs, []);
+    thread.members.add("Antony");
+    assert.deepEqual(logs, ["EAGER"]);
+    logs = [];
+    assert.strictEqual(thread.typeEager, "dm chat");
+    assert.deepEqual(logs, []);
+    thread.members.add("Demo");
+    assert.deepEqual(logs, ["EAGER"]);
+    assert.strictEqual(thread.typeEager, "group chat");
+    logs = [];
+    assert.strictEqual(thread.typeLazy, "group chat");
+    assert.deepEqual(logs, ["LAZY"]);
 });
 
 QUnit.test("Trusted insert on html field with { html: true }", async (assert) => {
@@ -177,4 +292,53 @@ QUnit.test("Unshift preserves order", async (assert) => {
         thread.messages.map((msg) => msg.id),
         [7, 6, 5, 4, 3, 2, 1]
     );
+});
+
+QUnit.test("onAdd hook should see fully inserted data", async (assert) => {
+    (class Thread extends Record {
+        static id = "name";
+        name;
+        members = Record.many("Member", {
+            inverse: "thread",
+            onAdd: (member) =>
+                assert.step(`Thread.onAdd::${member.name}.${member.type}.${member.isAdmin}`),
+        });
+    }).register();
+    (class Member extends Record {
+        static id = "name";
+        name;
+        type;
+        isAdmin = Record.attr(false, {
+            compute() {
+                return this.type === "admin";
+            },
+        });
+        thread = Record.one("Thread");
+    }).register();
+    const store = await start();
+    const thread = store.Thread.insert("General");
+    thread.members.add({ name: "John", type: "admin" });
+    assert.verifySteps(["Thread.onAdd::John.admin.true"]);
+});
+
+QUnit.test("Can insert with relation as id, using relation as data object", async (assert) => {
+    (class User extends Record {
+        static id = "name";
+        name;
+        settings = Record.one("Settings");
+    }).register();
+    (class Settings extends Record {
+        static id = "user";
+        pushNotif;
+        user = Record.one("User", { inverse: "settings" });
+    }).register();
+    const store = await start();
+    store.Settings.insert([
+        { pushNotif: true, user: { name: "John" } },
+        { pushNotif: false, user: { name: "Paul" } },
+    ]);
+    assert.ok(store.User.get("John"));
+    assert.ok(store.User.get("John").settings.pushNotif);
+    assert.ok(store.User.get("Paul"));
+    assert.notOk(store.User.get("Paul").settings.pushNotif);
 });

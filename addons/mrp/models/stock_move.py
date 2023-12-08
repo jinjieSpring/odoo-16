@@ -287,6 +287,8 @@ class StockMove(models.Model):
     def write(self, vals):
         if self.env.context.get('force_manual_consumption'):
             vals['manual_consumption'] = True
+        if vals.get('manual_consumption'):
+            self.picked = True
         if 'product_uom_qty' in vals and 'move_line_ids' in vals:
             # first update lines then product_uom_qty as the later will unreserve
             # so possibly unlink lines
@@ -444,7 +446,7 @@ class StockMove(models.Model):
     def _get_backorder_move_vals(self):
         self.ensure_one()
         return {
-            'state': 'confirmed',
+            'state': 'draft' if self.state == 'draft' else 'confirmed',
             'reservation_date': self.reservation_date,
             'date_deadline': self.date_deadline,
             'manual_consumption': self._is_manual_consumption(),

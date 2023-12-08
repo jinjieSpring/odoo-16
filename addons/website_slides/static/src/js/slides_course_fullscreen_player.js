@@ -444,7 +444,7 @@
             ev.preventDefault();
             var $clipboardBtn = this.$('.o_clipboard_button');
             $clipboardBtn.tooltip({title: "Copied!", trigger: "manual", placement: "bottom"});
-            await browser.navigator.clipboard.writeText(this.$('.o_wslides_js_share_link')[0].innerText);    
+            await browser.navigator.clipboard.writeText(this.$('.o_wslides_js_share_link').val() || '');
             $clipboardBtn.tooltip('show');
             setTimeout(() => $clipboardBtn.tooltip("hide"), 800);
         },
@@ -668,7 +668,7 @@
                 $content.empty().append(renderToElement('website.slides.fullscreen.video.google_drive', {widget: this}));
             } else if (slide.category === 'article'){
                 var $wpContainer = $('<div>').addClass('o_wslide_fs_article_content bg-white block w-100 overflow-auto');
-                $(slide.htmlContent).appendTo($wpContainer);
+                $wpContainer.html(slide.htmlContent);
                 $content.append($wpContainer);
                 this.trigger_up('widgets_start_request', {
                     $target: $content,

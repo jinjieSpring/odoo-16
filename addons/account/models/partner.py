@@ -383,11 +383,11 @@ class ResPartner(models.Model):
               FROM res_partner partner
          LEFT JOIN account_move_line aml ON aml.partner_id = partner.id
               JOIN account_move move ON move.id = aml.move_id
-              JOIN res_company line_company ON line_company.id = line.company_id
+              JOIN res_company line_company ON line_company.id = aml.company_id
         RIGHT JOIN account_account acc ON aml.account_id = acc.id
              WHERE acc.account_type = %s
                AND NOT acc.deprecated
-               AND SPLIT_PART(line_company.parent_path, '/', 1):int == %s
+               AND SPLIT_PART(line_company.parent_path, '/', 1)::int = %s
                AND move.state = 'posted'
           GROUP BY aml.partner_id
             HAVING %s * COALESCE(SUM(aml.amount_residual), 0) {operator} %s''',
@@ -879,3 +879,11 @@ class ResPartner(models.Model):
                 if partner:
                     return partner
         return self.env['res.partner']
+
+    def _merge_method(self, destination, source):
+        """
+        Prevent merging partners that are linked to already hashed journal items.
+        """
+        if self.env['account.move.line'].sudo().search([('move_id.inalterable_hash', '!=', False), ('partner_id', 'in', source.ids)], limit=1):
+            raise UserError(_('Partners that are used in hashed entries cannot be merged.'))
+        return super()._merge_method(destination, source)
