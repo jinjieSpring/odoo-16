@@ -49,7 +49,7 @@ msgstr "Transfronterizo"
 #. module: payment_alipay
 #: model:ir.model.fields.selection,name:payment_alipay.selection__payment_provider__alipay_payment_method__express_checkout
 msgid "Express Checkout (only for Chinese merchants)"
-msgstr "Pago exprés (solo para comerciantes chinos)"
+msgstr "Pago rápido (solo para comerciantes chinos)"
 
 #. module: payment_alipay
 #: model:ir.model.fields,field_description:payment_alipay.field_payment_provider__alipay_md5_signature_key
@@ -109,6 +109,8 @@ msgid ""
 "This provider is deprecated.\n"
 "                    Consider disabling it and moving to <strong>Asiapay</strong>."
 msgstr ""
+"Este es un proveedor obsoleto.\n"
+"                    Considere deshabilitarlo y cambiar a <strong>Asiapay</strong>."
 
 #. module: payment_alipay
 #: model_terms:payment.provider,auth_msg:payment_alipay.payment_provider_alipay
