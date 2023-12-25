@@ -2266,6 +2266,13 @@ class AccountMove(models.Model):
             del vals['invoice_line_ids']
         return vals
 
+    def _stolen_move(self, vals):
+        for command in vals.get('line_ids', ()):
+            if command[0] == Command.LINK:
+                yield self.env['account.move.line'].browse(command[1]).move_id.id
+            if command[0] == Command.SET:
+                yield from self.env['account.move.line'].browse(command[2]).move_id.ids
+
     @api.model_create_multi
     def create(self, vals_list):
         if any('state' in vals and vals.get('state') == 'posted' for vals in vals_list):
@@ -2273,8 +2280,11 @@ class AccountMove(models.Model):
         container = {'records': self}
         with self._check_balanced(container):
             with self._sync_dynamic_lines(container):
-                moves = super().create([self._sanitize_vals(vals) for vals in vals_list])
-                container['records'] = moves
+                for vals in vals_list:
+                    self._sanitize_vals(vals)
+                stolen_moves = self.browse(set(move for vals in vals_list for move in self._stolen_move(vals)))
+                moves = super().create(vals_list)
+                container['records'] = moves | stolen_moves
             for move, vals in zip(moves, vals_list):
                 if 'tax_totals' in vals:
                     move.tax_totals = vals['tax_totals']
@@ -2317,7 +2327,8 @@ class AccountMove(models.Model):
             field = self._fields[fname]
             if field.compute and not field.readonly:
                 to_protect.append(field)
-        container = {'records': self}
+        stolen_moves = self.browse(set(move for move in self._stolen_move(vals)))
+        container = {'records': self | stolen_moves}
         with self.env.protecting(to_protect, self), self._check_balanced(container):
             with self._sync_dynamic_lines(container):
                 res = super(AccountMove, self.with_context(
@@ -3827,19 +3838,25 @@ class AccountMove(models.Model):
 
     def _notify_get_recipients_groups(self, msg_vals=None):
         groups = super()._notify_get_recipients_groups(msg_vals)
-        local_msg_vals = dict(msg_vals or {})
+        self.ensure_one()
+
         if self.move_type != 'entry':
-            # This allows partners added to the email list in the sending wizard to access this document.
-            for group_name, _group_method, group_data in groups:
-                if group_name == 'customer' and self._portal_ensure_token():
-                    access_link = self._notify_get_action_link(
-                        'view', **local_msg_vals, access_token=self.access_token)
-                    group_data.update({
-                        'has_button_access': True,
-                        'button_access': {
-                            'url': access_link,
-                        },
-                    })
+            local_msg_vals = dict(msg_vals or {})
+            self._portal_ensure_token()
+            access_link = self._notify_get_action_link('view', **local_msg_vals, access_token=self.access_token)
+
+            # Create a new group for partners that have been manually added as recipients.
+            # Those partners should have access to the invoice.
+            button_access = {'url': access_link} if access_link else {}
+            recipient_group = (
+                'additional_intended_recipient',
+                lambda pdata: pdata['id'] in local_msg_vals.get('partner_ids', []) and pdata['id'] != self.partner_id.id,
+                {
+                    'has_button_access': True,
+                    'button_access': button_access,
+                }
+            )
+            groups.insert(0, recipient_group)
 
         return groups
 

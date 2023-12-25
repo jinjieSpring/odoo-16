@@ -39,8 +39,8 @@
 # Joakim Weckman, 2023
 # Martin Trigaux, 2023
 # Tuomo Aura <tuomo.aura@web-veistamo.fi>, 2023
-# Jarmo Kortetjärvi <jarmo.kortetjarvi@gmail.com>, 2023
 # Konsta Aavaranta, 2023
+# Jarmo Kortetjärvi <jarmo.kortetjarvi@gmail.com>, 2023
 # Ossi Mantylahti <ossi.mantylahti@obs-solutions.fi>, 2023
 # 
 msgid ""
@@ -655,13 +655,6 @@ msgid ""
 msgstr ""
 "<i class = \"fa fa-ellipsis-v\" aria-label = \"Valinta\" rooli = \"img\" "
 "title = \"Valinta\" />"
-
-#. module: account
-#: model_terms:ir.ui.view,arch_db:account.account_journal_dashboard_kanban_view
-msgid ""
-"<i class=\"fa fa-exclamation-triangle\"/>\n"
-"                            Gaps in the sequence"
-msgstr "<i class=\"fa fa-exclamation-triangle\"/> Aukkoja sekvenssissä"
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.portal_invoice_page
@@ -6996,6 +6989,20 @@ msgstr "Voittotili valuttakurssierolle"
 #: model:ir.model.fields,field_description:account.field_account_reconcile_model_template__payment_tolerance_param
 msgid "Gap"
 msgstr "Väli"
+
+#. module: account
+#: model_terms:ir.ui.view,arch_db:account.account_journal_dashboard_kanban_view
+msgid ""
+"Gaps due to canceled invoices, deleted entries or manual errors in open "
+"period."
+msgstr ""
+"Aukot johtuvat perutuista laskuista, poistetuista kirjauksista tai käsin "
+"tehdyistä virheistä avoimessa jaksossa."
+
+#. module: account
+#: model_terms:ir.ui.view,arch_db:account.account_journal_dashboard_kanban_view
+msgid "Gaps in the sequence"
+msgstr "Aukkoja sekvenssissä."
 
 #. module: account
 #: model:ir.ui.menu,name:account.menu_finance_entries_generate_entries
@@ -15191,7 +15198,7 @@ msgstr "Tämä vienti kirjataan kirjauspäivänä: %(date)s"
 #: code:addons/account/static/src/components/account_move_list/account_move_list.js:0
 #, python-format
 msgid "This operation will create a gap in the sequence."
-msgstr "Tämä toiminto luo aukon sekvenssiin."
+msgstr "Tämä toiminto luo aukon järjestysnumerointiin."
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_invoice_send__auto_delete
