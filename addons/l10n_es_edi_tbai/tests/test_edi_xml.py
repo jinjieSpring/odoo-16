@@ -2,7 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from base64 import b64encode
-from datetime import datetime
+from datetime import datetime, date
 
 from freezegun import freeze_time
 from lxml import etree
@@ -23,7 +23,7 @@ class TestEdiTbaiXmls(TestEsEdiTbaiCommon):
         cls.out_invoice = cls.env['account.move'].create({
             'name': 'INV/01',
             'move_type': 'out_invoice',
-            'invoice_date': datetime.now(),
+            'invoice_date': date(2022, 1, 1),
             'partner_id': cls.partner_a.id,
             'invoice_line_ids': [(0, 0, {
                 'product_id': cls.product_a.id,
@@ -41,6 +41,81 @@ class TestEdiTbaiXmls(TestEsEdiTbaiCommon):
             xml_doc = self.edi_format._get_l10n_es_tbai_invoice_xml(self.out_invoice, cancel=False)[self.out_invoice]['xml_file']
             xml_doc.remove(xml_doc.find("Signature", namespaces=NS_MAP))
             xml_expected = etree.fromstring(super().L10N_ES_TBAI_SAMPLE_XML_POST)
+            self.assertXmlTreeEqual(xml_doc, xml_expected)
+
+    def test_xml_tree_post_multicurrency(self):
+        """Test of Customer Invoice XML. The invoice is not in company currency and has a line with a 100% discount"""
+
+        currency_usd = self.env.ref('base.USD')
+        currency_usd.active = True
+        date = str(self.out_invoice.invoice_date)
+        self.env['res.currency.rate'].create({
+            'name': date,
+            'company_id': self.company_data['company'].id,
+            'currency_id': currency_usd.id,
+            'rate': 0.5})
+        invoice = self.env['account.move'].create({
+            'name': 'INV/01',
+            'move_type': 'out_invoice',
+            'invoice_date': date,
+            'partner_id': self.partner_a.id,
+            'currency_id': currency_usd.id,
+            'invoice_line_ids': [
+                (0, 0, {
+                    'product_id': self.product_a.id,
+                    'price_unit': 123.00,
+                    'quantity': 5,
+                    'discount': 20.0,
+                    'tax_ids': [(6, 0, self._get_tax_by_xml_id('s_iva21b').ids)],
+                }),
+                (0, 0, {
+                    'product_id': self.product_a.id,
+                    'price_unit': 123.00,
+                    'quantity': 5,
+                    'discount': 100.0,
+                    'tax_ids': [(6, 0, self._get_tax_by_xml_id('s_iva21b').ids)],
+                }),
+            ],
+        })
+
+        with freeze_time(self.frozen_today):
+            xml_doc = self.edi_format._get_l10n_es_tbai_invoice_xml(invoice, cancel=False)[invoice]['xml_file']
+            xml_doc.remove(xml_doc.find("Signature", namespaces=NS_MAP))
+            xml_expected_base = etree.fromstring(super().L10N_ES_TBAI_SAMPLE_XML_POST)
+            xpath = """
+                <xpath expr="//DetallesFactura" position="replace">
+                    <DetallesFactura>
+                      <IDDetalleFactura>
+                          <DescripcionDetalle>producta</DescripcionDetalle>
+                          <Cantidad>5.00000000</Cantidad>
+                          <ImporteUnitario>246.00000000</ImporteUnitario>
+                          <Descuento>246.00000000</Descuento>
+                          <ImporteTotal>1190.64000000</ImporteTotal>
+                      </IDDetalleFactura>
+                      <IDDetalleFactura>
+                          <DescripcionDetalle>producta</DescripcionDetalle>
+                          <Cantidad>5.00000000</Cantidad>
+                          <ImporteUnitario>246.00000000</ImporteUnitario>
+                          <Descuento>1230.00000000</Descuento>
+                          <ImporteTotal>0.00000000</ImporteTotal>
+                      </IDDetalleFactura>
+                    </DetallesFactura>
+                </xpath>
+                <xpath expr="//ImporteTotalFactura" position="replace">
+                    <ImporteTotalFactura>1190.64</ImporteTotalFactura>
+                </xpath>
+                <xpath expr="//DesgloseIVA" position="replace">
+                    <DesgloseIVA>
+                      <DetalleIVA>
+                        <BaseImponible>984.00</BaseImponible>
+                        <TipoImpositivo>21.00</TipoImpositivo>
+                        <CuotaImpuesto>206.64</CuotaImpuesto>
+                        <OperacionEnRecargoDeEquivalenciaORegimenSimplificado>N</OperacionEnRecargoDeEquivalenciaORegimenSimplificado>
+                      </DetalleIVA>
+                    </DesgloseIVA>
+                </xpath>
+            """
+            xml_expected = self.with_applied_xpath(xml_expected_base, xpath)
             self.assertXmlTreeEqual(xml_doc, xml_expected)
 
     def test_xml_tree_in_post(self):

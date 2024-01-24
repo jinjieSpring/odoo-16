@@ -603,15 +603,12 @@ QUnit.module("Views", (hooks) => {
         triggerHotkey("control+k");
         await nextTick();
 
-        assert.deepEqual(
-            getNodesTextContent(target.querySelectorAll(".o_command_hotkey")),
-            [
-                "NewALT + C",
-                "ActionsALT + U",
-                "Search...ALT + Q",
-                "Toggle search panelALT + SHIFT + Q"
-            ]
-        );
+        assert.deepEqual(getNodesTextContent(target.querySelectorAll(".o_command_hotkey")), [
+            "NewALT + C",
+            "ActionsALT + U",
+            "Search...ALT + Q",
+            "Toggle search panelALT + SHIFT + Q",
+        ]);
     });
 
     QUnit.test('list with delete="0"', async function (assert) {
@@ -1029,10 +1026,15 @@ QUnit.module("Views", (hooks) => {
                 <tree>
                     <header>
                         <button name="display" type="object" class="display" string="display" display="always"/>
+                        <button name="display" type="object" class="display_invisible" string="invisible 1" display="always" invisible="1"/>
+                        <button name="display" type="object" class="display_invisible" string="invisible context" display="always" invisible="context.get('a')"/>
                         <button name="default-selection" type="object" class="default-selection" string="default-selection"/>
                     </header>
                     <field name="foo" />
                 </tree>`,
+                context: {
+                    a: true,
+                },
             });
             let cpButtons = getVisibleButtons(target);
             assert.deepEqual(
@@ -19827,5 +19829,29 @@ QUnit.module("Views", (hooks) => {
         assert.containsNone(target, ".o_view_nocontent");
         assert.containsOnce(target, ".o_data_row");
         assert.containsOnce(target, ".o_data_row.o_selected_row");
+    });
+
+    QUnit.test("Adding new record in list view with open form view button", async function (assert) {
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: '<tree editable="top" open_form_view="1"><field name="foo"/></tree>',
+            selectRecord: (resId, options) => {
+                assert.step(`switch to form - resId: ${resId} activeIds: ${options.activeIds}`);
+            },
+        });
+
+        await clickAdd();
+        assert.containsN(
+            target,
+            "td.o_list_record_open_form_view",
+            5,
+            "button to open form view should be present on each row"
+        );
+
+        await editInput(target, ".o_field_widget[name=foo] input", "new");
+        await click(target.querySelector("td.o_list_record_open_form_view"));
+        assert.verifySteps(["switch to form - resId: 5 activeIds: 5,1,2,3,4"]);
     });
 });

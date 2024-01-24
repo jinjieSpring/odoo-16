@@ -260,6 +260,22 @@ QUnit.test("Trusted insert on html field with { html: true }", async (assert) =>
     assert.strictEqual(world.body, "<p>world</p>");
 });
 
+QUnit.test("(Un)trusted insertion is applied even with same field value", async (assert) => {
+    (class Message extends Record {
+        static id = "id";
+        id;
+        body = Record.attr("", { html: true });
+    }).register();
+    const store = await start();
+    const rawMessage = { id: 1, body: "<p>hello</p>" };
+    let message = store.Message.insert(rawMessage);
+    assert.notOk(message.body instanceof markup("").constructor);
+    message = store.Message.insert(rawMessage, { html: true });
+    assert.ok(message.body instanceof markup("").constructor);
+    message = store.Message.insert(rawMessage);
+    assert.notOk(message.body instanceof markup("").constructor);
+});
+
 QUnit.test("Unshift preserves order", async (assert) => {
     (class Message extends Record {
         static id = "id";
@@ -581,4 +597,21 @@ QUnit.test("lazy sort should re-sort while they are observed", async (assert) =>
     assert.verifySteps(["render 1,2"]);
     message.sequence = 10;
     assert.verifySteps(["render 2,1"]);
+});
+
+QUnit.test("store updates can be observed", async (assert) => {
+    const store = await start();
+    function onUpdate() {
+        assert.step(`abc:${reactiveStore.abc}`);
+    }
+    const rawStore = toRaw(store)._raw;
+    const reactiveStore = reactive(store, onUpdate);
+    onUpdate();
+    assert.verifySteps(["abc:undefined"]);
+    store.abc = 1;
+    assert.verifySteps(["abc:1"], "observable from makeStore");
+    rawStore._store.abc = 2;
+    assert.verifySteps(["abc:2"], "observable from record._store");
+    rawStore.Model.store.abc = 3;
+    assert.verifySteps(["abc:3"], "observable from Model.store");
 });

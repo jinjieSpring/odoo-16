@@ -4098,6 +4098,26 @@ class TestAccountMoveReconcile(AccountTestInvoicingCommon):
         self.assertFalse(line_c.matching_number)
         self.assertFalse(line_d.matching_number)
 
+    def test_matching_loop(self):
+        currency = self.env.company.currency_id
+        wrong_credit = self.create_line_for_reconciliation(-500, -500, currency, '2016-01-01')
+        debit_a = self.create_line_for_reconciliation(1000, 1000, currency, '2016-01-01')
+        credit_a = self.create_line_for_reconciliation(-1000, -1000, currency, '2016-01-01')
+        debit_b = self.create_line_for_reconciliation(1000, 1000, currency, '2016-01-01')
+        credit_b = self.create_line_for_reconciliation(-1000, -1000, currency, '2016-01-01')
+        (wrong_credit + debit_a).reconcile()
+        (debit_a + credit_a).reconcile()
+        wrong_credit.remove_move_reconcile()  # now there is an open amount on both the payment and the invoice
+        (credit_a + debit_b).reconcile()
+        (debit_b + credit_b).reconcile()
+        # Everything is reconciled but some amounts are still open
+        self.assertEqual(len(set((debit_a + debit_b + credit_a + credit_b).mapped('matching_number'))), 1)
+        self.assertFalse(all(aml.amount_residual == 0 for aml in (debit_a, debit_b, credit_a, credit_b)))
+
+        # Now this should create a loop, it should still work, and the residual amounts should now reach 0
+        (credit_b + debit_a).reconcile()
+        self.assertTrue(all(aml.amount_residual == 0 for aml in (debit_a, debit_b, credit_a, credit_b)))
+
     def test_caba_mix_reconciliation(self):
         """ Test the reconciliation of tax lines (when using a reconcilable tax account)
         for cases mixing taxes exigible on payment and on invoices.
@@ -4793,3 +4813,40 @@ class TestAccountMoveReconcile(AccountTestInvoicingCommon):
         (line_1 + line_4).reconcile()
         self.assertRegex(line_1.matching_number, r'^\d+')
         self.assertTrue(line_1.full_reconcile_id)
+
+    def test_reconcile_payment_custom_rate(self):
+        """When reconciling a payment we want to take the accounting rate and not the odoo rate.
+        Most likely the payment information are derived from information of the bank, therefore have
+        the relevant rate.
+        """
+        company_currency = self.company_data['currency']
+        foreign_currency = self.currency_data['currency']
+
+        invoice = self.env['account.move'].create({
+            'move_type': 'out_invoice',
+            'invoice_date': '2017-01-01',
+            'date': '2017-01-01',
+            'partner_id': self.partner_a.id,
+            'currency_id': company_currency.id,
+            'invoice_line_ids': [Command.create({
+                'product_id': self.product_a.id,
+                'price_unit': 400.0,
+                'tax_ids': [],
+            })],
+        })
+        invoice.action_post()
+
+        payment = self.env['account.payment'].create({
+            'date': invoice.date,
+            'amount': 800.0,
+            'currency_id': foreign_currency.id,
+            'partner_id': self.partner_a.id,
+        })
+        payment.action_post()
+        # unlink the rate to simulate a custom rate on the payment
+        self.env['res.currency.rate'].search([('currency_id', '=', foreign_currency.id)]).unlink()
+
+        lines_to_reconcile = (invoice + payment.move_id).line_ids.filtered(lambda x: x.account_id.account_type == 'asset_receivable')
+        lines_to_reconcile.reconcile()
+
+        self.assertTrue(all(lines_to_reconcile.mapped('reconciled')), "All lines should be fully reconciled")

@@ -765,6 +765,60 @@ QUnit.module("Views", (hooks) => {
         assert.containsOnce(target, ".modal .o_form_view .o_field_widget[name=p]");
     });
 
+    QUnit.test(
+        "form with o2m having a selection field with fieldDependencies",
+        async function (assert) {
+            class MyField extends CharField {}
+            fieldRegistry.add("my_widget", {
+                component: MyField,
+                fieldDependencies: [{ name: "selection", type: "selection" }],
+            });
+
+            serverData.models.partner.fields.o2m = { type: "one2many", relation: "partner_type" };
+            serverData.models.partner.records[1].o2m = [];
+            serverData.views = {
+                "partner_type,false,form": `<form><field name="display_name" /></form>`,
+            };
+
+            serverData.models.partner_type.fields.selection = {
+                type: "selection",
+                selection: [
+                    ["a", "A"],
+                    ["b", "B"],
+                ],
+            };
+            serverData.models.partner_type.records = [
+                {
+                    id: 1,
+                    display_name: "first partner_type",
+                    selection: false,
+                },
+            ];
+
+            serverData.models.partner.records[1].o2m = [1];
+            await makeView({
+                type: "form",
+                resModel: "partner",
+                serverData,
+                arch: `
+                <form>
+                    <field name="o2m">
+                        <tree>
+                            <field name="display_name" widget="my_widget"/>
+                        </tree>
+                    </field>
+                </form>`,
+                resId: 2,
+            });
+
+            assert.containsOnce(target, ".o_field_widget[name=o2m] .o_data_row");
+            await click(
+                target.querySelector(".o_field_widget[name=o2m] .o_field_x2many_list_row_add a")
+            );
+            assert.containsOnce(target, ".modal .o_form_view .o_field_widget[name=display_name]");
+        }
+    );
+
     QUnit.test("fieldDependencies are readonly by default", async function (assert) {
         class MyField extends CharField {}
         fieldRegistry.add("my_widget", {
@@ -8208,6 +8262,30 @@ QUnit.module("Views", (hooks) => {
         );
     });
 
+    QUnit.test("on a touch screen, fields are not focused", async function (assert) {
+        // patch matchMedia to alter hasTouch value
+        patchWithCleanup(browser, {
+            matchMedia: (media) => {
+                if (media === "(pointer:coarse)") {
+                    return { matches: true };
+                }
+                this._super();
+            },
+        });
+
+        await makeView({
+            type: "form",
+            resModel: "partner",
+            serverData,
+            arch: '<form><field name="foo"/><field name="bar"/></form>',
+        });
+
+        assert.notEqual(
+            document.activeElement,
+            target.querySelector('.o_field_widget[name="foo"] input')
+        );
+    });
+
     QUnit.test(
         "no autofocus with disable_autofocus option [REQUIRE FOCUS]",
         async function (assert) {
@@ -14420,4 +14498,47 @@ QUnit.module("Views", (hooks) => {
             );
         }
     );
+
+    QUnit.test("nested form view doesn't parasite the main one", async (assert) => {
+        await makeView({
+            type: "form",
+            resModel: "partner",
+            serverData,
+            arch: `
+                <form>
+                    <field name="p">
+                        <form>
+                            <div name="button_box" invisible="crash == True">
+                                <button name="somename" type="object" />
+                            </div>
+                            <field name="p">
+                                <form>
+                                    <footer>
+                                        <button name="someothername" type="object" />
+                                    </footer>
+                                </form>
+                                <tree><field name="display_name" /></tree>
+                            </field>
+                            <footer>
+                                <button name="somename" type="object" />
+                            </footer>
+                        </form>
+                        <tree>
+                            <field name="display_name" />
+                        </tree>
+                    </field>
+                </form>`,
+            resId: 2,
+        });
+        assert.containsOnce(target, ".o_form_view");
+        assert.containsNone(target, ".o-form-buttonbox");
+        await click(target, ".o_field_x2many_list_row_add a");
+        assert.containsOnce(target, ".modal .modal-footer button[name='somename']");
+        assert.containsNone(target, ".modal .modal-footer button[name='someothername']");
+        await click(target, ".modal .o_field_x2many_list_row_add a");
+        assert.containsOnce(
+            target,
+            ".modal:not(.o_inactive_modal) .modal-footer button[name='someothername']"
+        );
+    });
 });

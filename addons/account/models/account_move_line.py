@@ -261,6 +261,7 @@ class AccountMoveLine(models.Model):
     matching_number = fields.Char(
         string="Matching #",
         copy=False,
+        index='btree',
         help="Matching number for this line, 'P' if it is only partially reconcile, or the name of "
              "the full reconcile if it exists.",
     )  # can also start with `I` for imports: see `_reconcile_marked`
@@ -880,7 +881,7 @@ class AccountMoveLine(models.Model):
             tax_ids = filtered_supplier_taxes_id or self.account_id.tax_ids.filtered(lambda tax: tax.type_tax_use == 'purchase')
 
         else:
-            tax_ids = self.account_id.tax_ids
+            tax_ids = False if self.env.context.get('skip_computed_taxes') else self.account_id.tax_ids
 
         if self.company_id and tax_ids:
             tax_ids = tax_ids.filtered_domain(company_domain)
@@ -1751,12 +1752,12 @@ class AccountMoveLine(models.Model):
             return aml.move_id.payment_id or aml.move_id.statement_line_id
 
         def get_odoo_rate(aml, other_aml, currency):
+            if other_aml and not is_payment(aml) and is_payment(other_aml):
+                return get_accounting_rate(other_aml, currency)
             if aml.move_id.is_invoice(include_receipts=True):
                 exchange_rate_date = aml.move_id.invoice_date
             else:
                 exchange_rate_date = aml._get_reconciliation_aml_field_value('date', shadowed_aml_values)
-            if other_aml and not is_payment(aml) and is_payment(other_aml):
-                exchange_rate_date = other_aml._get_reconciliation_aml_field_value('date', shadowed_aml_values)
             return currency._get_conversion_rate(aml.company_currency_id, currency, aml.company_id, exchange_rate_date)
 
         def get_accounting_rate(aml, currency):
@@ -2514,7 +2515,6 @@ class AccountMoveLine(models.Model):
                 skip_invoice_sync=True,
                 skip_invoice_line_sync=True,
                 skip_account_move_synchronization=True,
-                check_move_validity=False,
             )\
             .create(full_reconcile_values_list)
 
@@ -3046,23 +3046,11 @@ class AccountMoveLine(models.Model):
         return ids
 
     def _all_reconciled_lines(self):
-        reconciliation_lines = self.filtered(lambda x: x.account_id.reconcile or x.account_id.account_type in ('asset_cash', 'liability_credit_card'))
-        self.env['account.partial.reconcile'].flush_model()
-        self.env.cr.execute("""
-            WITH RECURSIVE partials (current_id) AS (
-                    SELECT line.id
-                      FROM account_move_line line
-                     WHERE id = ANY(%s)
-
-                                                UNION
-
-                    SELECT CASE WHEN partial.debit_move_id = p.current_id THEN partial.credit_move_id ELSE partial.debit_move_id END
-                      FROM partials p
-                      JOIN account_partial_reconcile partial ON partial.debit_move_id = p.current_id OR partial.credit_move_id = p.current_id
-            )
-            SELECT current_id FROM partials;
-        """, [reconciliation_lines.ids])
-        return self.browse(r[0] for r in self.env.cr.fetchall())
+        reconciled = self
+        matching_numbers = [n for n in set(self.mapped('matching_number')) if n]
+        if matching_numbers:
+            reconciled |= self.search([('matching_number', 'in', matching_numbers)])
+        return reconciled
 
     def _get_attachment_domains(self):
         self.ensure_one()

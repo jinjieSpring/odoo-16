@@ -93,7 +93,7 @@ class ThreadController(http.Controller):
                 'last_used': datetime.now(),
                 'ids': canned_response_ids,
             })
-        thread = request.env[thread_model].search([("id", "=", thread_id)])
+        thread = request.env[thread_model].with_context(active_test=False).search([("id", "=", thread_id)])
         if not thread:
             raise NotFound()
         if "body" in post_data:
@@ -122,6 +122,7 @@ class ThreadController(http.Controller):
             raise NotFound()
         if not message_sudo.model or not message_sudo.res_id:
             raise NotFound()
+        body = Markup(body) if body else body  # may contain HTML such as @mentions
         guest.env[message_sudo.model].browse([message_sudo.res_id])._message_update_content(
             message_sudo, body, attachment_ids=attachment_ids, partner_ids=partner_ids
         )

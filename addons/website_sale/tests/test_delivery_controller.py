@@ -2,8 +2,8 @@
 
 from unittest.mock import patch
 
-from odoo.exceptions import UserError
 from odoo.fields import Command
+from odoo.exceptions import UserError
 from odoo.tests import tagged
 
 from odoo.addons.payment.tests.common import PaymentCommon

@@ -4,6 +4,7 @@
 # 
 # Translators:
 # Wil Odoo, 2023
+# Rasareeyar Lappiam, 2024
 # 
 msgid ""
 msgstr ""
@@ -11,7 +12,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-26 21:55+0000\n"
 "PO-Revision-Date: 2023-10-26 23:09+0000\n"
-"Last-Translator: Wil Odoo, 2023\n"
+"Last-Translator: Rasareeyar Lappiam, 2024\n"
 "Language-Team: Thai (https://app.transifex.com/odoo/teams/41243/th/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -51,7 +52,7 @@ msgstr ""
 #. module: website_hr_recruitment
 #: model_terms:ir.ui.view,arch_db:website_hr_recruitment.job_pages_kanban_view
 msgid "<i class=\"fa fa-globe me-1\" title=\"Website\"/>"
-msgstr ""
+msgstr "<i class=\"fa fa-globe me-1\" title=\"เว็บไซต์\"/>"
 
 #. module: website_hr_recruitment
 #: model_terms:ir.ui.view,arch_db:website_hr_recruitment.detail
@@ -423,6 +424,13 @@ msgid ""
 "                                                feedback</strong> or if you don't get news from me\n"
 "                                                quickly enough."
 msgstr ""
+"โดยปกติ <strong>ฉันจะตอบใบสมัครภายใน 3 วัน</strong>\n"
+"                                                <br/><br/>\n"
+"                                                ขั้นตอนต่อไปคือการโทรหรือการประชุมในสำนักงานของเรา\n"
+"                                                <br/><br/>\n"
+"                                                โปรด<strong>ติดต่อฉันหากคุณต้องการได้การตอบรับที่เร็วขึ้น\n"
+"                                                </strong> หรือหากคุณไม่ได้รับการติดต่อจากฉัน\n"
+"                                                ที่เร็วพอ"
 
 #. module: website_hr_recruitment
 #: model_terms:ir.ui.view,arch_db:website_hr_recruitment.apply
@@ -497,7 +505,7 @@ msgstr "เป็นผู้นำในด้านวงจรการขา
 #: code:addons/website_hr_recruitment/static/src/js/website_hr_recruitment_editor.js:0
 #, python-format
 msgid "LinkedIn Profile"
-msgstr ""
+msgstr "โปรไฟล์ LinkedIn"
 
 #. module: website_hr_recruitment
 #: model_terms:ir.ui.view,arch_db:website_hr_recruitment.default_website_description
@@ -585,6 +593,9 @@ msgid ""
 "        Strong communication, problem-solving, and work ethic required.\n"
 "        Adaptability, initiative, and willingness to learn are valued."
 msgstr ""
+"ปฏิบัติตามความรับผิดชอบที่ได้รับมอบหมาย ทำงานร่วมกับสมาชิกในทีม และปฏิบัติตามนโยบายของบริษัท\n"
+"        ต้องมีการสื่อสารที่ดี การแก้ปัญหา และมีจรรยาบรรณในการทำงาน\n"
+"        ความสามารถในการปรับตัว ความคิดริเริ่ม และความเต็มใจที่จะเรียนรู้เป็นสิ่งที่มีคุณค่า"
 
 #. module: website_hr_recruitment
 #: model_terms:ir.ui.view,arch_db:website_hr_recruitment.default_website_description
@@ -645,7 +656,7 @@ msgstr "ความรับผิดชอบและความท้าท
 #: model_terms:ir.ui.view,arch_db:website_hr_recruitment.job_filter_by_countries
 #: model_terms:ir.ui.view,arch_db:website_hr_recruitment.job_filter_by_offices
 msgid "Remote"
-msgstr ""
+msgstr "ระยะไกล"
 
 #. module: website_hr_recruitment
 #: model_terms:ir.ui.view,arch_db:website_hr_recruitment.default_website_description
@@ -660,7 +671,7 @@ msgstr "จำกัดการเผยแพร่ในเว็บไซต
 #. module: website_hr_recruitment
 #: model_terms:ir.ui.view,arch_db:website_hr_recruitment.job_pages_kanban_view
 msgid "SEO Optimized"
-msgstr ""
+msgstr "ปรับ SEO ให้เหมาะสม"
 
 #. module: website_hr_recruitment
 #: model:ir.model.fields,field_description:website_hr_recruitment.field_hr_job__is_seo_optimized
@@ -882,7 +893,7 @@ msgstr "เกล็ดขนมปัง"
 #. module: website_hr_recruitment
 #: model_terms:ir.ui.view,arch_db:website_hr_recruitment.apply
 msgid "e.g. https://www.linkedin.com/in/fpodoo/"
-msgstr ""
+msgstr "เช่น https://www.linkedin.com/in/fpodoo/"
 
 #. module: website_hr_recruitment
 #: model_terms:ir.ui.view,arch_db:website_hr_recruitment.job_right_side_bar

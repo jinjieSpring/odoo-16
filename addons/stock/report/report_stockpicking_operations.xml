@@ -109,7 +109,7 @@
                                 </thead>
                                 <tbody>
                                     <!-- In case you come across duplicated lines, ask NIM or LAP -->
-                                    <tr t-foreach="o.move_line_ids_without_package" t-as="ml">
+                                    <tr t-foreach="o.move_line_ids_without_package.sorted(lambda ml: (ml.location_id.complete_name, ml.location_dest_id.complete_name))" t-as="ml">
                                         <td>
                                             <span t-field="ml.product_id.display_name">Customizable Desk</span><br/>
                                             <span t-field="ml.product_id.description_picking">Description on transfer</span>
@@ -122,7 +122,7 @@
                                                     (<span t-field="ml.product_packaging_qty" t-options='{"widget": "integer"}'/> <span t-field="ml.move_id.product_packaging_id.name"/>)
                                                 </span>
                                                 <span t-if="o.state == 'done'">
-                                                    (<span t-field="ml.product_packaging_quantity" t-options='{"widget": "integer"}'/> <span t-field="ml.move_id.product_packaging_id.name"/>)
+                                                    (<span t-field="ml.product_packaging_qty" t-options='{"widget": "integer"}'/> <span t-field="ml.move_id.product_packaging_id.name"/>)
                                                 </span>
                                             </span>
                                         </td>

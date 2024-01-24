@@ -2365,12 +2365,9 @@ msgstr "Alatunnisteet"
 #: model_terms:ir.ui.view,arch_db:mass_mailing.s_company_team
 msgid ""
 "Founder and chief visionary, Tony is the driving force behind the company. "
-"He lovesto keep his hands full by participating in the development of the "
+"He loves to keep his hands full by participating in the development of the "
 "software, marketing, and customer experience strategies."
 msgstr ""
-"Perustaja ja päävisionääri Tony on yrityksen kantava voima. Hän rakastaa "
-"pitää kädet täynnä työtä osallistumalla ohjelmistojen, markkinoinnin ja "
-"asiakaskokemusstrategioiden kehittämiseen."
 
 #. module: mass_mailing
 #: model:ir.model.fields,field_description:mass_mailing.field_mailing_trace_report__email_from
@@ -4749,10 +4746,8 @@ msgstr "Suodatinalue ei ole voimassa tämän vastaanottajan kohdalla."
 #: model:ir.model.fields,help:mass_mailing.field_mailing_list__is_public
 msgid ""
 "The mailing list can be accessible by recipients in the subscription "
-"management page to allows them to update their preferences."
+"management page to allow them to update their preferences."
 msgstr ""
-"Vastaanottajat pääsevät postituslistalle tilausten hallintasivulla, jotta he"
-" voivat päivittää asetuksiaan."
 
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.s_text_block

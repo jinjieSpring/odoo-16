@@ -7,7 +7,7 @@ from freezegun import freeze_time
 from unittest.mock import patch
 
 import odoo
-from odoo import fields
+from odoo import fields, exceptions, Command
 from odoo.tests import Form
 from odoo.tests.common import TransactionCase, tagged
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon
@@ -2713,6 +2713,59 @@ class TestStockValuationWithCOA(AccountTestInvoicingCommon):
             {'date': one_day_ago,   'debit': 25,    'credit': 0,    'reconciled': True},
         ])
 
+    def test_purchase_with_backorders_and_return_and_price_changes(self):
+        """
+        When you have multiples receipts associated to a Purchase Order, with 1 bill for each receipt,
+            then each bill has an impact on its own receipt only, hence if I modify the price on Bill01,
+            it will not have an effect on Receipt02.
+        However, if we create a return for a portion of a receipt,
+            the invoiced_qty will be higher than the received_qty. This could be iterpreted has the bill
+            being done before the receipt, which is not the case.
+        In this test, we ensure that if the Control Policy is 'On received quantities' (procure_method = 'receive'),
+            we keep using the purchase price for the svl unit_cost even when invoiced_qty > received_qty.
+        """
+        self.product1.categ_id.property_cost_method = 'average'
+        self.product1.categ_id.property_valuation = 'real_time'
+        self.product1.purchase_method = 'receive'  # ControlPolicy
+
+        po_form = Form(self.env['purchase.order'])
+        po_form.partner_id = self.partner_id
+        with po_form.order_line.new() as po_line:
+            po_line.product_id = self.product1
+            po_line.product_qty = 100
+            po_line.price_unit = 10.0
+        po = po_form.save()
+        po.button_confirm()
+
+        def _validate_backorder(po, qty):
+            picking = po.picking_ids.filtered(lambda p: p.state not in ['done', 'draft', 'cancel']).ensure_one()
+            picking.move_ids.move_line_ids.quantity = qty
+            picking.button_validate()
+            # Validate picking with backorder
+            res_dict = picking.button_validate()
+            wizard = self.env[(res_dict.get('res_model'))].browse(res_dict.get('res_id')).with_context(res_dict['context'])
+            wizard.process()
+            return picking
+
+        receipt01 = _validate_backorder(po, 30)
+        self.assertEqual(receipt01.move_ids.stock_valuation_layer_ids.ensure_one().value, 300.0)
+        bill01 = self._bill(po, price=12)
+        self.assertEqual(bill01.invoice_line_ids.stock_valuation_layer_ids.ensure_one().value, 60.0)
+
+        receipt02 = _validate_backorder(po, 30)
+        # Even though Bill01 updated the price for Receipt01, the layers of Receipt02 are not impacted.
+        self.assertEqual(receipt02.move_ids.stock_valuation_layer_ids.ensure_one().value, 300.0)
+        bill02 = self._bill(po, price=13)
+        self.assertEqual(bill02.invoice_line_ids.stock_valuation_layer_ids.ensure_one().value, 90.0)
+
+        # With the return, the invoiced qty > received qty,
+        # this must NOT be interpreted as the invoice done before the picking (purchase_method = 'purchase')
+        self._return(receipt02, qty=10)
+
+        receipt03 = _validate_backorder(po, 30)
+        # Like Receipt02 layers, Receipt03 layers should not be impacted by the previous price changes.
+        self.assertEqual(receipt03.move_ids.stock_valuation_layer_ids.ensure_one().value, 300.0)
+
     def test_invoice_on_ordered_qty_with_backorder_and_different_currency_automated(self):
         """Create a PO with currency different from the company currency. Set the
         product to be invoiced on ordered quantities. Receive partially the products
@@ -2806,3 +2859,130 @@ class TestStockValuationWithCOA(AccountTestInvoicingCommon):
         move2.picked = True
         picking2.button_validate()
         self.assertAlmostEqual(move2.stock_valuation_layer_ids.unit_cost, price_unit_USD)
+
+    def test_pdiff_date_usererror(self):
+        """
+        Test pdiff operations complete without errors in case we don't have
+        the bill date. A UserError is raised as usual.
+        """
+        self.product1.product_tmpl_id.categ_id.property_cost_method = 'average'
+
+        po = self.env['purchase.order'].create({
+            'partner_id': self.partner_id.id,
+            'order_line': [
+                (0, 0, {
+                    'name': self.product1.name,
+                    'product_id': self.product1.id,
+                    'product_qty': 1.0,
+                    'product_uom': self.product1.uom_po_id.id,
+                    'price_unit': 100.0,
+                    'taxes_id': False,
+                }),
+            ],
+        })
+        po.button_confirm()
+
+        receipt = po.picking_ids
+        receipt.move_ids.move_line_ids.quantity = 1.0
+        receipt.button_validate()
+
+        action = po.action_create_invoice()
+        bill = self.env["account.move"].browse(action["res_id"])
+        with self.assertRaises(exceptions.UserError):
+            bill.action_post()
+
+    def test_bill_date_exchange_rate_for_price_diff_amls(self):
+        """Ensure sure that the amls for price difference uses the bill date exchange rate. They originally used today's rate
+        which meant that their value depended on the day the bill was posted (as it is when the price diff amls are created).
+        """
+        company = self.env.user.company_id
+        company.anglo_saxon_accounting = True
+        company.currency_id = self.usd_currency
+
+        self.product1.categ_id.property_cost_method = 'fifo'
+        self.product1.categ_id.property_valuation = 'real_time'
+
+        po_date = '2023-10-01'
+        bill_date = '2023-11-01'
+        today = fields.Date.today()
+
+        po_rate = 2.0
+        bill_rate = 3.0
+        today_rate = 4.0
+
+        self.env['res.currency.rate'].search([]).unlink()
+        self.env['res.currency.rate'].create([
+            {
+                'name': po_date,
+                'rate': po_rate,
+                'currency_id': self.eur_currency.id,
+                'company_id': company.id,
+            },
+            {
+                'name': bill_date,
+                'rate': bill_rate,
+                'currency_id': self.eur_currency.id,
+                'company_id': company.id,
+            },
+            {
+                'name': today,
+                'rate': today_rate,
+                'currency_id': self.eur_currency.id,
+                'company_id': company.id,
+            },
+        ])
+
+        with freeze_time(po_date):
+            purchase_price = 90
+            po = self.env['purchase.order'].create({
+                'partner_id': self.partner_id.id,
+                'currency_id': self.eur_currency.id,
+                'order_line': [
+                    Command.create({
+                        'product_id': self.product1.id,
+                        'product_qty': 1.0,
+                        'price_unit': purchase_price,
+                        'taxes_id': False,
+                    }),
+                ]
+            })
+            po.button_confirm()
+
+            receipt = po.picking_ids
+            receipt.move_line_ids.quantity = 1
+            receipt.button_validate()
+
+        warehouse = self.env['stock.warehouse'].search([('company_id', '=', company.id)], limit=1)
+        stock_location = warehouse.lot_stock_id
+        customer_location = self.env.ref('stock.stock_location_customers')
+        delivery = self.env['stock.picking'].create({
+            'location_id': stock_location.id,
+            'location_dest_id': customer_location.id,
+            'picking_type_id': warehouse.out_type_id.id,
+            'move_ids': [
+                Command.create({
+                    'name': self.product1.name,
+                    'product_id': self.product1.id,
+                    'product_uom_qty': 1.0,
+                    'location_id': stock_location.id,
+                    'location_dest_id': customer_location.id,
+                })
+            ]
+        })
+        delivery.action_confirm()
+        delivery.move_ids.quantity = 1.0
+        delivery.button_validate()
+
+        po.action_create_invoice()
+        bill = po.invoice_ids
+        bill.invoice_date = bill_date
+        bill.action_post()
+
+        # Check that we have price difference amls
+        self.assertEqual(len(bill.line_ids), 4)
+
+        # Check that all the amls use the bill date exchange rate
+        self.assertEqual(
+            [self.eur_currency._convert(line.amount_currency, company.currency_id, company, bill_date) for line in bill.line_ids],
+            [line.balance for line in bill.line_ids]
+        )

@@ -343,7 +343,7 @@ class WebsiteSale(payment_portal.PaymentPortal):
 
         filter_by_price_enabled = website.is_view_active('website_sale.filter_products_price')
         if filter_by_price_enabled:
-            company_currency = website.company_id.currency_id
+            company_currency = website.company_id.sudo().currency_id
             conversion_rate = request.env['res.currency']._get_conversion_rate(
                 company_currency, website.currency_id, request.website.company_id, fields.Date.today())
         else:
@@ -1343,7 +1343,7 @@ class WebsiteSale(payment_portal.PaymentPortal):
             'account_on_checkout': request.website.account_on_checkout,
             'is_public_user': is_public_user,
             'is_public_order': order._is_public_order(),
-            'use_same': is_public_user or ('use_same' in kw and str2bool(kw.get('use_same'))),
+            'use_same': is_public_user or ('use_same' in kw and str2bool(kw.get('use_same') or '0')),
         }
         render_values.update(self._get_country_related_render_values(kw, render_values))
         return request.render("website_sale.address", render_values)
@@ -1679,7 +1679,7 @@ class WebsiteSale(payment_portal.PaymentPortal):
     def _get_shop_payment_values(self, order, **kwargs):
         checkout_page_values = {
             'website_sale_order': order,
-            'errors': [],
+            'errors': self._get_shop_payment_errors(order),
             'partner': order.partner_invoice_id,
             'order': order,
             'submit_button_label': _("Pay now"),
@@ -1702,13 +1702,6 @@ class WebsiteSale(payment_portal.PaymentPortal):
             has_storable_products = any(
                 line.product_id.type in ['consu', 'product'] for line in order.order_line
             )
-            if not order._get_delivery_methods() and has_storable_products:
-                values['errors'].append((
-                    _('Sorry, we are unable to ship your order'),
-                    _('No shipping method is available for your current order and shipping address.'
-                    ' Please contact us for more information.')
-                ))
-
             if has_storable_products:
                 if order.carrier_id and not order.delivery_rating_success:
                     order._remove_delivery_line()
@@ -1721,6 +1714,24 @@ class WebsiteSale(payment_portal.PaymentPortal):
             ).id
 
         return values
+
+    def _get_shop_payment_errors(self, order):
+        """ Check that there is no error that should block the payment.
+
+        :param sale.order order: The sales order to pay
+        :return: A list of errors (error_title, error_message)
+        :rtype: list[tuple]
+        """
+        has_storable_products = any(line.product_id.type in ['consu', 'product'] for line in order.order_line)
+        errors = []
+
+        if not order._get_delivery_methods() and has_storable_products:
+            errors.append((
+                _('Sorry, we are unable to ship your order'),
+                _('No shipping method is available for your current order and shipping address. '
+                   'Please contact us for more information.'),
+            ))
+        return errors
 
     @http.route('/shop/payment', type='http', auth='public', website=True, sitemap=False)
     def shop_payment(self, **post):
@@ -1779,6 +1790,12 @@ class WebsiteSale(payment_portal.PaymentPortal):
         else:
             order = request.env['sale.order'].sudo().browse(sale_order_id)
             assert order.id == request.session.get('sale_last_order_id')
+
+        errors = self._get_shop_payment_errors(order)
+        if errors:
+            first_error = errors[0]  # only display first error
+            error_msg = f"{first_error[0]}\n{first_error[1]}"
+            raise ValidationError(error_msg)
 
         tx_sudo = order.get_portal_last_transaction() if order else order.env['payment.transaction']
 

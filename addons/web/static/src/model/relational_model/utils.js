@@ -65,13 +65,17 @@ export function addFieldDependencies(activeFields, fields, fieldDependencies = [
             activeFields[field.name] = makeActiveField(field);
         }
         if (!fields[field.name]) {
-            fields[field.name] = omit(field, [
+            const newField = omit(field, [
                 "context",
                 "invisible",
                 "required",
                 "readonly",
                 "onChange",
             ]);
+            fields[field.name] = newField;
+            if (newField.type === "selection" && !Array.isArray(newField.selection)) {
+                newField.selection = [];
+            }
         }
     }
 }
@@ -619,21 +623,23 @@ export function useRecordObserver(callback) {
         const def = new Deferred();
         let firstCall = true;
         effect(
-            async (record) => {
+            (record) => {
                 if (firstCall) {
                     firstCall = false;
-                    await callback(record, props);
-                    def.resolve();
+                    return Promise.resolve(callback(record, props))
+                        .then(def.resolve)
+                        .catch(def.reject);
                 } else {
                     return batched(
-                        async (record) => {
+                        (record) => {
                             if (!alive) {
                                 // effect doesn't clean up when the component is unmounted.
                                 // We must do it manually.
                                 return;
                             }
-                            await callback(record, props);
-                            def.resolve();
+                            return Promise.resolve(callback(record, props))
+                                .then(def.resolve)
+                                .catch(def.reject);
                         },
                         () => new Promise((resolve) => window.requestAnimationFrame(resolve))
                     )(record);

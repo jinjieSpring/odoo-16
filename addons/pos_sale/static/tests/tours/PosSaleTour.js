@@ -146,7 +146,7 @@ registry
             ProductScreen.confirmOpeningPopup(),
             ProductScreen.clickQuotationButton(),
             ProductScreen.selectFirstOrder(),
-            ProductScreen.totalAmountIs(40.25),
+            ProductScreen.totalAmountIs(32.2), // 3.5 * 8 * 1.15
             ProductScreen.selectedOrderlineHas("Product A", "0.50"),
             ProductScreen.checkOrderlinesNumber(4),
         ].flat(),
@@ -170,3 +170,19 @@ registry
 
         ].flat(),
     });
+
+registry
+.category("web_tour.tours")
+.add('PosSettleAndInvoiceOrder', {
+    test: true,
+    url: '/pos/ui',
+    steps: () => [
+        ProductScreen.confirmOpeningPopup(),
+        ProductScreen.clickQuotationButton(),
+        ProductScreen.selectFirstOrder(),
+        ProductScreen.clickPayButton(),
+        PaymentScreen.clickPaymentMethod("Bank"),
+        PaymentScreen.clickInvoiceButton(),
+        PaymentScreen.clickValidate(),
+    ].flat(),
+});

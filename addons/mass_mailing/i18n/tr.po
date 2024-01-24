@@ -2317,12 +2317,9 @@ msgstr "Footers"
 #: model_terms:ir.ui.view,arch_db:mass_mailing.s_company_team
 msgid ""
 "Founder and chief visionary, Tony is the driving force behind the company. "
-"He lovesto keep his hands full by participating in the development of the "
+"He loves to keep his hands full by participating in the development of the "
 "software, marketing, and customer experience strategies."
 msgstr ""
-"Kurucu ve baş vizyoner olan Tony, şirketin arkasındaki itici güçtür. "
-"Yazılım, pazarlama ve müşteri deneyimi stratejilerinin geliştirilmesine "
-"katılarak ellerini dolu tutmayı seviyor."
 
 #. module: mass_mailing
 #: model:ir.model.fields,field_description:mass_mailing.field_mailing_trace_report__email_from
@@ -4691,10 +4688,8 @@ msgstr "Filtre etki alanı bu alıcılar için geçerli değildir."
 #: model:ir.model.fields,help:mass_mailing.field_mailing_list__is_public
 msgid ""
 "The mailing list can be accessible by recipients in the subscription "
-"management page to allows them to update their preferences."
+"management page to allow them to update their preferences."
 msgstr ""
-"Posta listesine alıcılar abonelik yönetimi sayfasından erişerek tercihlerini"
-" güncelleyebilirler."
 
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.s_text_block

@@ -349,12 +349,29 @@ export async function applyModifications(img, dataOptions = {}) {
  * @param {String} src URL of the image to load
  * @param {HTMLImageElement} [img] img element in which to load the image
  * @returns {Promise<HTMLImageElement>} Promise that resolves to the loaded img
+ *     or a placeholder image if the src is not found.
  */
 export function loadImage(src, img = new Image()) {
+    const handleImage = (source, resolve, reject) => {
+        img.addEventListener("load", () => resolve(img), {once: true});
+        img.addEventListener("error", reject, {once: true});
+        img.src = source;
+    };
+    // The server will return a placeholder image with the following src.
+    const placeholderHref = "/web/image/__odoo__unknown__src__/";
+
     return new Promise((resolve, reject) => {
-        img.addEventListener('load', () => resolve(img), {once: true});
-        img.addEventListener('error', reject, {once: true});
-        img.src = src;
+        fetch(src)
+            .then(response => {
+                if (!response.ok) {
+                    src = placeholderHref;
+                }
+                handleImage(src, resolve, reject);
+            })
+            .catch(error => {
+                src = placeholderHref;
+                handleImage(src, resolve, reject);
+            });
     });
 }
 
@@ -510,6 +527,31 @@ export function isImageSupportedForStyle(img) {
     const isEditableRootElement = ('oeXpath' in img.dataset);
 
     return !isTFieldImg && !isEditableRootElement;
+}
+/**
+ * @param {HTMLImageElement} img
+ * @returns {Promise<Boolean>}
+ */
+export async function isImageCorsProtected(img) {
+    const src = img.getAttribute('src');
+    if (!src) {
+        return false;
+    }
+    let isCorsProtected = false;
+    if (!src.startsWith("/") || /\/web\/image\/\d+-redirect\//.test(src)) {
+        // The `fetch()` used later in the code might fail if the image is
+        // CORS protected. We check upfront if it's the case.
+        // Two possible cases:
+        // 1. the `src` is an absolute URL from another domain.
+        //    For instance, abc.odoo.com vs abc.com which are actually the
+        //    same database behind.
+        // 2. A "attachment-url" which is just a redirect to the real image
+        //    which could be hosted on another website.
+        isCorsProtected = await fetch(src, {method: 'HEAD'})
+            .then(() => false)
+            .catch(() => true);
+    }
+    return isCorsProtected;
 }
 
 /**
