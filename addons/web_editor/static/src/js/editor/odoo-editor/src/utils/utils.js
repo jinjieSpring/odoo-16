@@ -788,18 +788,22 @@ export function getDeepRange(editable, { range, sel, splitText, select, correctT
     // A selection spanning multiple nodes and ending at position 0 of a node,
     // like the one resulting from a triple click, is corrected so that it ends
     // at the last position of the previous node instead.
-    const endLeaf = firstLeaf(end);
-    const beforeEnd = endLeaf.previousSibling;
-    if (
+    let endLeaf = firstLeaf(end);
+    let beforeEnd = endLeaf.previousSibling;
+    while (
         correctTripleClick &&
-        !endOffset &&
+        (nodeSize(end) && !endOffset) &&
         (start !== end || startOffset !== endOffset) &&
-        (!beforeEnd || (beforeEnd.nodeType === Node.TEXT_NODE && !isVisibleStr(beforeEnd)))
+        (!beforeEnd || (beforeEnd.nodeType === Node.TEXT_NODE && !isVisibleStr(beforeEnd)) || !beforeEnd.isContentEditable)
     ) {
         const previous = previousLeaf(endLeaf, editable, true);
-        if (previous && closestElement(previous).isContentEditable) {
+        if (previous && !closestElement(previous).classList.contains('visually-hidden') && isVisibleStr(previous)) {
             [end, endOffset] = [previous, nodeSize(previous)];
+        } else if (previous) {
+            [end, endOffset] = [previous, 0];
         }
+        endLeaf = firstLeaf(end);
+        beforeEnd = endLeaf.previousSibling;
     }
 
     if (select) {
@@ -1084,6 +1088,7 @@ export const formatSelection = (editor, formatName, {applyStyle, formatProps} = 
     if (zws) {
         const siblings = [...zws.parentElement.childNodes];
         if (
+            !isBlock(zws.parentElement) &&
             selectedTextNodes.includes(siblings[0]) &&
             selectedTextNodes.includes(siblings[siblings.length - 1])
         ) {
@@ -2560,7 +2565,8 @@ export function enforceWhitespace(el, offset, direction, rule) {
         if (
             spaceVisibility &&
             !foundVisibleSpaceTextNode &&
-            getState(...rightPos(spaceNode), DIRECTIONS.RIGHT).cType & CTGROUPS.BLOCK
+            getState(...rightPos(spaceNode), DIRECTIONS.RIGHT).cType & CTGROUPS.BLOCK &&
+            getState(...leftPos(spaceNode), DIRECTIONS.LEFT).cType !== CTYPES.CONTENT
         ) {
             spaceVisibility = false;
         }

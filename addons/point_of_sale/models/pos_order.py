@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-import logging
-from datetime import timedelta
-from functools import partial
-from itertools import groupby
 from collections import defaultdict
+from datetime import timedelta
+from functools import partial, lru_cache
+from itertools import groupby
+from random import randrange
 
+import logging
 import psycopg2
 import pytz
 import re
@@ -152,8 +153,9 @@ class PosOrder(models.Model):
         if pos_order.to_invoice and pos_order.state == 'paid':
             pos_order._generate_pos_order_invoice()
 
+        if pos_session._is_capture_system_activated():
+            pos_session._remove_capture_content(order)
         return pos_order.id
-
 
     def _process_payment_lines(self, pos_order, order, pos_session, draft):
         """Create account.bank.statement.lines from the dictionary given to the parent function.
@@ -330,8 +332,18 @@ class PosOrder(models.Model):
 
     @api.depends('date_order', 'company_id', 'currency_id', 'company_id.currency_id')
     def _compute_currency_rate(self):
+        @lru_cache
+        def get_rate(from_currency, to_currency, company, date):
+            return self.env['res.currency']._get_conversion_rate(
+                from_currency=from_currency,
+                to_currency=to_currency,
+                company=company,
+                date=date,
+            )
         for order in self:
-            order.currency_rate = self.env['res.currency']._get_conversion_rate(order.company_id.currency_id, order.currency_id, order.company_id, order.date_order)
+            # date_order is a datetime, but the rates are looked up on a date basis,
+            # therefor converting the date_order to a date helps with sharing entries in the lru_cache
+            order.currency_rate = get_rate(order.company_id.currency_id, order.currency_id, order.company_id, order.date_order.date())
 
     @api.depends('lines.is_total_cost_computed')
     def _compute_is_total_cost_computed(self):
@@ -656,7 +668,7 @@ class PosOrder(models.Model):
                 product=line.product_id,
                 taxes=line.tax_ids_after_fiscal_position,
                 price_unit=line.price_unit,
-                quantity=sign * line.qty,
+                quantity=-line.qty,
                 discount=line.discount,
                 account=account,
                 is_refund=is_refund,
@@ -800,7 +812,11 @@ class PosOrder(models.Model):
                 move_lines.append(aml_values)
 
         # Make a move with all the lines.
-        reversal_entry = self.env['account.move'].with_context(default_journal_id=self.config_id.journal_id.id).create({
+        reversal_entry = self.env['account.move'].with_context(
+            default_journal_id=self.config_id.journal_id.id,
+            skip_invoice_sync=True,
+            skip_invoice_line_sync=True,
+        ).create({
             'journal_id': self.config_id.journal_id.id,
             'date': fields.Date.context_today(self),
             'ref': _('Reversal of POS closing entry %s for order %s from session %s', self.session_move_id.name, self.name, self.session_id.name),
@@ -888,8 +904,12 @@ class PosOrder(models.Model):
         :type draft: bool.
         :Returns: list -- list of db-ids for the created and updated orders.
         """
+        order_names = [order['data']['name'] for order in orders]
+        sync_token = randrange(100000000)  # Use to differentiate 2 parallels calls to this function in the logs
+        _logger.info("Start PoS synchronisation #%d for PoS orders references: %s (draft: %s)", sync_token, order_names, draft)
         order_ids = []
         for order in orders:
+            order_name = order['data']['name']
             existing_draft_order = None
 
             if 'server_id' in order['data'] and order['data']['server_id']:
@@ -901,16 +921,23 @@ class PosOrder(models.Model):
                     continue
 
             if not existing_draft_order:
-                existing_draft_order = self.env['pos.order'].search(['&', ('pos_reference', '=', order['data']['name']), ('state', '=', 'draft')], limit=1)
+                existing_draft_order = self.env['pos.order'].search(['&', ('pos_reference', '=', order_name), ('state', '=', 'draft')], limit=1)
 
-            if existing_draft_order:
-                order_ids.append(self._process_order(order, draft, existing_draft_order))
-            else:
-                existing_orders = self.env['pos.order'].search([('pos_reference', '=', order['data']['name'])])
-                if all(not self._is_the_same_order(order['data'], existing_order) for existing_order in existing_orders):
-                    order_ids.append(self._process_order(order, draft, False))
-
-        return self.env['pos.order'].search_read(domain=[('id', 'in', order_ids)], fields=['id', 'pos_reference', 'account_move'], load=False)
+            try:
+                if existing_draft_order:
+                    order_ids.append(self._process_order(order, draft, existing_draft_order))
+                else:
+                    existing_orders = self.env['pos.order'].search([('pos_reference', '=', order_name)])
+                    if all(not self._is_the_same_order(order['data'], existing_order) for existing_order in existing_orders):
+                        order_ids.append(self._process_order(order, draft, False))
+            except Exception as e:
+                _logger.exception("An error occurred when processing the PoS order %s", order_name)
+                pos_session = self.env['pos.session'].browse(order['data']['pos_session_id'])
+                pos_session._handle_order_process_fail(order, e, draft)
+                raise
+        res = self.env['pos.order'].search_read(domain=[('id', 'in', order_ids)], fields=['id', 'pos_reference', 'account_move'], load=False)
+        _logger.info("Finish PoS synchronisation #%d with result: %s", sync_token, res)
+        return res
 
     def _is_the_same_order(self, data, existing_order):
         received_payments = [(p[2]['amount'], p[2]['payment_method_id']) for p in data['statement_ids']]

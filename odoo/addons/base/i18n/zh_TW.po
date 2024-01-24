@@ -7,8 +7,8 @@
 # 敬雲 林 <chingyun@yuanchih-consult.com>, 2023
 # Benson <Benson.Dr@Gmail.com>, 2023
 # Martin Trigaux, 2023
-# Tony Ng, 2023
 # Wil Odoo, 2023
+# Tony Ng, 2024
 # 
 msgid ""
 msgstr ""
@@ -16,7 +16,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-05-23 08:23+0000\n"
 "PO-Revision-Date: 2022-09-22 05:44+0000\n"
-"Last-Translator: Wil Odoo, 2023\n"
+"Last-Translator: Tony Ng, 2024\n"
 "Language-Team: Chinese (Taiwan) (https://app.transifex.com/odoo/teams/41243/zh_TW/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -6096,12 +6096,12 @@ msgstr " 在潛在客戶表單檢視上增加一個統計按鈕以存取他們�
 #. module: base
 #: model:ir.module.module,summary:base.module_website_sale_delivery_mondialrelay
 msgid " Let's choose Point Relais® on your ecommerce "
-msgstr ""
+msgstr " 讓我們在你的電子商務中選擇 Point Relais® "
 
 #. module: base
 #: model:ir.module.module,summary:base.module_delivery_mondialrelay
 msgid " Let's choose a Point Relais® as shipping address "
-msgstr " Let's choose a Point Relais® as shipping address "
+msgstr " 讓我們選擇 Point Relais® 作為送貨地址"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_hk
@@ -8524,7 +8524,7 @@ msgstr "發送到該聯繫人的所有電子郵件和文件將以這種語言翻
 #. module: base
 #: model:ir.module.module,summary:base.module_hr_holidays
 msgid "Allocate PTOs and follow leaves requests"
-msgstr "分配 PTO 並遵循休假請求"
+msgstr "分配有薪假，並追蹤休假申請"
 
 #. module: base
 #: model:ir.module.module,description:base.module_website_event_crm
@@ -8817,7 +8817,7 @@ msgstr "預約"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_hr_appraisal
 msgid "Appraisal"
-msgstr "評價"
+msgstr "表現評核"
 
 #. module: base
 #: model:ir.module.category,name:base.module_category_human_resources_appraisals
@@ -15372,7 +15372,7 @@ msgstr "個人"
 #. module: base
 #: model:res.country,name:base.id
 msgid "Indonesia"
-msgstr "印度尼西亞"
+msgstr "印尼"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_id_efaktur
@@ -15800,7 +15800,7 @@ msgstr "%s.%s: %s 的無效值"
 msgid ""
 "Invalid value for %s.%s: %s is out of bounds (integers should be between "
 "-2,147,483,648 and 2,147,483,647)"
-msgstr ""
+msgstr "數值無效： %s.%s： %s 超出範圍（整數應介乎 -2,147,483,648 與 2,147,483,647 之間）"
 
 #. module: base
 #. odoo-python
@@ -21774,7 +21774,7 @@ msgstr "付款與網站整合"
 #. module: base
 #: model:ir.module.category,name:base.module_category_human_resources_payroll
 msgid "Payroll"
-msgstr "薪資表"
+msgstr "薪酬管理"
 
 #. module: base
 #: model:ir.module.category,name:base.module_category_payroll_localization
@@ -26828,7 +26828,7 @@ msgstr "U - 境外組織及機構的活動"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_delivery_ups
 msgid "UPS Shipping (Legacy)"
-msgstr ""
+msgstr "UPS 貨運 (舊)"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_delivery_ups_rest
@@ -28364,6 +28364,14 @@ msgstr ""
 
 #. module: base
 #. odoo-python
+#: code:addons/base/models/res_lang.py:0
+#, python-format
+msgid ""
+"You cannot archive the language in which Odoo was setup as it is used by "
+"automated processes."
+msgstr ""
+
+#. module: base
 #: code:addons/base/models/res_partner.py:0
 #, python-format
 msgid "You cannot create recursive Partner hierarchies."
@@ -29077,7 +29085,7 @@ msgstr "pos_sale_product_configurator"
 #. module: base
 #: model:ir.model.fields.selection,name:base.selection__ir_model_fields__ttype__properties
 msgid "properties"
-msgstr ""
+msgstr "屬性"
 
 #. module: base
 #: model:ir.model.fields.selection,name:base.selection__ir_model_fields__ttype__properties_definition

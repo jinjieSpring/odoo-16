@@ -2006,18 +2006,30 @@ var SnippetsMenu = Widget.extend({
 
         // Auto-selects text elements with a specific class and remove this
         // on text changes
-        this.$body.on('click.snippets_menu', '.o_default_snippet_text', function (ev) {
-            $(ev.target).closest('.o_default_snippet_text').removeClass('o_default_snippet_text');
-            $(ev.target).selectContent();
-            $(ev.target).removeClass('o_default_snippet_text');
+        const alreadySelectedElements = new Set();
+        this.$body.on('click.snippets_menu', '.o_default_snippet_text', ev => {
+            const el = ev.currentTarget;
+            if (alreadySelectedElements.has(el)) {
+                // If the element was already selected in such a way before, we
+                // don't reselect it. This actually allows to have the first
+                // click on an element to select its text, but the second click
+                // to place the cursor inside of that text.
+                return;
+            }
+            alreadySelectedElements.add(el);
+            $(el).selectContent();
         });
-        this.$body.on('keyup.snippets_menu', function () {
+        this.$body.on('keyup.snippets_menu', () => {
+            // Note: we cannot listen to keyup in .o_default_snippet_text
+            // elements via delegation because keyup only bubbles from focusable
+            // elements which contenteditable are not.
             const selection = this.ownerDocument.getSelection();
-            if (!Selection.rangeCount) {
+            if (!selection.rangeCount) {
                 return;
             }
             const range = selection.getRangeAt(0);
             $(range.startContainer).closest('.o_default_snippet_text').removeClass('o_default_snippet_text');
+            alreadySelectedElements.delete(range.startContainer);
         });
         const refreshSnippetEditors = _.debounce(() => {
             for (const snippetEditor of this.snippetEditors) {
@@ -2544,7 +2556,7 @@ var SnippetsMenu = Widget.extend({
             // their descendant snippets.
             const rootInvisibleSnippetEls = [...$invisibleSnippets].filter(invisibleSnippetEl => {
                 const ancestorInvisibleEl = invisibleSnippetEl
-                                                 .parentElement.closest(".o_snippet_invisible");
+                                                 .parentElement.closest(invisibleSelector);
                 if (!ancestorInvisibleEl) {
                     return true;
                 }
@@ -3576,7 +3588,10 @@ var SnippetsMenu = Widget.extend({
      */
     _registerDefaultTexts: function ($in) {
         if ($in === undefined) {
-            $in = this.$snippets.find('.oe_snippet_body');
+            // By default, we don't want the `o_default_snippet_text` class on
+            // custom snippets. Those are most likely already ready, we don't
+            // really need the auto-selection by the editor.
+            $in = this.$snippets.find('.oe_snippet_body:not(.s_custom_snippet)');
         }
 
         $in.find('*').addBack()
@@ -4413,7 +4428,7 @@ var SnippetsMenu = Widget.extend({
         const $customizeTableBlock = $(QWeb.render('web_editor.toolbar.table-options'));
         this.options.wysiwyg.odooEditor.bindExecCommand($customizeTableBlock[0]);
         $(this.customizePanel).append($customizeTableBlock);
-        this._$removeFormatButton = this.options.wysiwyg.toolbar.$el.find('#removeFormat');
+        this._$removeFormatButton = this._$removeFormatButton || this.options.wysiwyg.toolbar.$el.find('#removeFormat');
         $title.append(this._$removeFormatButton);
         this._$toolbarContainer.append(this.options.wysiwyg.toolbar.$el);
         this.options.wysiwyg.toolbar.$el.find('#table').remove();

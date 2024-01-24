@@ -6,6 +6,7 @@ from datetime import date, timedelta
 from dateutil.relativedelta import relativedelta
 from hashlib import sha256
 from json import dumps
+import math
 import re
 from textwrap import shorten
 from unittest.mock import patch
@@ -604,7 +605,7 @@ class AccountMove(models.Model):
     def _compute_hide_post_button(self):
         for record in self:
             record.hide_post_button = record.state != 'draft' \
-                or record.auto_post != 'no' and record.date > fields.Date.today()
+                or record.auto_post != 'no' and record.date > fields.Date.context_today(record)
 
     @api.depends('journal_id')
     def _compute_company_id(self):
@@ -991,7 +992,7 @@ class AccountMove(models.Model):
                         untaxed_amount_currency = invoice.amount_untaxed * sign
                         untaxed_amount = invoice.amount_untaxed_signed
                     invoice_payment_terms = invoice.invoice_payment_term_id._compute_terms(
-                        date_ref=invoice.invoice_date or invoice.date or fields.Date.today(),
+                        date_ref=invoice.invoice_date or invoice.date or fields.Date.context_today(invoice),
                         currency=invoice.currency_id,
                         tax_amount_currency=tax_amount_currency,
                         tax_amount=tax_amount,
@@ -1659,6 +1660,13 @@ class AccountMove(models.Model):
                         "The year detected here is '%(year)s'.\n"
                         "The incrementing number in this case is '%(formatted_seq)s'."
                     )
+                elif reset == 'year_range':
+                    detected = _(
+                        "The sequence will restart at 1 at the start of every financial year.\n"
+                        "The financial start year detected here is '%(year)s'.\n"
+                        "The financial end year detected here is '%(year_end)s'.\n"
+                        "The incrementing number in this case is '%(formatted_seq)s'."
+                    )
                 else:
                     detected = _(
                         "The sequence will never restart.\n"
@@ -2013,7 +2021,8 @@ class AccountMove(models.Model):
     def _sync_rounding_lines(self, container):
         yield
         for invoice in container['records']:
-            invoice._recompute_cash_rounding_lines()
+            if invoice.state != 'posted':
+                invoice._recompute_cash_rounding_lines()
 
     @contextmanager
     def _sync_dynamic_line(self, existing_key_fname, needed_vals_fname, needed_dirty_fname, line_type, container):
@@ -2524,14 +2533,13 @@ class AccountMove(models.Model):
             if not reference_move_name:
                 reference_move_name = self.search(domain, order='date asc', limit=1).name
             sequence_number_reset = self._deduce_sequence_number_reset(reference_move_name)
-            if sequence_number_reset == 'year':
-                where_string += " AND date_trunc('year', date::timestamp without time zone) = date_trunc('year', %(date)s) "
-                param['date'] = self.date
+            date_start, date_end = self._get_sequence_date_range(sequence_number_reset)
+            where_string += """ AND date BETWEEN %(date_start)s AND %(date_end)s"""
+            param['date_start'] = date_start
+            param['date_end'] = date_end
+            if sequence_number_reset in ('year', 'year_range'):
                 param['anti_regex'] = re.sub(r"\?P<\w+>", "?:", self._sequence_monthly_regex.split('(?P<seq>')[0]) + '$'
-            elif sequence_number_reset == 'month':
-                where_string += " AND date_trunc('month', date::timestamp without time zone) = date_trunc('month', %(date)s) "
-                param['date'] = self.date
-            else:
+            elif sequence_number_reset == 'never':
                 param['anti_regex'] = re.sub(r"\?P<\w+>", "?:", self._sequence_yearly_regex.split('(?P<seq>')[0]) + '$'
 
             if param.get('anti_regex') and not self.journal_id.sequence_override_regex:
@@ -2563,6 +2571,12 @@ class AccountMove(models.Model):
         if self.journal_id.payment_sequence and is_payment:
             starting_sequence = "P" + starting_sequence
         return starting_sequence
+
+    def _get_sequence_date_range(self, reset):
+        if reset == 'year_range':
+            company = self.company_id
+            return date_utils.get_fiscal_year(self.date, day=company.fiscalyear_last_day, month=int(company.fiscalyear_last_month))
+        return super()._get_sequence_date_range(reset)
 
     # -------------------------------------------------------------------------
     # PAYMENT REFERENCE
@@ -2914,6 +2928,72 @@ class AccountMove(models.Model):
         for base_line in base_lines:
             to_update_vals, tax_values_list = self.env['account.tax']._compute_taxes_for_single_line(base_line)
             to_process.append((base_line, to_update_vals, tax_values_list))
+
+        # Handle manually changed tax amounts (via quick-edit or journal entry manipulation):
+        # For each tax repartition line we compute the difference between the following 2 amounts
+        #     * Manual tax amount:
+        #       The sum of the amounts on the tax lines belonging to the tax repartition line.
+        #       These amounts may have been manually changed.
+        #     * Computed tax amount:
+        #       The sum of the amounts on the items in 'tax_values_list' in 'to_process' belonging to the tax repartition line.
+        # This difference is then distributed evenly across the 'tax_values_list' in 'to_process'
+        # such that the manual and computed tax amounts match.
+        # The updated tax information is later used by '_aggregate_taxes' to compute the right tax amounts (consistently on all levels).
+        tax_lines = self.line_ids.filtered(lambda x: x.display_type == 'tax')
+        sign = -1 if self.is_inbound(include_receipts=True) else 1
+
+        # Collect the tax_amount_currency/balance from tax lines.
+        current_tax_amount_per_rep_line = {}
+        for tax_line in tax_lines:
+            tax_rep_amounts = current_tax_amount_per_rep_line.setdefault(tax_line.tax_repartition_line_id.id, {
+                'tax_amount_currency': 0.0,
+                'tax_amount': 0.0,
+            })
+            tax_rep_amounts['tax_amount_currency'] += sign * tax_line.amount_currency
+            tax_rep_amounts['tax_amount'] += sign * tax_line.balance
+
+        # Collect the computed tax_amount_currency/tax_amount from the taxes computation.
+        tax_details_per_rep_line = {}
+        for _base_line, _to_update_vals, tax_values_list in to_process:
+            for tax_values in tax_values_list:
+                tax_rep_id = tax_values['tax_repartition_line_id']
+                tax_rep_amounts = tax_details_per_rep_line.setdefault(tax_rep_id, {
+                    'tax_amount_currency': 0.0,
+                    'tax_amount': 0.0,
+                    'distribute_on': [],
+                })
+                tax_rep_amounts['tax_amount_currency'] += tax_values['tax_amount_currency']
+                tax_rep_amounts['tax_amount'] += tax_values['tax_amount']
+                tax_rep_amounts['distribute_on'].append(tax_values)
+
+        # Dispatch the delta on tax_values.
+        for key, currency in (('tax_amount_currency', self.currency_id), ('tax_amount', self.company_currency_id)):
+            for tax_rep_id, computed_tax_rep_amounts in tax_details_per_rep_line.items():
+                current_tax_rep_amounts = current_tax_amount_per_rep_line.get(tax_rep_id, computed_tax_rep_amounts)
+                diff = current_tax_rep_amounts[key] - computed_tax_rep_amounts[key]
+                abs_diff = abs(diff)
+
+                if currency.is_zero(abs_diff):
+                    continue
+
+                diff_sign = -1 if diff < 0 else 1
+                nb_error = math.ceil(abs_diff / currency.rounding)
+                nb_cents_per_tax_values = math.floor(nb_error / len(computed_tax_rep_amounts['distribute_on']))
+                nb_extra_cent = nb_error % len(computed_tax_rep_amounts['distribute_on'])
+                for tax_values in computed_tax_rep_amounts['distribute_on']:
+
+                    if currency.is_zero(abs_diff):
+                        break
+
+                    nb_amount_curr_cent = nb_cents_per_tax_values
+                    if nb_extra_cent:
+                        nb_amount_curr_cent += 1
+                        nb_extra_cent -= 1
+
+                    # We can have more than one cent to distribute on a single tax_values.
+                    abs_delta_to_add = min(abs_diff, currency.rounding * nb_amount_curr_cent)
+                    tax_values[key] += diff_sign * abs_delta_to_add
+                    abs_diff -= abs_delta_to_add
 
         return self.env['account.tax']._aggregate_taxes(
             to_process,
@@ -3405,7 +3485,11 @@ class AccountMove(models.Model):
             raise AccessError(_("You don't have the access rights to post an invoice."))
 
         for invoice in self.filtered(lambda move: move.is_invoice(include_receipts=True)):
-            if invoice.quick_edit_mode and invoice.quick_edit_total_amount and invoice.quick_edit_total_amount != invoice.amount_total:
+            if (
+                invoice.quick_edit_mode
+                and invoice.quick_edit_total_amount
+                and invoice.currency_id.compare_amounts(invoice.quick_edit_total_amount, invoice.amount_total) != 0
+            ):
                 raise UserError(_(
                     "The current total is %s but the expected total is %s. In order to post the invoice/bill, "
                     "you can adjust its lines or the expected Total (tax inc.).",
@@ -3946,7 +4030,7 @@ class AccountMove(models.Model):
         :return (datetime.date):
         """
         lock_dates = self._get_violated_lock_dates(invoice_date, has_tax)
-        today = fields.Date.today()
+        today = fields.Date.context_today(self)
         highest_name = self.highest_name or self._get_last_sequence(relaxed=True, lock=False)
         number_reset = self._deduce_sequence_number_reset(highest_name)
         if lock_dates:

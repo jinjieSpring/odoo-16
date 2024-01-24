@@ -304,15 +304,76 @@
     // -----------------------------------------------------------------------------
     // Date Type
     // -----------------------------------------------------------------------------
+    /**
+     * A DateTime object that can be used to manipulate spreadsheet dates.
+     * Conceptually, a spreadsheet date is simply a number with a date format,
+     * and it is timezone-agnostic.
+     * This DateTime object consistently uses UTC time to represent a naive date and time.
+     */
+    class DateTime {
+        constructor(year, month, day, hours = 0, minutes = 0, seconds = 0) {
+            this.jsDate = new Date(Date.UTC(year, month, day, hours, minutes, seconds, 0));
+        }
+        static fromTimestamp(timestamp) {
+            const date = new Date(timestamp);
+            return new DateTime(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
+        }
+        static now() {
+            const now = new Date();
+            return new DateTime(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds());
+        }
+        toString() {
+            return this.jsDate.toString();
+        }
+        getTime() {
+            return this.jsDate.getTime();
+        }
+        getFullYear() {
+            return this.jsDate.getUTCFullYear();
+        }
+        getMonth() {
+            return this.jsDate.getUTCMonth();
+        }
+        getDate() {
+            return this.jsDate.getUTCDate();
+        }
+        getDay() {
+            return this.jsDate.getUTCDay();
+        }
+        getHours() {
+            return this.jsDate.getUTCHours();
+        }
+        getMinutes() {
+            return this.jsDate.getUTCMinutes();
+        }
+        getSeconds() {
+            return this.jsDate.getUTCSeconds();
+        }
+        setFullYear(year) {
+            this.jsDate.setFullYear(year);
+        }
+        setDate(date) {
+            this.jsDate.setUTCDate(date);
+        }
+        setHours(hours) {
+            this.jsDate.setUTCHours(hours);
+        }
+        setMinutes(minutes) {
+            this.jsDate.setUTCMinutes(minutes);
+        }
+        setSeconds(seconds) {
+            this.jsDate.setUTCSeconds(seconds);
+        }
+    }
     // -----------------------------------------------------------------------------
     // Parsing
     // -----------------------------------------------------------------------------
-    const INITIAL_1900_DAY = new Date(1899, 11, 30);
+    const INITIAL_1900_DAY = new DateTime(1899, 11, 30);
     const MS_PER_DAY = 24 * 60 * 60 * 1000;
     const CURRENT_MILLENIAL = 2000; // note: don't forget to update this in 2999
-    const CURRENT_YEAR = new Date().getFullYear();
-    const INITIAL_JS_DAY = new Date(0);
-    const DATE_JS_1900_OFFSET = INITIAL_JS_DAY - INITIAL_1900_DAY;
+    const CURRENT_YEAR = DateTime.now().getFullYear();
+    const INITIAL_JS_DAY = DateTime.fromTimestamp(0);
+    const DATE_JS_1900_OFFSET = INITIAL_JS_DAY.getTime() - INITIAL_1900_DAY.getTime();
     const mdyDateRegexp = /^\d{1,2}(\/|-|\s)\d{1,2}((\/|-|\s)\d{1,4})?$/;
     const ymdDateRegexp = /^\d{3,4}(\/|-|\s)\d{1,2}(\/|-|\s)\d{1,2}$/;
     const timeRegexp = /((\d+(:\d+)?(:\d+)?\s*(AM|PM))|(\d+:\d+(:\d+)?))$/;
@@ -361,7 +422,7 @@
             return {
                 value: date.value + time.value,
                 format: date.format + " " + (time.format === "hhhh:mm:ss" ? "hh:mm:ss" : time.format),
-                jsDate: new Date(date.jsDate.getFullYear() + time.jsDate.getFullYear() - 1899, date.jsDate.getMonth() + time.jsDate.getMonth() - 11, date.jsDate.getDate() + time.jsDate.getDate() - 30, date.jsDate.getHours() + time.jsDate.getHours(), date.jsDate.getMinutes() + time.jsDate.getMinutes(), date.jsDate.getSeconds() + time.jsDate.getSeconds()),
+                jsDate: new DateTime(date.jsDate.getFullYear() + time.jsDate.getFullYear() - 1899, date.jsDate.getMonth() + time.jsDate.getMonth() - 11, date.jsDate.getDate() + time.jsDate.getDate() - 30, date.jsDate.getHours() + time.jsDate.getHours(), date.jsDate.getMinutes() + time.jsDate.getMinutes(), date.jsDate.getSeconds() + time.jsDate.getSeconds()),
             };
         }
         return date || time;
@@ -378,13 +439,13 @@
             const day = Number(parts[dayIndex]);
             const leadingZero = (parts[monthIndex].length === 2 && month < 10) || (parts[dayIndex].length === 2 && day < 10);
             const year = parts[yearIndex] ? inferYear(parts[yearIndex]) : CURRENT_YEAR;
-            const jsDate = new Date(year, month - 1, day);
+            const jsDate = new DateTime(year, month - 1, day);
             const sep = str.match(/\/|-|\s/)[0];
             if (jsDate.getMonth() !== month - 1 || jsDate.getDate() !== day) {
                 // invalid date
                 return null;
             }
-            const delta = jsDate - INITIAL_1900_DAY;
+            const delta = jsDate.getTime() - INITIAL_1900_DAY.getTime();
             let format = leadingZero ? `mm${sep}dd` : `m${sep}d`;
             if (parts[yearIndex]) {
                 format = isMDY ? format + sep + "yyyy" : "yyyy" + sep + format;
@@ -444,7 +505,7 @@
             if (hours >= 24) {
                 format = "hhhh:mm:ss";
             }
-            const jsDate = new Date(1899, 11, 30, hours, minutes, seconds);
+            const jsDate = new DateTime(1899, 11, 30, hours, minutes, seconds);
             return {
                 value: hours / 24 + minutes / 1440 + seconds / 86400,
                 format: format,
@@ -458,7 +519,7 @@
     // -----------------------------------------------------------------------------
     function numberToJsDate(value) {
         const truncValue = Math.trunc(value);
-        let date = new Date(truncValue * MS_PER_DAY - DATE_JS_1900_OFFSET);
+        let date = DateTime.fromTimestamp(truncValue * MS_PER_DAY - DATE_JS_1900_OFFSET);
         let time = value - truncValue;
         time = time < 0 ? 1 + time : time;
         const hours = Math.round(time * 24);
@@ -475,7 +536,7 @@
     }
     /** Return the number of days in the current month of the given date */
     function getDaysInMonth(date) {
-        return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+        return new DateTime(date.getFullYear(), date.getMonth() + 1, 0).getDate();
     }
     function isLastDayOfMonth(date) {
         return getDaysInMonth(date) === date.getDate();
@@ -493,7 +554,7 @@
         const yStart = date.getFullYear();
         const mStart = date.getMonth();
         const dStart = date.getDate();
-        const jsDate = new Date(yStart, mStart + months);
+        const jsDate = new DateTime(yStart, mStart + months, 1);
         if (keepEndOfMonth && dStart === getDaysInMonth(date)) {
             jsDate.setDate(getDaysInMonth(jsDate));
         }
@@ -846,7 +907,7 @@
     function isDateTime(str) {
         return parseDateTime(str) !== null;
     }
-    const MARKDOWN_LINK_REGEX = /^\[([^\[]+)\]\((.+)\)$/;
+    const MARKDOWN_LINK_REGEX = /^\[(.+)\]\((.+)\)$/;
     //link must start with http or https
     //https://stackoverflow.com/a/3809435/4760614
     const WEB_LINK_REGEX = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/;
@@ -1501,6 +1562,31 @@
     //from https://stackoverflow.com/questions/721304/insert-commas-into-number-string @Thomas/Alan Moore
     const thousandsGroupsRegexp = /(\d+?)(?=(\d{3})+(?!\d)|$)/g;
     const zeroRegexp = /0/g;
+    // TODO in the future : remove these constants MONTHS/DAYS, and use a library such as luxon to handle it
+    // + possibly handle automatic translation of day/month
+    const MONTHS = {
+        0: _lt("January"),
+        1: _lt("February"),
+        2: _lt("March"),
+        3: _lt("April"),
+        4: _lt("May"),
+        5: _lt("June"),
+        6: _lt("July"),
+        7: _lt("August"),
+        8: _lt("September"),
+        9: _lt("October"),
+        10: _lt("November"),
+        11: _lt("December"),
+    };
+    const DAYS$1 = {
+        0: _lt("Sunday"),
+        1: _lt("Monday"),
+        2: _lt("Tuesday"),
+        3: _lt("Wednesday"),
+        4: _lt("Thursday"),
+        5: _lt("Friday"),
+        6: _lt("Saturday"),
+    };
     // -----------------------------------------------------------------------------
     // FORMAT REPRESENTATION CACHE
     // -----------------------------------------------------------------------------
@@ -1733,8 +1819,9 @@
         return strDate + (strDate && strTime ? " " : "") + strTime;
     }
     function formatJSDate(jsDate, format) {
-        const sep = format.match(/\/|-|\s/)[0];
-        const parts = format.split(sep);
+        var _a;
+        const sep = (_a = format.match(/\/|-|\s/)) === null || _a === void 0 ? void 0 : _a[0];
+        const parts = sep ? format.split(sep) : [format];
         return parts
             .map((p) => {
             switch (p) {
@@ -1742,10 +1829,23 @@
                     return jsDate.getDate();
                 case "dd":
                     return jsDate.getDate().toString().padStart(2, "0");
+                case "ddd":
+                    return DAYS$1[jsDate.getDay()].slice(0, 3);
+                case "dddd":
+                    return DAYS$1[jsDate.getDay()];
                 case "m":
                     return jsDate.getMonth() + 1;
                 case "mm":
                     return String(jsDate.getMonth() + 1).padStart(2, "0");
+                case "mmm":
+                    return MONTHS[jsDate.getMonth()].slice(0, 3);
+                case "mmmm":
+                    return MONTHS[jsDate.getMonth()];
+                case "mmmmm":
+                    return MONTHS[jsDate.getMonth()].slice(0, 1);
+                case "yy":
+                    const fullYear = String(jsDate.getFullYear()).replace("-", "").padStart(2, "0");
+                    return fullYear.slice(fullYear.length - 2);
                 case "yyyy":
                     return jsDate.getFullYear();
                 default:
@@ -1769,7 +1869,7 @@
             .map((p) => {
             switch (p) {
                 case "hhhh":
-                    const helapsedHours = Math.floor((jsDate.getTime() - INITIAL_1900_DAY) / (60 * 60 * 1000));
+                    const helapsedHours = Math.floor((jsDate.getTime() - INITIAL_1900_DAY.getTime()) / (60 * 60 * 1000));
                     return helapsedHours.toString();
                 case "hh":
                     return hours.toString().padStart(2, "0");
@@ -3884,6 +3984,7 @@
         return node.description ? node.description : "";
     }
 
+    const macRegex = /Mac/i;
     /**
      * Return true if the event was triggered from
      * a child element.
@@ -3903,7 +4004,15 @@
         return Array.from(document.querySelectorAll(".o-spreadsheet .o-menu"));
     }
     function isMacOS() {
-        return navigator.userAgent.toUpperCase().indexOf("MAC") >= 0;
+        return Boolean(macRegex.test(navigator.userAgent));
+    }
+    /**
+     * @param {KeyboardEvent | MouseEvent} ev
+     * @returns Returns true if the event was triggered with the "ctrl" modifier pressed.
+     * On Mac, this is the "meta" or "command" key.
+     */
+    function isCtrlKey(ev) {
+        return isMacOS() ? ev.metaKey : ev.ctrlKey;
     }
 
     /**
@@ -13836,7 +13945,7 @@
             if (_year < 1900) {
                 _year += 1900;
             }
-            const jsDate = new Date(_year, _month - 1, _day);
+            const jsDate = new DateTime(_year, _month - 1, _day);
             const result = jsDateToRoundNumber(jsDate);
             assert(() => result >= 0, _lt(`The function [[FUNCTION_NAME]] result must be greater than or equal 01/01/1900.`));
             return result;
@@ -13948,7 +14057,7 @@
             const _months = Math.trunc(toNumber(months));
             const yStart = _startDate.getFullYear();
             const mStart = _startDate.getMonth();
-            const jsDate = new Date(yStart, mStart + _months + 1, 0);
+            const jsDate = new DateTime(yStart, mStart + _months + 1, 0);
             return jsDateToRoundNumber(jsDate);
         },
         isExported: true,
@@ -13987,17 +14096,17 @@
             // The first week of the year is the week that contains the first
             // Thursday of the year.
             let firstThursday = 1;
-            while (new Date(y, 0, firstThursday).getDay() !== 4) {
+            while (new DateTime(y, 0, firstThursday).getDay() !== 4) {
                 firstThursday += 1;
             }
-            const firstDayOfFirstWeek = new Date(y, 0, firstThursday - 3);
+            const firstDayOfFirstWeek = new DateTime(y, 0, firstThursday - 3);
             // The last week of the year is the week that contains the last Thursday of
             // the year.
             let lastThursday = 31;
-            while (new Date(y, 11, lastThursday).getDay() !== 4) {
+            while (new DateTime(y, 11, lastThursday).getDay() !== 4) {
                 lastThursday -= 1;
             }
-            const lastDayOfLastWeek = new Date(y, 11, lastThursday + 3);
+            const lastDayOfLastWeek = new DateTime(y, 11, lastThursday + 3);
             // B - If our date > lastDayOfLastWeek then it's in the weeks of the year after
             // If our date < firstDayOfFirstWeek then it's in the weeks of the year before
             let offsetYear;
@@ -14023,17 +14132,17 @@
                 case 1:
                     // firstDay is the 1st day of the 1st week of the year after
                     // firstDay = lastDayOfLastWeek + 1 Day
-                    firstDay = new Date(y, 11, lastThursday + 3 + 1);
+                    firstDay = new DateTime(y, 11, lastThursday + 3 + 1);
                     break;
                 case -1:
                     // firstDay is the 1st day of the 1st week of the previous year.
                     // The first week of the previous year is the week that contains the
                     // first Thursday of the previous year.
                     let firstThursdayPreviousYear = 1;
-                    while (new Date(y - 1, 0, firstThursdayPreviousYear).getDay() !== 4) {
+                    while (new DateTime(y - 1, 0, firstThursdayPreviousYear).getDay() !== 4) {
                         firstThursdayPreviousYear += 1;
                     }
-                    firstDay = new Date(y - 1, 0, firstThursdayPreviousYear - 3);
+                    firstDay = new DateTime(y - 1, 0, firstThursdayPreviousYear - 3);
                     break;
             }
             const diff = (_date.getTime() - firstDay.getTime()) / MS_PER_DAY;
@@ -14172,8 +14281,8 @@
                 });
             }
             const invertDate = _startDate.getTime() > _endDate.getTime();
-            const stopDate = new Date((invertDate ? _startDate : _endDate).getTime());
-            let stepDate = new Date((invertDate ? _endDate : _startDate).getTime());
+            const stopDate = DateTime.fromTimestamp((invertDate ? _startDate : _endDate).getTime());
+            let stepDate = DateTime.fromTimestamp((invertDate ? _endDate : _startDate).getTime());
             const timeStopDate = stopDate.getTime();
             let timeStepDate = stepDate.getTime();
             let netWorkingDay = 0;
@@ -14197,8 +14306,7 @@
         returns: ["DATE"],
         computeFormat: () => "m/d/yyyy hh:mm:ss",
         compute: function () {
-            let today = new Date();
-            today.setMilliseconds(0);
+            let today = DateTime.now();
             const delta = today.getTime() - INITIAL_1900_DAY.getTime();
             const time = today.getHours() / 24 + today.getMinutes() / 1440 + today.getSeconds() / 86400;
             return Math.floor(delta / MS_PER_DAY) + time;
@@ -14272,8 +14380,8 @@
         returns: ["DATE"],
         computeFormat: () => "m/d/yyyy",
         compute: function () {
-            const today = new Date();
-            const jsDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            const today = DateTime.now();
+            const jsDate = new DateTime(today.getFullYear(), today.getMonth(), today.getDate());
             return jsDateToRoundNumber(jsDate);
         },
         isExported: true,
@@ -14328,10 +14436,10 @@
             }
             const y = _date.getFullYear();
             let dayStart = 1;
-            let startDayOfFirstWeek = new Date(y, 0, dayStart);
+            let startDayOfFirstWeek = new DateTime(y, 0, dayStart);
             while (startDayOfFirstWeek.getDay() !== startDayOfWeek) {
                 dayStart += 1;
-                startDayOfFirstWeek = new Date(y, 0, dayStart);
+                startDayOfFirstWeek = new DateTime(y, 0, dayStart);
             }
             const dif = (_date.getTime() - startDayOfFirstWeek.getTime()) / MS_PER_DAY;
             if (dif < 0) {
@@ -14385,7 +14493,7 @@
                     timesHoliday.add(holiday.getTime());
                 });
             }
-            let stepDate = new Date(_startDate.getTime());
+            let stepDate = DateTime.fromTimestamp(_startDate.getTime());
             let timeStepDate = stepDate.getTime();
             const unitDay = Math.sign(_numDays);
             let stepDay = Math.abs(_numDays);
@@ -14451,7 +14559,7 @@
             const _startDate = toJsDate(date);
             const yStart = _startDate.getFullYear();
             const mStart = _startDate.getMonth();
-            const jsDate = new Date(yStart, mStart, 1);
+            const jsDate = new DateTime(yStart, mStart, 1);
             return jsDateToRoundNumber(jsDate);
         },
     };
@@ -14495,7 +14603,7 @@
         compute: function (date) {
             const quarter = QUARTER.compute(date);
             const year = YEAR.compute(date);
-            const jsDate = new Date(year, (quarter - 1) * 3, 1);
+            const jsDate = new DateTime(year, (quarter - 1) * 3, 1);
             return jsDateToRoundNumber(jsDate);
         },
     };
@@ -14512,7 +14620,7 @@
         compute: function (date) {
             const quarter = QUARTER.compute(date);
             const year = YEAR.compute(date);
-            const jsDate = new Date(year, quarter * 3, 0);
+            const jsDate = new DateTime(year, quarter * 3, 0);
             return jsDateToRoundNumber(jsDate);
         },
     };
@@ -14528,7 +14636,7 @@
         computeFormat: () => "m/d/yyyy",
         compute: function (date) {
             const year = YEAR.compute(date);
-            const jsDate = new Date(year, 0, 1);
+            const jsDate = new DateTime(year, 0, 1);
             return jsDateToRoundNumber(jsDate);
         },
     };
@@ -14544,7 +14652,7 @@
         computeFormat: () => "m/d/yyyy",
         compute: function (date) {
             const year = YEAR.compute(date);
-            const jsDate = new Date(year + 1, 0, 0);
+            const jsDate = new DateTime(year + 1, 0, 0);
             return jsDateToRoundNumber(jsDate);
         },
     };
@@ -14678,7 +14786,7 @@
     function assertSettlementLessThanOneYearBeforeMaturity(settlement, maturity) {
         const startDate = toJsDate(settlement);
         const endDate = toJsDate(maturity);
-        const startDatePlusOneYear = new Date(startDate);
+        const startDatePlusOneYear = toJsDate(settlement);
         startDatePlusOneYear.setFullYear(startDate.getFullYear() + 1);
         assert(() => endDate.getTime() <= startDatePlusOneYear.getTime(), _lt("The settlement date (%s) must at most one year after the maturity date (%s).", settlement.toString(), maturity.toString()));
     }
@@ -21473,7 +21581,10 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                 return;
             }
             const [col, row] = this.getCartesianCoordinates(ev);
-            this.props.onCellClicked(col, row, { shiftKey: ev.shiftKey, ctrlKey: ev.ctrlKey });
+            this.props.onCellClicked(col, row, {
+                expandZone: ev.shiftKey,
+                addZone: isCtrlKey(ev),
+            });
         }
         onDoubleClick(ev) {
             const [col, row] = this.getCartesianCoordinates(ev);
@@ -21701,7 +21812,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                 this._increaseSelection(index);
             }
             else {
-                this._selectElement(index, ev.ctrlKey);
+                this._selectElement(index, isCtrlKey(ev));
             }
             this.lastSelectedElementIndex = index;
             const mouseMoveSelect = (col, row) => {
@@ -21714,7 +21825,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
             const mouseUpSelect = () => {
                 this.state.isSelecting = false;
                 this.lastSelectedElementIndex = null;
-                this.env.model.dispatch(ev.ctrlKey ? "PREPARE_SELECTION_INPUT_EXPANSION" : "STOP_SELECTION_INPUT");
+                this.env.model.dispatch(isCtrlKey(ev) ? "PREPARE_SELECTION_INPUT_EXPANSION" : "STOP_SELECTION_INPUT");
                 this._computeGrabDisplay(ev);
             };
             dragAndDropBeyondTheViewport(this.env, mouseMoveSelect, mouseUpSelect);
@@ -21861,8 +21972,8 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                 this.env.raiseError(MergeErrorMessage);
             }
         }
-        _selectElement(index, ctrlKey) {
-            this.env.model.selection.selectColumn(index, ctrlKey ? "newAnchor" : "overrideSelection");
+        _selectElement(index, addDistinctHeader) {
+            this.env.model.selection.selectColumn(index, addDistinctHeader ? "newAnchor" : "overrideSelection");
         }
         _increaseSelection(index) {
             this.env.model.selection.selectColumn(index, "updateAnchor");
@@ -22031,8 +22142,8 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                 this.env.raiseError(MergeErrorMessage);
             }
         }
-        _selectElement(index, ctrlKey) {
-            this.env.model.selection.selectRow(index, ctrlKey ? "newAnchor" : "overrideSelection");
+        _selectElement(index, addDistinctHeader) {
+            this.env.model.selection.selectRow(index, addDistinctHeader ? "newAnchor" : "overrideSelection");
         }
         _increaseSelection(index) {
             this.env.model.selection.selectRow(index, "updateAnchor");
@@ -22723,18 +22834,18 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
         // ---------------------------------------------------------------------------
         // Zone selection with mouse
         // ---------------------------------------------------------------------------
-        onCellClicked(col, row, { ctrlKey, shiftKey }) {
-            if (ctrlKey) {
+        onCellClicked(col, row, { addZone, expandZone }) {
+            if (addZone) {
                 this.env.model.dispatch("PREPARE_SELECTION_INPUT_EXPANSION");
             }
             this.closeOpenedPopover();
             if (this.env.model.getters.getEditionMode() === "editing") {
                 this.env.model.dispatch("STOP_EDITION");
             }
-            if (shiftKey) {
+            if (expandZone) {
                 this.env.model.selection.setAnchorCorner(col, row);
             }
-            else if (ctrlKey) {
+            else if (addZone) {
                 this.env.model.selection.addCellToSelection(col, row);
             }
             else {
@@ -22788,10 +22899,10 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
             };
             const direction = arrowMap[ev.key];
             if (ev.shiftKey) {
-                this.env.model.selection.resizeAnchorZone(direction, ev.ctrlKey ? "end" : 1);
+                this.env.model.selection.resizeAnchorZone(direction, isCtrlKey(ev) ? "end" : 1);
             }
             else {
-                this.env.model.selection.moveAnchorCell(direction, ev.ctrlKey ? "end" : 1);
+                this.env.model.selection.moveAnchorCell(direction, isCtrlKey(ev) ? "end" : 1);
             }
             if (this.env.model.getters.isPaintingFormat()) {
                 this.env.model.dispatch("PASTE", {
@@ -22805,9 +22916,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                 return;
             }
             let keyDownString = "";
-            if (ev.ctrlKey)
-                keyDownString += "CTRL+";
-            if (ev.metaKey)
+            if (isCtrlKey(ev))
                 keyDownString += "CTRL+";
             if (ev.altKey)
                 keyDownString += "ALT+";
@@ -32568,13 +32677,18 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
         // Getters
         // ---------------------------------------------------------------------------
         evaluateFormula(formulaString, sheetId = this.getters.getActiveSheetId()) {
-            const compiledFormula = compile(formulaString);
-            const params = this.getCompilationParameters(() => { });
-            const ranges = [];
-            for (let xc of compiledFormula.dependencies) {
-                ranges.push(this.getters.getRangeFromSheetXC(sheetId, xc));
+            try {
+                const compiledFormula = compile(formulaString);
+                const params = this.getCompilationParameters(() => { });
+                const ranges = [];
+                for (let xc of compiledFormula.dependencies) {
+                    ranges.push(this.getters.getRangeFromSheetXC(sheetId, xc));
+                }
+                return compiledFormula.execute(ranges, ...params).value;
             }
-            return compiledFormula.execute(ranges, ...params).value;
+            catch (error) {
+                return error instanceof EvaluationError ? error.errorType : CellErrorType.GenericError;
+            }
         }
         /**
          * Return the value of each cell in the range as they are displayed in the grid.
@@ -32976,39 +33090,34 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
             this.computedIcons[activeSheetId] = {};
             const computedStyle = this.computedStyles[activeSheetId];
             for (let cf of this.getters.getConditionalFormats(activeSheetId).reverse()) {
-                try {
-                    switch (cf.rule.type) {
-                        case "ColorScaleRule":
-                            for (let range of cf.ranges) {
-                                this.applyColorScale(range, cf.rule);
-                            }
-                            break;
-                        case "IconSetRule":
-                            for (let range of cf.ranges) {
-                                this.applyIcon(range, cf.rule);
-                            }
-                            break;
-                        default:
-                            for (let ref of cf.ranges) {
-                                const zone = this.getters.getRangeFromSheetXC(activeSheetId, ref).zone;
-                                for (let row = zone.top; row <= zone.bottom; row++) {
-                                    for (let col = zone.left; col <= zone.right; col++) {
-                                        const pr = this.rulePredicate[cf.rule.type];
-                                        let cell = this.getters.getCell(activeSheetId, col, row);
-                                        if (pr && pr(cell, cf.rule)) {
-                                            if (!computedStyle[col])
-                                                computedStyle[col] = [];
-                                            // we must combine all the properties of all the CF rules applied to the given cell
-                                            computedStyle[col][row] = Object.assign(((_a = computedStyle[col]) === null || _a === void 0 ? void 0 : _a[row]) || {}, cf.rule.style);
-                                        }
+                switch (cf.rule.type) {
+                    case "ColorScaleRule":
+                        for (let range of cf.ranges) {
+                            this.applyColorScale(range, cf.rule);
+                        }
+                        break;
+                    case "IconSetRule":
+                        for (let range of cf.ranges) {
+                            this.applyIcon(range, cf.rule);
+                        }
+                        break;
+                    default:
+                        for (let ref of cf.ranges) {
+                            const zone = this.getters.getRangeFromSheetXC(activeSheetId, ref).zone;
+                            for (let row = zone.top; row <= zone.bottom; row++) {
+                                for (let col = zone.left; col <= zone.right; col++) {
+                                    const pr = this.rulePredicate[cf.rule.type];
+                                    let cell = this.getters.getCell(activeSheetId, col, row);
+                                    if (pr && pr(cell, cf.rule)) {
+                                        if (!computedStyle[col])
+                                            computedStyle[col] = [];
+                                        // we must combine all the properties of all the CF rules applied to the given cell
+                                        computedStyle[col][row] = Object.assign(((_a = computedStyle[col]) === null || _a === void 0 ? void 0 : _a[row]) || {}, cf.rule.style);
                                     }
                                 }
                             }
-                            break;
-                    }
-                }
-                catch (_) {
-                    // we don't care about the errors within the evaluation of a rule
+                        }
+                        break;
                 }
             }
         }
@@ -33032,7 +33141,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                     return percentile(rangeValues, Number(threshold.value) / 100, true);
                 case "formula":
                     const value = threshold.value && this.getters.evaluateFormula(threshold.value);
-                    return !(value instanceof Promise) ? value : null;
+                    return typeof value === "number" ? value : null;
                 default:
                     return null;
             }
@@ -39111,7 +39220,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
         }
         onKeydown(ev) {
             let keyDownString = "";
-            if (ev.ctrlKey || ev.metaKey) {
+            if (isCtrlKey(ev)) {
                 keyDownString += "CTRL+";
             }
             keyDownString += ev.key.toUpperCase();
@@ -40415,9 +40524,10 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
          * Get a Xc string that represent a part of a range
          */
         getRangePartString(range, part) {
-            const colFixed = range.parts && range.parts[part].colFixed ? "$" : "";
+            var _a, _b;
+            const colFixed = range.parts && ((_a = range.parts[part]) === null || _a === void 0 ? void 0 : _a.colFixed) ? "$" : "";
             const col = part === 0 ? numberToLetters(range.zone.left) : numberToLetters(range.zone.right);
-            const rowFixed = range.parts && range.parts[part].rowFixed ? "$" : "";
+            const rowFixed = range.parts && ((_b = range.parts[part]) === null || _b === void 0 ? void 0 : _b.rowFixed) ? "$" : "";
             const row = part === 0 ? String(range.zone.top + 1) : String(range.zone.bottom + 1);
             let str = "";
             if (range.isFullCol) {
@@ -43060,9 +43170,9 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
     Object.defineProperty(exports, '__esModule', { value: true });
 
 
-    __info__.version = '16.0.26';
-    __info__.date = '2023-12-05T10:10:01.055Z';
-    __info__.hash = '10de093';
+    __info__.version = '16.0.29';
+    __info__.date = '2024-01-17T10:50:38.251Z';
+    __info__.hash = '3fda985';
 
 
 })(this.o_spreadsheet = this.o_spreadsheet || {}, owl);
