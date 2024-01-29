@@ -365,7 +365,7 @@ class HolidaysType(models.Model):
             '|',
             ('company_id', 'in', self.env.context.get('allowed_company_ids')),
             ('company_id', '=', False),
-        ])
+        ], order='id')
         employee = self.env['hr.employee']._get_contextual_employee()
         if employee:
             return leave_types.get_allocation_data(employee, target_date)[employee]
@@ -462,9 +462,11 @@ class HolidaysType(models.Model):
                     closest_allocation_remaining += allocations_leaves_consumed[employee][leave_type][closest_allocation]['virtual_remaining_leaves']
                 if closest_allocation.date_to:
                     closest_allocation_expire = format_date(self.env, closest_allocation.date_to)
+                    calendar = employee.resource_calendar_id\
+                               or employee.company_id.resource_calendar_id
                     # closest_allocation_duration corresponds to the time remaining before the allocation expires
                     closest_allocation_duration =\
-                        employee.resource_calendar_id._attendance_intervals_batch(
+                        calendar._attendance_intervals_batch(
                             datetime.combine(closest_allocation.date_to, time.min).replace(tzinfo=pytz.UTC),
                             datetime.combine(target_date, time.max).replace(tzinfo=pytz.UTC))\
                         if leave_type.request_unit in ['hour']\
