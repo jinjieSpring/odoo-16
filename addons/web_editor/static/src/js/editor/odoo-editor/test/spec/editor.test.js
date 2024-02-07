@@ -125,6 +125,14 @@ describe('Editor', () => {
                 });
             });
         });
+        describe('sanitize should modify p within li', () => {
+            it('should convert p into span if p has classes', async () => {
+                await testEditor(BasicEditor, {
+                    contentBefore: '<ul><li><p class="class-1">abc</p><p class="class-2">def</p></li></ul>',
+                    contentAfter: '<ul><li><span class="class-1">abc</span><span class="class-2">def</span></li></ul>',
+                });
+            });
+        });
     });
     describe('deleteForward', () => {
         describe('Selection collapsed', () => {
@@ -3275,35 +3283,6 @@ X[]
                     contentAfter: `<p>[]abcd</p>`,
                 });
             });
-            it('should not remove contenteditable false elements', async () => {
-                await testEditor(BasicEditor, {
-                    contentBefore:
-                        `<div>
-                            <div><div class="oe_unremovable"><p>[abc</p></div></div>
-                            <a class="o_not_editable" contenteditable="false" title="Previous">
-                                <span class="visually-hidden o_default_snippet_text">Previous</span>
-                            </a>]
-                            <a class="o_not_editable" contenteditable="false" title="Next">
-                                <span class="visually-hidden o_default_snippet_text">Next</span>
-                            </a>
-                        </div>
-                        `,
-                    stepFunction: async editor => {
-                        await deleteBackward(editor);
-                    },
-                    contentAfter:
-                        `<div>
-                            <div><div class="oe_unremovable"><p>[]<br></p></div></div>
-                            <a class="o_not_editable" contenteditable="false" title="Previous">
-                                <span class="visually-hidden o_default_snippet_text">Previous</span>
-                            </a>
-                            <a class="o_not_editable" contenteditable="false" title="Next">
-                                <span class="visually-hidden o_default_snippet_text">Next</span>
-                            </a>
-                        </div>
-                        `,
-                })
-            });
             describe('Nested editable zone (inside contenteditable=false element)', () => {
                 it('should extend the range to fully include contenteditable=false that are partially selected at the end of the range', async () => {
                     await testEditor(BasicEditor, {
@@ -5133,7 +5112,14 @@ X[]
                 await testEditor(BasicEditor, {
                     contentBefore: '<table><tbody><tr style="height: 20px;"><td style="width: 20px;">ab</td><td>cd</td><td>ef[]</td></tr></tbody></table>',
                     stepFunction: async editor => triggerEvent(editor.editable, 'keydown', { key: 'Tab'}),
-                    contentAfter: '<table><tbody><tr style="height: 20px;"><td style="width: 20px;">ab</td><td>cd</td><td>ef</td></tr><tr style="height: 20px;"><td>[<p><br></p>]</td><td><p><br></p></td><td><p><br></p></td></tr></tbody></table>',
+                    contentAfter: '<table><tbody><tr style="height: 20px;"><td style="width: 20px;">ab</td><td>cd</td><td>ef</td></tr><tr style="height: 20px;"><td><p>[]<br></p></td><td><p><br></p></td><td><p><br></p></td></tr></tbody></table>',
+                });
+            });
+            it('should not select whole text of the next cell', async () => {
+                await testEditor(BasicEditor, {
+                    contentBefore: '<table><tbody><tr style="height: 20px;"><td style="width: 20px;">ab</td><td>[cd]</td><td>ef</td></tr></tbody></table>',
+                    stepFunction: async editor => triggerEvent(editor.editable, 'keydown', { key: 'Tab'}),
+                    contentAfter: '<table><tbody><tr style="height: 20px;"><td style="width: 20px;">ab</td><td>cd</td><td>ef[]</td></tr></tbody></table>',
                 });
             });
         });

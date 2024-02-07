@@ -264,15 +264,14 @@ class Module(models.Model):
 
     @api.depends('icon')
     def _get_icon_image(self):
+        self.icon_image = ''
         for module in self:
-            module.icon_image = ''
+            if not module.id:
+                continue
             if module.icon:
-                path_parts = module.icon.split('/')
-                path = modules.get_module_resource(path_parts[1], *path_parts[2:])
-            elif module.id:
-                path = modules.module.get_module_icon_path(module)
+                path = modules.get_module_resource(*module.icon.split("/")[1:])
             else:
-                path = ''
+                path = modules.module.get_module_icon_path(module)
             if path:
                 with tools.file_open(path, 'rb') as image_file:
                     module.icon_image = base64.b64encode(image_file.read())
@@ -788,9 +787,7 @@ class Module(models.Model):
                 mod = self.create(dict(name=mod_name, state=state, **values))
                 res[1] += 1
 
-            mod._update_dependencies(terp.get('depends', []), terp.get('auto_install'))
-            mod._update_exclusions(terp.get('excludes', []))
-            mod._update_category(terp.get('category', 'Uncategorized'))
+            mod._update_from_terp(terp)
 
         return res
 
@@ -897,6 +894,11 @@ class Module(models.Model):
     @api.model
     def get_apps_server(self):
         return tools.config.get('apps_server', 'https://apps.odoo.com/apps')
+
+    def _update_from_terp(self, terp):
+        self._update_dependencies(terp.get('depends', []), terp.get('auto_install'))
+        self._update_exclusions(terp.get('excludes', []))
+        self._update_category(terp.get('category', 'Uncategorized'))
 
     def _update_dependencies(self, depends=None, auto_install_requirements=()):
         self.env['ir.module.module.dependency'].flush_model()
