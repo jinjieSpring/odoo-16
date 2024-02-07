@@ -63,14 +63,22 @@ export const PROTECTED_BLOCK_TAG = ['TR','TD','TABLE','TBODY','UL','OL','LI'];
 
 /**
  * Array of all the classes used by the editor to change the font size.
+ *
+ * Note: the Bootstrap "small" class is an exception, the editor does not allow
+ * to set it but it did in the past and we want to remove it when applying an
+ * override of the font-size.
  */
 export const FONT_SIZE_CLASSES = ["display-1-fs", "display-2-fs", "display-3-fs", "display-4-fs", "h1-fs",
-    "h2-fs", "h3-fs", "h4-fs", "h5-fs", "h6-fs", "base-fs", "small"];
+    "h2-fs", "h3-fs", "h4-fs", "h5-fs", "h6-fs", "base-fs", "o_small-fs", "small"];
 
 /**
  * Array of all the classes used by the editor to change the text style.
+ *
+ * Note: the Bootstrap "small" class was actually part of "text style"
+ * configuration in the past... but also of the "font size" configuration (see
+ * FONT_SIZE_CLASSES). It should be mentioned here too.
  */
-export const TEXT_STYLE_CLASSES = ["display-1", "display-2", "display-3", "display-4", "lead"];
+export const TEXT_STYLE_CLASSES = ["display-1", "display-2", "display-3", "display-4", "lead", "o_small", "small"];
 
 //------------------------------------------------------------------------------
 // Position and sizes
@@ -850,7 +858,7 @@ export function getDeepestPosition(node, offset) {
     let direction = DIRECTIONS.RIGHT;
     let next = node;
     while (next) {
-        if (isVisible(next) || isZWS(next)) {
+        if ((isVisible(next) || isZWS(next)) && (!isBlock(next) || next.isContentEditable)) {
             // Valid node: update position then try to go deeper.
             if (next !== node) {
                 [node, offset] = [next, direction ? 0 : nodeSize(next)];
@@ -858,7 +866,7 @@ export function getDeepestPosition(node, offset) {
             // First switch direction to left if offset is at the end.
             direction = offset < node.childNodes.length;
             next = node.childNodes[direction ? offset : offset - 1];
-        } else if (direction && next.nextSibling && !isBlock(next.nextSibling)) {
+        } else if (direction && next.nextSibling) {
             // Invalid node: skip to next sibling (without crossing blocks).
             next = next.nextSibling;
         } else {
@@ -1964,6 +1972,11 @@ export function splitElement(element, offset) {
     for (const child of [...element.childNodes]) {
         index < offset ? before.appendChild(child) : after.appendChild(child);
         index++;
+    }
+    // e.g.: <p>Test/banner</p> + ENTER <=> <p>Test</p><div class="o_editor_banner>...</div><p><br></p>
+    const blockEl = closestBlock(after);
+    if (blockEl) {
+        fillEmpty(blockEl);
     }
     element.before(before);
     element.after(after);

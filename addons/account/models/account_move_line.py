@@ -682,7 +682,7 @@ class AccountMoveLine(models.Model):
     @api.depends_context('order_cumulated_balance', 'domain_cumulated_balance')
     def _compute_cumulated_balance(self):
         if not self.env.context.get('order_cumulated_balance'):
-            # We do not come from search_read, so we are not in a list view, so it doesn't make any sense to compute the cumulated balance
+            # We do not come from search_fetch, so we are not in a list view, so it doesn't make any sense to compute the cumulated balance
             self.cumulated_balance = 0
             return
 
@@ -773,14 +773,16 @@ class AccountMoveLine(models.Model):
                 and foreign_curr.is_zero(line.amount_residual_currency)
             )
 
-    @api.depends('move_id.move_type', 'tax_ids', 'tax_repartition_line_id', 'debit', 'credit', 'tax_tag_ids', 'is_refund')
+    @api.depends('move_id.move_type', 'tax_ids', 'tax_repartition_line_id', 'debit', 'credit', 'tax_tag_ids', 'is_refund',
+                 'move_id.tax_cash_basis_origin_move_id')
     def _compute_tax_tag_invert(self):
         for record in self:
+            origin_move_id = record.move_id.tax_cash_basis_origin_move_id or record.move_id
             if not record.tax_repartition_line_id and not record.tax_ids:
                 # Invoices imported from other softwares might only have kept the tags, not the taxes.
-                record.tax_tag_invert = record.tax_tag_ids and record.move_id.is_inbound()
+                record.tax_tag_invert = record.tax_tag_ids and origin_move_id.is_inbound()
 
-            elif record.move_id.move_type == 'entry':
+            elif origin_move_id.move_type == 'entry':
                 # For misc operations, cash basis entries and write-offs from the bank reconciliation widget
                 tax = record.tax_repartition_line_id.tax_id or record.tax_ids[:1]
                 is_refund = record.is_refund
@@ -788,7 +790,7 @@ class AccountMoveLine(models.Model):
                 record.tax_tag_invert = (tax_type == 'purchase' and is_refund) or (tax_type == 'sale' and not is_refund)
             else:
                 # For invoices with taxes
-                record.tax_tag_invert = record.move_id.is_inbound()
+                record.tax_tag_invert = origin_move_id.is_inbound()
 
     @api.depends('product_id')
     def _compute_product_uom_id(self):
@@ -1203,7 +1205,6 @@ class AccountMoveLine(models.Model):
                 line.debit = 0
             line.balance = line.debit - line.credit
 
-    @api.onchange('analytic_distribution')
     def _inverse_analytic_distribution(self):
         """ Unlink and recreate analytic_lines when modifying the distribution."""
         lines_to_modify = self.env['account.move.line'].browse([
@@ -1395,17 +1396,19 @@ class AccountMoveLine(models.Model):
         return super().invalidate_recordset(fnames, flush)
 
     @api.model
-    def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None):
+    def search_fetch(self, domain, field_names, offset=0, limit=None, order=None):
         def to_tuple(t):
             return tuple(map(to_tuple, t)) if isinstance(t, (list, tuple)) else t
-        # Make an explicit order because we will need to reverse it
-        order = (order or self._order) + ', id'
+        order = (order or self._order)
+        if not re.search(r'\bid\b', order):
+            # Make an explicit order because we will need to reverse it
+            order += ', id'
         # Add the domain and order by in order to compute the cumulated balance in _compute_cumulated_balance
         contextualized = self.with_context(
             domain_cumulated_balance=to_tuple(domain or []),
             order_cumulated_balance=order,
         )
-        return super(AccountMoveLine, contextualized).search_read(domain, fields, offset, limit, order)
+        return super(AccountMoveLine, contextualized).search_fetch(domain, field_names, offset, limit, order)
 
     def init(self):
         """ change index on partner_id to a multi-column index on (partner_id, ref), the new index will behave in the
@@ -3009,7 +3012,7 @@ class AccountMoveLine(models.Model):
         account_field_values = {}
         decimal_precision = self.env['decimal.precision'].precision_get('Percentage Analytic')
         amount = 0
-        for account in self.env['account.analytic.account'].browse(map(int, account_ids.split(","))):
+        for account in self.env['account.analytic.account'].browse(map(int, account_ids.split(","))).exists():
             distribution_plan = distribution_on_each_plan.get(account.root_plan_id, 0) + distribution
             if float_compare(distribution_plan, 100, precision_digits=decimal_precision) == 0:
                 amount = -self.balance * (100 - distribution_on_each_plan.get(account.root_plan_id, 0)) / 100.0

@@ -1194,7 +1194,7 @@ class Field(MetaField('DummyField', (object,), {})):
         elif self.store and record._origin and not (self.compute and self.readonly):
             # new record with origin: fetch from origin
             value = self.convert_to_cache(record._origin[self.name], record, validate=False)
-            env.cache.set(record, self, value)
+            value = env.cache.patch_and_set(record, self, value)
 
         elif self.compute: #pylint: disable=using-constant-test
             # non-stored field or new record without origin: compute
@@ -1240,7 +1240,7 @@ class Field(MetaField('DummyField', (object,), {})):
         else:
             # non-stored field or stored field on new record: default value
             value = self.convert_to_cache(False, record, validate=False)
-            env.cache.set(record, self, value)
+            value = env.cache.patch_and_set(record, self, value)
             defaults = record.default_get([self.name])
             if self.name in defaults:
                 # The null value above is necessary to convert x2many field
@@ -1853,16 +1853,22 @@ class _String(Field):
             for term in new_terms:
                 text2terms[self.get_text_content(term)].append(term)
 
+            is_text = self.translate.is_text if hasattr(self.translate, 'is_text') else lambda term: True
+            term_adapter = self.translate.term_adapter if hasattr(self.translate, 'term_adapter') else None
             for old_term in list(translation_dictionary.keys()):
                 if old_term not in new_terms:
                     old_term_text = self.get_text_content(old_term)
                     matches = get_close_matches(old_term_text, text2terms, 1, 0.9)
                     if matches:
                         closest_term = get_close_matches(old_term, text2terms[matches[0]], 1, 0)[0]
-                        old_is_text = old_term == self.get_text_content(old_term)
-                        closest_is_text = closest_term == self.get_text_content(closest_term)
+                        old_is_text = is_text(old_term)
+                        closest_is_text = is_text(closest_term)
                         if old_is_text or not closest_is_text:
-                            translation_dictionary[closest_term] = translation_dictionary.pop(old_term)
+                            if not closest_is_text and records.env.context.get("install_mode") and lang == 'en_US' and term_adapter:
+                                adapter = term_adapter(closest_term)
+                                translation_dictionary[closest_term] = {k: adapter(v) for k, v in translation_dictionary.pop(old_term).items()}
+                            else:
+                                translation_dictionary[closest_term] = translation_dictionary.pop(old_term)
             # pylint: disable=not-callable
             new_translations = {
                 l: self.translate(lambda term: translation_dictionary.get(term, {l: None})[l], cache_value)
@@ -4161,10 +4167,7 @@ class _RelationalMulti(_Relational):
 
     def _update(self, records, value):
         """ Update the cached value of ``self`` for ``records`` with ``value``. """
-        cache = records.env.cache
-        for record in records.with_context(active_test=False):
-            val = self.convert_to_cache(record[self.name] | value, record, validate=False)
-            cache.set(record, self, val)
+        records.env.cache.patch(records, self, value.id)
         records.modified([self.name])
 
     def convert_to_cache(self, value, record, validate=True):

@@ -450,6 +450,9 @@ class TestUi(odoo.tests.HttpCase):
     def test_30_website_text_animations(self):
         self.start_tour("/", 'text_animations', login='admin')
 
+    def test_31_website_edit_megamenu_big_icons_subtitles(self):
+        self.start_tour(self.env['website'].get_client_action_url('/'), 'edit_megamenu_big_icons_subtitles', login='admin')
+
     def test_website_media_dialog_image_shape(self):
         self.start_tour("/", 'website_media_dialog_image_shape', login='admin')
 
@@ -504,3 +507,11 @@ class TestUi(odoo.tests.HttpCase):
         website.menu_id.child_id[1:].unlink()
 
         self.start_tour('/', 'website_no_dirty_page', login='admin')
+
+    def test_widget_lifecycle(self):
+        self.env['ir.asset'].create({
+            'name': 'wysiwyg_patch_start_and_destroy',
+            'bundle': 'website.assets_wysiwyg',
+            'path': 'website/static/tests/tour_utils/widget_lifecycle_patch_wysiwyg.js',
+        })
+        self.start_tour(self.env['website'].get_client_action_url('/'), 'widget_lifecycle', login='admin')

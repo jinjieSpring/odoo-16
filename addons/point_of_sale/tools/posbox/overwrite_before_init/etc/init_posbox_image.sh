@@ -19,7 +19,7 @@ echo "export LC_ALL=en_US.UTF-8" >> ~/.bashrc
 locale-gen
 source ~/.bashrc
 
-apt-get update && apt-get -y upgrade
+apt-get update
 
 # At the first start it is necessary to configure a password
 # This will be modified by a unique password on the first start of Odoo
@@ -116,7 +116,8 @@ PIP_TO_INSTALL="
     PyPDF2==1.26.0 \
     Werkzeug==2.0.2 \
     urllib3==1.26.5 \
-    pyOpenssl==22.1.0"
+    pyOpenssl==22.0.0 \
+    cryptography==36.0.2"
 
 pip3 install ${PIP_TO_INSTALL} --break-system-package
 

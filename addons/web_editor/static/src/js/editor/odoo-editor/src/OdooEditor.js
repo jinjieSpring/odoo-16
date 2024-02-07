@@ -16,7 +16,6 @@ import {
     commonParentGet,
     containsUnremovable,
     DIRECTIONS,
-    endPos,
     ensureFocus,
     getCursorDirection,
     getFurthestUneditableParent,
@@ -28,7 +27,6 @@ import {
     preserveCursor,
     setCursorStart,
     setSelection,
-    startPos,
     toggleClass,
     closestElement,
     isVisible,
@@ -80,6 +78,8 @@ import {
     boundariesOut,
     getFontSizeDisplayValue,
     rightLeafOnlyNotBlockPath,
+    lastLeaf,
+    isUnbreakable,
 } from './utils/utils.js';
 import { editorCommands } from './commands/commands.js';
 import { Powerbox } from './powerbox/Powerbox.js';
@@ -2116,6 +2116,15 @@ export class OdooEditor extends EventTarget {
         return didDeselectTable;
     }
 
+    /**
+     * `activateContenteditable` serves as an interface for external use,
+     * allowing users to conveniently trigger `_activateContenteditable`
+     * from outside the odooEditor.
+     */
+    activateContenteditable() {
+        this._activateContenteditable();
+    }
+
     //--------------------------------------------------------------------------
     // Private
     //--------------------------------------------------------------------------
@@ -2172,6 +2181,10 @@ export class OdooEditor extends EventTarget {
             }
         }
         let insertedZws;
+        let { startContainer: start, startOffset, endContainer: end, endOffset } = range;
+        const startBlock = closestBlock(start);
+        const endBlock = closestBlock(end);
+        const [firstLeafOfStartBlock, lastLeafOfEndBlock] = [firstLeaf(startBlock), lastLeaf(endBlock)];
         if (sel && !sel.isCollapsed && !range.startOffset && !range.startContainer.previousSibling) {
             // Insert a zero-width space before the selection if the selection
             // is non-collapsed and at the beginning of its parent, so said
@@ -2184,12 +2197,16 @@ export class OdooEditor extends EventTarget {
             range.startContainer.before(zws);
             insertedZws = zws;
         }
-        let { startContainer: start, startOffset, endContainer: end, endOffset } = range;
-        const [startBlock, endBlock] = [closestBlock(start), closestBlock(end)];
+        // Do not join blocks in the following cases:
+        // 1. start and end share a common ancestor block with the range
+        // 2. selection spans multiple TDs
+        // 3. selection starts at beginning of startBlock and ends at end of
+        //    endBlock
         const doJoin =
-            (startBlock !== closestBlock(range.commonAncestorContainer) ||
-            endBlock !== closestBlock(range.commonAncestorContainer))
-            && (startBlock.tagName !== 'TD' && endBlock.tagName !== 'TD');
+            !(startBlock === closestBlock(range.commonAncestorContainer) &&
+                endBlock === closestBlock(range.commonAncestorContainer))
+            && (startBlock.tagName !== 'TD' && endBlock.tagName !== 'TD')
+            && !(firstLeafOfStartBlock === start && lastLeafOfEndBlock === end);
         let next = nextLeaf(end, this.editable);
 
         // Get the boundaries of the range so as to get the state to restore.
@@ -2210,6 +2227,12 @@ export class OdooEditor extends EventTarget {
         const contents = range.extractContents();
 
         setSelection(start, nodeSize(start));
+        const startLi = closestElement(start, 'li');
+        // Uncheck a list item with empty text in multi-list selection.
+        if (startLi && startLi.classList.contains('o_checked') &&
+            startLi.textContent === '\u200B' && closestElement(end, 'li') !== startLi) {
+            startLi.classList.remove('o_checked');
+        }
         range = getDeepRange(this.editable, { sel });
         // Restore unremovables removed by extractContents.
         [...contents.querySelectorAll('*')].filter(isUnremovable).forEach(n => {
@@ -2916,6 +2939,9 @@ export class OdooEditor extends EventTarget {
      * @param {HTMLTableRowElement|HTMLTableCellElement} element
      */
     _positionTableUi(element) {
+        if (!element.isConnected) {
+            return;
+        }
         const tableUiContainerRect = this._tableUiContainer.getBoundingClientRect();
         const isRtl = this.options.direction === 'rtl';
         const isRow = element.nodeName === 'TR';
@@ -3172,7 +3198,10 @@ export class OdooEditor extends EventTarget {
         const block = closestBlock(sel.anchorNode);
         let activeLabel = undefined;
         for (const [style, cssSelector, isList] of [
-            ['paragraph', 'p:not(.small, .lead)', false],
+            // TODO we might want to review this list to not mention o_xxx
+            // classes but be a setting instead? Probably after current
+            // refactorings being made in master.
+            ['paragraph', 'p:not(.small, .lead, .o_small)', false],
             ['pre', 'pre', false],
             ['heading1', 'h1:not(.display-1, .display-2, .display-3, .display-4)', false],
             ['heading2', 'h2', false],
@@ -3185,7 +3214,10 @@ export class OdooEditor extends EventTarget {
             ['display-3', 'h1.display-3', false],
             ['display-4', 'h1.display-4', false],
             ['blockquote', 'blockquote', false],
-            ['small', '.small', false],
+            // Note: this button will apply the "o_small" class but as an
+            // approximation, we display "Small" if this actually use the
+            // Bootstrap "small" class.
+            ['small', '.small, .o_small', false],
             ['light', '.lead', false],
             ['unordered', 'UL', true],
             ['ordered', 'OL', true],
@@ -3247,7 +3279,7 @@ export class OdooEditor extends EventTarget {
         const range = getDeepRange(this.editable, { sel, correctTripleClick: true });
         const spansBlocks = [...range.commonAncestorContainer.childNodes].some(isBlock);
         linkButton?.classList.toggle('d-none', spansBlocks || isInMedia);
-        
+
         // Hide link button group if it has no visible button.
         const linkBtnGroup = this.toolbar.querySelector('#link.btn-group');
         linkBtnGroup?.classList.toggle('d-none', !linkBtnGroup.querySelector('.btn:not(.d-none)'));
@@ -4172,13 +4204,20 @@ export class OdooEditor extends EventTarget {
         // and the toolbar so we need to fix the selection to be based on the
         // editable children. Calling `getDeepRange` ensure the selection is
         // limited to the editable.
+        const containerSelector = '#wrap>*, .oe_structure>*, [contenteditable]';
+        const container =
+            (selection &&
+                closestElement(selection.anchorNode, containerSelector)) ||
+            // In case a suitable container could not be found then the
+            // selection is restricted inside the editable area.
+            this.editable;
         if (
-            selection.anchorNode === this.editable &&
-            selection.focusNode === this.editable &&
+            selection.anchorNode === container &&
+            selection.focusNode === container &&
             selection.anchorOffset === 0 &&
-            selection.focusOffset === [...this.editable.childNodes].length
+            selection.focusOffset === [...container.childNodes].length
         ) {
-            getDeepRange(this.editable, {select: true});
+            getDeepRange(container, {select: true});
             // The selection is changed in `getDeepRange` and will therefore
             // re-trigger the _onSelectionChange.
             return;
@@ -4978,10 +5017,11 @@ export class OdooEditor extends EventTarget {
                                 // Break line by inserting new paragraph and
                                 // remove current paragraph's bottom margin.
                                 const p = closestElement(sel.anchorNode, 'p');
-                                if (this._applyCommand('oEnter') === UNBREAKABLE_ROLLBACK_CODE) {
+                                if (isUnbreakable(closestBlock(sel.anchorNode))) {
                                     this._applyCommand('oShiftEnter');
-                                } else if (p) {
-                                    p.style.marginBottom = '0px';
+                                } else {
+                                    this._applyCommand('oEnter');
+                                    p && (p.style.marginBottom = '0px');
                                 }
                             }
                             textIndex++;
@@ -5063,7 +5103,7 @@ export class OdooEditor extends EventTarget {
         const cursorDestination =
             tds[tds.findIndex(td => closestTd === td) + (direction === DIRECTIONS.LEFT ? -1 : 1)];
         if (cursorDestination) {
-            setSelection(...startPos(cursorDestination), ...endPos(cursorDestination), true);
+            setCursorEnd(lastLeaf(cursorDestination));
         } else if (direction === DIRECTIONS.RIGHT) {
             this.execCommand('addRow', 'after');
             this._onTabulationInTable(ev);

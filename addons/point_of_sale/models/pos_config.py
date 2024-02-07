@@ -203,9 +203,9 @@ class PosConfig(models.Model):
     def _compute_currency(self):
         for pos_config in self:
             if pos_config.journal_id:
-                pos_config.currency_id = pos_config.journal_id.currency_id.id or pos_config.journal_id.company_id.currency_id.id
+                pos_config.currency_id = pos_config.journal_id.currency_id.id or pos_config.journal_id.company_id.sudo().currency_id.id
             else:
-                pos_config.currency_id = pos_config.company_id.currency_id.id
+                pos_config.currency_id = pos_config.company_id.sudo().currency_id.id
 
     @api.depends('session_ids', 'session_ids.state')
     def _compute_current_session(self):
@@ -813,6 +813,10 @@ class PosConfig(models.Model):
             return int(config_param)
         except (TypeError, ValueError, OverflowError):
             return default_limit
+
+    def toggle_images(self, for_products, for_categories):
+        self.env['ir.config_parameter'].sudo().set_param('point_of_sale.show_product_images', for_products)
+        self.env['ir.config_parameter'].sudo().set_param('point_of_sale.show_category_images', for_categories)
 
     def get_limited_partners_loading(self):
         self.env.cr.execute("""

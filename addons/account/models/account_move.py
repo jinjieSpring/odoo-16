@@ -11,10 +11,8 @@ from psycopg2 import OperationalError
 import math
 import re
 from textwrap import shorten
-from unittest.mock import patch
 
 from odoo import api, fields, models, _, Command
-from odoo.addons.base.models.decimal_precision import DecimalPrecision
 from odoo.addons.account.tools import format_structured_reference_iso
 from odoo.exceptions import UserError, ValidationError, AccessError, RedirectWarning
 from odoo.tools import (
@@ -97,7 +95,12 @@ class AccountMove(models.Model):
         tracking=True,
         index='trigram',
     )
-    ref = fields.Char(string='Reference', copy=False, tracking=True)
+    ref = fields.Char(
+        string='Reference',
+        copy=False,
+        tracking=True,
+        index='trigram',
+    )
     date = fields.Date(
         string='Date',
         index=True,
@@ -671,7 +674,7 @@ class AccountMove(models.Model):
     def _compute_hide_post_button(self):
         for record in self:
             record.hide_post_button = record.state != 'draft' \
-                or record.auto_post != 'no' and record.date > fields.Date.today()
+                or record.auto_post != 'no' and record.date > fields.Date.context_today(record)
 
     @api.depends('journal_id')
     def _compute_company_id(self):
@@ -1068,7 +1071,7 @@ class AccountMove(models.Model):
                         untaxed_amount_currency = invoice.amount_untaxed * sign
                         untaxed_amount = invoice.amount_untaxed_signed
                     invoice_payment_terms = invoice.invoice_payment_term_id._compute_terms(
-                        date_ref=invoice.invoice_date or invoice.date or fields.Date.today(),
+                        date_ref=invoice.invoice_date or invoice.date or fields.Date.context_today(invoice),
                         currency=invoice.currency_id,
                         tax_amount_currency=tax_amount_currency,
                         tax_amount=tax_amount,
@@ -3065,12 +3068,7 @@ class AccountMove(models.Model):
         The reasonning is that if the document that we are importing has a discount, it
         shouldn't be rounded to the local settings.
         """
-        original_precision_get = DecimalPrecision.precision_get
-        def precision_get(self, application):
-            if application == 'Discount':
-                return 100
-            return original_precision_get(self, application)
-        with patch('odoo.addons.base.models.decimal_precision.DecimalPrecision.precision_get', new=precision_get):
+        with self._disable_recursion({'records': self}, 'ignore_discount_precision'):
             yield
 
     def _get_edi_decoder(self, file_data, new=False):
@@ -4227,6 +4225,24 @@ class AccountMove(models.Model):
         """ Handle Send & Print async processing.
         :param job_count: maximum number of jobs to process if specified.
         """
+        def get_account_notification(partner, moves, is_success):
+            return [
+                partner,
+                'account_notification',
+                {
+                    'type': 'success' if is_success else 'warning',
+                    'title': _('Invoices sent') if is_success else _('Invoices in error'),
+                    'message': _('Invoices sent successfully.') if is_success else _(
+                        "One or more invoices couldn't be processed."),
+                    'action_button': {
+                        'name': _('Open'),
+                        'action_name': _('Sent invoices') if is_success else _('Invoices in error'),
+                        'model': 'account.move',
+                        'res_ids': moves.ids,
+                    },
+                },
+            ]
+
         limit = job_count + 1
         to_process = self.env['account.move']._read_group(
             [('send_and_print_values', '!=', False)],
@@ -4250,7 +4266,27 @@ class AccountMove(models.Model):
                 else:
                     raise
 
+            # Retrieve res.partner that executed the Send & Print wizard
+            sp_partner_ids = set(moves.mapped(lambda move: move.send_and_print_values.get('sp_partner_id')))
+            sp_partners = self.env['res.partner'].browse(sp_partner_ids)
+            moves_map = {
+                partner: moves.filtered(lambda m: m.send_and_print_values['sp_partner_id'] == partner.id)
+                for partner in sp_partners
+            }
+
             self.env['account.move.send']._process_send_and_print(moves)
+
+            notifications = []
+            for partner, partner_moves in moves_map.items():
+                partner_moves_error = partner_moves.filtered(lambda m: m.send_and_print_values and m.send_and_print_values.get('error'))
+                if partner_moves_error:
+                    notifications.append(get_account_notification(partner, partner_moves_error, False))
+                partner_moves_success = partner_moves - partner_moves_error
+                if partner_moves_success:
+                    notifications.append(get_account_notification(partner, partner_moves_success, True))
+                partner_moves_error.send_and_print_values = False
+
+            self.env['bus.bus']._sendmany(notifications)
 
         if need_retrigger:
             self.env.ref('account.ir_cron_account_move_send')._trigger()
@@ -4309,7 +4345,7 @@ class AccountMove(models.Model):
         :return (datetime.date):
         """
         lock_dates = self._get_violated_lock_dates(invoice_date, has_tax)
-        today = fields.Date.today()
+        today = fields.Date.context_today(self)
         highest_name = self.highest_name or self._get_last_sequence(relaxed=True)
         number_reset = self._deduce_sequence_number_reset(highest_name)
         if lock_dates:
