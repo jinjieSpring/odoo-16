@@ -7,9 +7,9 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 16.0beta\n"
+"Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-04 09:26+0000\n"
+"POT-Creation-Date: 2024-02-06 13:32+0000\n"
 "PO-Revision-Date: 2022-09-22 05:56+0000\n"
 "Last-Translator: Ivan Shakh, 2024\n"
 "Language-Team: Belarusian (https://app.transifex.com/odoo/teams/41243/be/)\n"
@@ -80,21 +80,21 @@ msgstr ""
 #: model:ir.model.fields,field_description:website_event_questions.field_event_question_answer__create_uid
 #: model:ir.model.fields,field_description:website_event_questions.field_event_registration_answer__create_uid
 msgid "Created by"
-msgstr ""
+msgstr "Стварыў"
 
 #. module: website_event_questions
 #: model:ir.model.fields,field_description:website_event_questions.field_event_question__create_date
 #: model:ir.model.fields,field_description:website_event_questions.field_event_question_answer__create_date
 #: model:ir.model.fields,field_description:website_event_questions.field_event_registration_answer__create_date
 msgid "Created on"
-msgstr ""
+msgstr "Створана"
 
 #. module: website_event_questions
 #: model:ir.model.fields,field_description:website_event_questions.field_event_question__display_name
 #: model:ir.model.fields,field_description:website_event_questions.field_event_question_answer__display_name
 #: model:ir.model.fields,field_description:website_event_questions.field_event_registration_answer__display_name
 msgid "Display Name"
-msgstr ""
+msgstr "Назва для адлюстравання"
 
 #. module: website_event_questions
 #: model:ir.model,name:website_event_questions.model_event_event
@@ -153,7 +153,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:website_event_questions.field_event_question_answer__id
 #: model:ir.model.fields,field_description:website_event_questions.field_event_registration_answer__id
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #. module: website_event_questions
 #: model:ir.model.fields,help:website_event_questions.field_event_question__once_per_order
@@ -168,21 +168,21 @@ msgstr ""
 #: model:ir.model.fields,field_description:website_event_questions.field_event_question_answer____last_update
 #: model:ir.model.fields,field_description:website_event_questions.field_event_registration_answer____last_update
 msgid "Last Modified on"
-msgstr ""
+msgstr "Апошняя мадыфікацыя"
 
 #. module: website_event_questions
 #: model:ir.model.fields,field_description:website_event_questions.field_event_question__write_uid
 #: model:ir.model.fields,field_description:website_event_questions.field_event_question_answer__write_uid
 #: model:ir.model.fields,field_description:website_event_questions.field_event_registration_answer__write_uid
 msgid "Last Updated by"
-msgstr ""
+msgstr "Апошні абнавіў"
 
 #. module: website_event_questions
 #: model:ir.model.fields,field_description:website_event_questions.field_event_question__write_date
 #: model:ir.model.fields,field_description:website_event_questions.field_event_question_answer__write_date
 #: model:ir.model.fields,field_description:website_event_questions.field_event_registration_answer__write_date
 msgid "Last Updated on"
-msgstr ""
+msgstr "Апошняе абнаўленне"
 
 #. module: website_event_questions
 #: model:ir.model.fields,field_description:website_event_questions.field_event_question__is_mandatory_answer
@@ -234,15 +234,10 @@ msgid "Question Type"
 msgstr ""
 
 #. module: website_event_questions
+#. odoo-python
 #: code:addons/website_event_questions/models/event_question.py:0
 #, python-format
 msgid "Question cannot be linked to both an Event and an Event Type."
-msgstr ""
-
-#. module: website_event_questions
-#: code:addons/website_event_questions/models/event_question.py:0
-#, python-format
-msgid "Question cannot belong to both the event category and itself."
 msgstr ""
 
 #. module: website_event_questions
@@ -342,6 +337,7 @@ msgid "Yes"
 msgstr ""
 
 #. module: website_event_questions
+#. odoo-python
 #: code:addons/website_event_questions/models/event_question.py:0
 #, python-format
 msgid ""
@@ -349,6 +345,7 @@ msgid ""
 msgstr ""
 
 #. module: website_event_questions
+#. odoo-python
 #: code:addons/website_event_questions/models/event_question.py:0
 #, python-format
 msgid ""
@@ -356,6 +353,7 @@ msgid ""
 msgstr ""
 
 #. module: website_event_questions
+#. odoo-python
 #: code:addons/website_event_questions/models/event_question.py:0
 #, python-format
 msgid ""

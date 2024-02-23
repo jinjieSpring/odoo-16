@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
+import base64
+from lxml import etree
+
 from odoo.addons.l10n_account_edi_ubl_cii_tests.tests.common import TestUBLCommon
 from odoo.tests import tagged
 from odoo import Command
-import base64
+
 
 @tagged('post_install_l10n', 'post_install', '-at_install')
 class TestUBLBE(TestUBLCommon):
@@ -75,6 +78,14 @@ class TestUBLBE(TestUBLCommon):
             'name': 'tax_6',
             'amount_type': 'percent',
             'amount': 6,
+            'type_tax_use': 'sale',
+            'country_id': cls.env.ref('base.be').id,
+        })
+
+        cls.tax_0 = cls.env['account.tax'].create({
+            'name': 'tax_0',
+            'amount_type': 'percent',
+            'amount': 0,
             'type_tax_use': 'sale',
             'country_id': cls.env.ref('base.be').id,
         })
@@ -481,6 +492,32 @@ class TestUBLBE(TestUBLCommon):
 
         self._assert_invoice_attachment(invoice, None, 'from_odoo/bis3_export_with_changed_taxes.xml')
 
+    def test_export_rounding_price_amount(self):
+        invoice = self._generate_move(
+            self.partner_1,
+            self.partner_2,
+            move_type='out_invoice',
+            invoice_line_ids=[{'quantity': 3, 'price_unit': 102.15}],
+        )
+        attachment = invoice._get_edi_attachment(self.edi_format)
+        price_amount = etree.fromstring(attachment.raw).find('.//{*}InvoiceLine/{*}Price/{*}PriceAmount')
+        self.assertEqual(price_amount.text, '102.15')
+
+    def test_export_tax_exempt(self):
+        invoice = self._generate_move(
+            self.partner_1,
+            self.partner_2,
+            move_type='out_invoice',
+            invoice_line_ids=[
+                {
+                    'product_id': self.product_a.id,
+                    'price_unit': 990.0,
+                    'tax_ids': [(6, 0, self.tax_0.ids)],
+                },
+            ],
+        )
+        self._assert_invoice_attachment(invoice, None, 'from_odoo/bis3_out_invoice_tax_exempt.xml')
+
     ####################################################
     # Test import
     ####################################################
@@ -652,11 +689,10 @@ class TestUBLBE(TestUBLCommon):
     def test_import_payment_terms(self):
         # The tax 21% from l10n_be is retrieved since it's a duplicate of self.tax_21
         tax_21 = self.env.ref(f'l10n_be.{self.env.company.id}_attn_VAT-OUT-21-L')
-        tax_0 = self.env.ref(f'l10n_be.{self.env.company.id}_attn_VAT-OUT-00-L')
         self._assert_imported_invoice_from_file(
             subfolder='tests/test_files/from_odoo', filename='bis3_pay_term.xml', amount_total=3105.68,
             amount_tax=505.68, list_line_subtotals=[-4, -48, 52, 200, 2400],
             currency_id=self.currency_data['currency'].id, list_line_price_unit=[-4, -48, 52, 200, 2400],
-            list_line_discount=[0, 0, 0, 0, 0], list_line_taxes=[self.tax_6, tax_21, tax_0, self.tax_6, tax_21],
+            list_line_discount=[0, 0, 0, 0, 0], list_line_taxes=[self.tax_6, tax_21, self.tax_0, self.tax_6, tax_21],
             move_type='out_invoice',
         )
