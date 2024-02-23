@@ -49,7 +49,7 @@ export class Store extends BaseStore {
         return this.imStatusTrackedPersonas.map((persona) => persona.id);
     }
 
-    lastChannelSubscription = "";
+    knownChannelIds = new Set();
     /** This is the current logged partner */
     user = Record.one("Persona");
     /** This is the current logged guest */
@@ -74,18 +74,10 @@ export class Store extends BaseStore {
     users = {};
     internalUserGroupId = null;
     imStatusTrackedPersonas = Record.many("Persona", {
-        compute() {
-            return Object.values(this.Persona?.records ?? []).filter(
-                (persona) =>
-                    persona.type === "partner" &&
-                    persona.im_status !== "im_partner" &&
-                    !persona.is_public
-            );
-        },
+        inverse: "storeAsTrackedImStatus",
         onUpdate() {
             this.updateImStatusRegistration();
         },
-        eager: true,
     });
     hasLinkPreviewFeature = true;
     // messaging menu
@@ -203,22 +195,34 @@ export class Store extends BaseStore {
     }
 
     updateBusSubscription() {
-        const channelIds = [];
-        const ids = Object.keys(this.Thread.records).sort(); // Ensure channels processed in same order.
-        for (const id of ids) {
-            const thread = this.Thread.records[id];
-            if (thread.model === "discuss.channel") {
-                channelIds.push(id);
-                if (!thread.hasSelfAsMember) {
-                    this.env.services["bus_service"].addChannel(`discuss.channel_${thread.id}`);
+        if (!this.isMessagingReady) {
+            return;
+        }
+        const allSelfChannelIds = new Set();
+        for (const thread of Object.values(this.Thread.records)) {
+            if (thread.model === "discuss.channel" && thread.hasSelfAsMember) {
+                if (thread.selfMember.memberSince < this.env.services["bus_service"].startedAt) {
+                    this.knownChannelIds.add(thread.id);
                 }
+                allSelfChannelIds.add(thread.id);
             }
         }
-        const channels = JSON.stringify(channelIds);
-        if (this.isMessagingReady && this.lastChannelSubscription !== channels) {
+        let shouldUpdateChannels = false;
+        for (const id of allSelfChannelIds) {
+            if (!this.knownChannelIds.has(id)) {
+                shouldUpdateChannels = true;
+                this.knownChannelIds.add(id);
+            }
+        }
+        for (const id of this.knownChannelIds) {
+            if (!allSelfChannelIds.has(id)) {
+                shouldUpdateChannels = true;
+                this.knownChannelIds.delete(id);
+            }
+        }
+        if (shouldUpdateChannels) {
             this.env.services["bus_service"].forceUpdateChannels();
         }
-        this.lastChannelSubscription = channels;
     }
 }
 Store.register();

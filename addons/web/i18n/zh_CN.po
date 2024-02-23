@@ -7,16 +7,17 @@
 # 何彬 <vnsoft.he@gmail.com>, 2023
 # 山西清水欧度(QQ:54773801) <54773801@qq.com>, 2023
 # Jeffery CHEN <jeffery9@gmail.com>, 2023
-# Chloe Wang, 2024
 # Etren Leo <475851879@qq.com>, 2024
+# Chloe Wang, 2024
+# 湘子 南 <1360857908@qq.com>, 2024
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-05 12:32+0000\n"
+"POT-Creation-Date: 2024-01-29 10:46+0000\n"
 "PO-Revision-Date: 2023-10-26 23:09+0000\n"
-"Last-Translator: Etren Leo <475851879@qq.com>, 2024\n"
+"Last-Translator: 湘子 南 <1360857908@qq.com>, 2024\n"
 "Language-Team: Chinese (China) (https://app.transifex.com/odoo/teams/41243/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -791,7 +792,7 @@ msgstr "必须为您收藏的筛选输入一个名称。"
 msgid ""
 "A popup window has been blocked. You may need to change your browser "
 "settings to allow popup windows for this page."
-msgstr "Odoo的弹出窗口已被浏览器阻止弹出。您需要更改浏览器的设置选项以便允许本页的弹出窗口。"
+msgstr "ERP 的弹出窗口已被浏览器阻止弹出。您需要更改浏览器的设置选项以便允许本页的弹出窗口."
 
 #. module: web
 #. odoo-javascript
@@ -1122,7 +1123,7 @@ msgstr "杏仁"
 #: code:addons/web/static/src/views/fields/datetime/datetime_field.js:0
 #, python-format
 msgid "Always range"
-msgstr ""
+msgstr "总是使用范围"
 
 #. module: web
 #. odoo-javascript
@@ -1485,6 +1486,15 @@ msgstr "布尔图标（Boolean Icon）"
 
 #. module: web
 #. odoo-javascript
+#: code:addons/web/static/src/views/fields/statusbar/statusbar_field.js:0
+#, python-format
+msgid ""
+"Boolean field from the model used in the relation, which indicates whether "
+"the state is folded or not."
+msgstr "关系中使用的模型中的布尔字段，表示状态是否折叠。"
+
+#. module: web
+#. odoo-javascript
 #: code:addons/web/static/src/views/fields/progress_bar/progress_bar_field.js:0
 #, python-format
 msgid ""
@@ -1702,7 +1712,7 @@ msgstr "重新检查"
 msgid ""
 "Check your network connection and come back here. Odoo will load as soon as "
 "you're back online."
-msgstr "检查您的网络连接，然后返回此处。一旦恢复网络连接，Odoo 将立即加载。"
+msgstr "检查您的网络连接，然后返回此处。一旦恢复网络连接，ERP 将立即加载."
 
 #. module: web
 #. odoo-javascript
@@ -3408,6 +3418,8 @@ msgid ""
 "click the <i class=\"fa fa-cloud-upload fa-fw\"></i> button now to ensure "
 "your work is saved before you exit this tab."
 msgstr ""
+"注意！您最近所做的更改太大，无法自动保存。请立即点击 <i class=\"fa fa-cloud-upload fa-"
+"fw\"></i>按钮，确保在退出此选项卡前保存您的工作。"
 
 #. module: web
 #. odoo-javascript
@@ -3613,7 +3625,7 @@ msgstr "包括已归档"
 msgid ""
 "Install Odoo on your device to access it easily. Here are the steps to "
 "follow:"
-msgstr "在设备上安装 Odoo，以便轻松访问。以下是操作步骤："
+msgstr "在设备上安装 ERP，以便轻松访问。以下是操作步骤："
 
 #. module: web
 #. odoo-javascript
@@ -5122,7 +5134,7 @@ msgstr "Odoo网络错误"
 msgid ""
 "Odoo Push notifications have been blocked. Go to your browser settings to "
 "allow them."
-msgstr "Odoo推送通知已被阻止。请转到您的浏览器设置以允许它们。"
+msgstr "ERP 推送通知已被阻止。请转到您的浏览器设置以允许它们。"
 
 #. module: web
 #. odoo-javascript
@@ -6999,7 +7011,7 @@ msgid ""
 "The style compilation failed. This is an administrator or developer error "
 "that must be fixed for the entire database before continuing working. See "
 "browser console or server logs for details."
-msgstr ""
+msgstr "样式编译失败。这是管理员或开发人员的错误，必须修复整个数据库的错误后才能继续工作。有关详情，请查看浏览器控制台或服务器日志。"
 
 #. module: web
 #. odoo-javascript
@@ -8003,7 +8015,7 @@ msgstr "在打开动态占位符选择器之前，您需要选择一个模型。
 msgid ""
 "You need to start Odoo with at least two workers to print a pdf version of "
 "the reports."
-msgstr "您需要至少使用两个工人来启动Odoo以打印报告的pdf版本。"
+msgstr "您需要至少使用两个工人来启动 ERP 以打印报告的pdf版本."
 
 #. module: web
 #. odoo-javascript

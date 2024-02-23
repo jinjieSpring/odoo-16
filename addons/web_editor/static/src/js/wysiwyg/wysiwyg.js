@@ -191,6 +191,10 @@ export class Wysiwyg extends Component {
             withGradients: true,
             onColorLeave: () => {
                 this.odooEditor.historyRevertCurrentStep();
+                // Compute the selection to ensure it's preserved between
+                // selectionchange events in case this gets triggered multiple
+                // times quickly.
+                this.odooEditor._computeHistorySelection();
             },
             onInputEnter: (ev) => {
                 const pickergroup = ev.target.closest('.colorpicker-group');
@@ -1679,8 +1683,8 @@ export class Wysiwyg extends Component {
                     const rangePosition = getRangePosition(popover, this.options.document, options);
                     popover.style.top = rangePosition.top + 'px';
                     popover.style.left = rangePosition.left + 'px';
-                    const oInputBox = popover.getElementsByClassName('o_input')[0];
-                    oInputBox.focus();
+                    const oInputBox = popover.querySelector('input');
+                    oInputBox?.focus();
                 },
             },
         );
@@ -2042,7 +2046,7 @@ export class Wysiwyg extends Component {
             const range = new Range();
             range.setStart(first, 0);
             range.setEnd(...endPos(last));
-            sel.addRange(range);
+            sel.addRange(getDeepRange(this.odooEditor.editable, { range }));
         }
 
         const hexColor = this._colorToHex(color);
@@ -2157,6 +2161,7 @@ export class Wysiwyg extends Component {
             '#list',
             '#colorInputButtonGroup',
             '#media-insert', // "Insert media" should be replaced with "Replace media".
+            '#chatgpt', // Chatgpt should be removed when media is in selection.
         ].join(','))){
             el.classList.toggle('d-none', isInMedia);
         }

@@ -63,7 +63,7 @@ msgstr "\"%(activity_name)s: %(summary)s\" призначено вам"
 #: code:addons/mail/static/src/discuss/voice_message/common/voice_recorder.js:0
 #, python-format
 msgid "\"%(hostname)s\" needs to access your microphone"
-msgstr ""
+msgstr "\"%(hostname)s\" вимагає доступ до вашого мікрофону"
 
 #. module: mail
 #. odoo-javascript
@@ -121,6 +121,10 @@ msgid ""
 "%(bold_start)s#channel%(bold_end)s to mention a channel.%(new_line)sType "
 "%(bold_start)s/command%(bold_end)s to execute a command."
 msgstr ""
+"%(new_line)s%(new_line)sВведіть %(bold_start)s@username%(bold_end)s щоби "
+"згадати когось або привернути його увагу.%(new_line)sВведіть "
+"%(bold_start)s#channel%(bold_end)s щоби згадати канал%(new_line)sВведіть "
+"%(bold_start)s/command%(bold_end)sщоби викликати команду."
 
 #. module: mail
 #. odoo-javascript
@@ -130,6 +134,8 @@ msgid ""
 "%(open_button)s%(icon)s%(open_em)sDiscard "
 "editing%(close_em)s%(close_button)s"
 msgstr ""
+"%(open_button)s%(icon)s%(open_em)sВідхилити "
+"редагування%(close_em)s%(close_button)s"
 
 #. module: mail
 #. odoo-javascript
@@ -141,6 +147,10 @@ msgid ""
 "Enter%(close_samp)s %(open_em)sto "
 "%(open_save)ssave%(close_save)s%(close_em)s"
 msgstr ""
+"%(open_samp)sEscape%(close_samp)s %(open_em)sдля "
+"%(open_cancel)sскасування%(close_cancel)s%(close_em)s, %(open_samp)sCTRL-"
+"Enter%(close_samp)s %(open_em)sдля "
+"%(open_save)sзбереження%(close_save)s%(close_em)s"
 
 #. module: mail
 #. odoo-javascript
@@ -152,6 +162,10 @@ msgid ""
 "%(open_samp)sEnter%(close_samp)s %(open_em)sto "
 "%(open_save)ssave%(close_save)s%(close_em)s"
 msgstr ""
+"%(open_samp)sEscape%(close_samp)s %(open_em)sдля "
+"%(open_cancel)sскасування%(close_cancel)s%(close_em)s, "
+"%(open_samp)sEnter%(close_samp)s %(open_em)sдля "
+"%(open_save)sзбереження%(close_save)s%(close_em)s"
 
 #. module: mail
 #. odoo-javascript
@@ -180,7 +194,7 @@ msgstr "%(user_name)s запросив вас слідкувати за нови
 #: code:addons/mail/models/discuss/discuss_channel.py:0
 #, python-format
 msgid "%(user_name)s pinned a message to this channel."
-msgstr ""
+msgstr "%(user_name)s закріпив повідомлення на цьому каналі."
 
 #. module: mail
 #. odoo-python
@@ -250,7 +264,7 @@ msgstr "%s має запит"
 #: code:addons/mail/static/src/core/web/messaging_menu.js:0
 #, python-format
 msgid "%s has a suggestion"
-msgstr ""
+msgstr "%s має запитання"
 
 #. module: mail
 #. odoo-javascript
@@ -271,14 +285,14 @@ msgstr "%s набирає текст..."
 #: code:addons/mail/static/src/core/common/search_messages_panel.js:0
 #, python-format
 msgid "%s messages found"
-msgstr ""
+msgstr "%s повідомлення знайдено"
 
 #. module: mail
 #. odoo-javascript
 #: code:addons/mail/static/src/discuss/call/common/rtc_service.js:0
 #, python-format
 msgid "%s raised their hand"
-msgstr ""
+msgstr "%s підняли руки"
 
 #. module: mail
 #. odoo-python
@@ -339,14 +353,14 @@ msgstr "&amp;nbsp;&amp;nbsp;"
 #: code:addons/mail/static/src/core/common/message.js:0
 #, python-format
 msgid "(Translated from: %(language)s)"
-msgstr ""
+msgstr "(Перекладено з: %(language)s)"
 
 #. module: mail
 #. odoo-javascript
 #: code:addons/mail/static/src/core/common/message.js:0
 #, python-format
 msgid "(Translation Failure: %(error)s)"
-msgstr ""
+msgstr "(Переклад не вдався: %(error)s)"
 
 #. module: mail
 #. odoo-javascript
@@ -382,6 +396,8 @@ msgid ""
 "<b invisible=\"not no_record\" class=\"text-warning\">No record for this "
 "model</b>"
 msgstr ""
+"<b invisible=\"not no_record\" class=\"text-warning\">Немає запису для цієї "
+"моделі</b>"
 
 #. module: mail
 #: model_terms:ir.ui.view,arch_db:mail.view_document_file_kanban
@@ -408,7 +424,7 @@ msgstr "<span class=\"d-block w-75 py-2\">Колір заголовку</span>"
 #. module: mail
 #: model_terms:ir.ui.view,arch_db:mail.res_config_settings_view_form
 msgid "<span class=\"me-1\">@</span>"
-msgstr ""
+msgstr "<span class=\"me-1\">@</span>"
 
 #. module: mail
 #: model_terms:ir.ui.view,arch_db:mail.mail_activity_view_form_popup
@@ -443,6 +459,18 @@ msgid ""
 "                                notifying all followers. It will appear in the messaging history.\n"
 "                            </span>"
 msgstr ""
+"<span invisible=\"mail_post_method != 'email'\">\n"
+"                                Повідомлення буде надіслано як електронний лист одержувачам \n"
+"шаблону та не відображатиметься в історії повідомлень.\n"
+"                            </span>\n"
+"                            <span invisible=\"mail_post_method != 'note'\">\n"
+"                                Повідомлення буде опубліковано як внутрішню примітку, видиму \n"
+"внутрішнім користувачам в історії повідомлень.\n"
+"                            </span>\n"
+"                            <span invisible=\"mail_post_method != 'comment'\">\n"
+"                                Повідомлення буде опубліковано як повідомлення для запису, \n"
+"сповіщаючи всіх підписників. Він з’явиться в історії повідомлень.\n"
+"                            </span>"
 
 #. module: mail
 #: model_terms:ir.ui.view,arch_db:mail.email_compose_message_wizard_form
@@ -450,6 +478,8 @@ msgid ""
 "<span name=\"document_followers_text\" invisible=\"not model or "
 "composition_mode == 'mass_mail'\">Followers of the document and</span>"
 msgstr ""
+"<span name=\"document_followers_text\" invisible=\"not model or "
+"composition_mode == 'mass_mail'\">Підписники документу та</span>"
 
 #. module: mail
 #: model_terms:ir.ui.view,arch_db:mail.account_security_setting_update
@@ -554,6 +584,8 @@ msgid ""
 "A valid Google API key is required to enable message translation. "
 "https://cloud.google.com/translate/docs/setup"
 msgstr ""
+"Дійсний ключ API Google необхідний для включення перекладу повідомлень. "
+"https://cloud.google.com/translate/docs/setup"
 
 #. module: mail
 #: model:ir.model.constraint,message:mail.constraint_res_users_settings_volumes_partner_or_guest_exists
@@ -793,7 +825,7 @@ msgstr "Дія: %s"
 #. module: mail
 #: model_terms:ir.ui.view,arch_db:mail.email_template_form
 msgid "Add Context Action"
-msgstr ""
+msgstr "Додати контекстну дію"
 
 #. module: mail
 #: model_terms:ir.ui.view,arch_db:mail.mail_blacklist_view_form
@@ -848,7 +880,7 @@ msgstr "Додати опис"
 #. module: mail
 #: model_terms:ir.ui.view,arch_db:mail.view_server_action_form_template
 msgid "Add a description to your activity..."
-msgstr ""
+msgstr "Додайте опис до вашої дії..."
 
 #. module: mail
 #. odoo-python
@@ -916,6 +948,8 @@ msgid ""
 "Adding more members to this chat isn't possible; it's designed for just two "
 "people."
 msgstr ""
+"Додати більше учасників до цього чату неможливо; він розрахований лише на "
+"двох осіб."
 
 #. module: mail
 #: model:ir.model.fields,field_description:mail.field_mail_compose_message__partner_ids
@@ -957,6 +991,9 @@ msgid ""
 "%(alias_model_name)s (%(matching_id)s) and used by the %(parent_name)s "
 "%(parent_model_name)s."
 msgstr ""
+"Псевдонім %(matching_name)s (%(current_id)s) вже підключено з "
+"%(alias_model_name)s (%(matching_id)s) і використовується %(parent_name)s "
+"%(parent_model_name)s."
 
 #. module: mail
 #. odoo-python
@@ -966,6 +1003,8 @@ msgid ""
 "Alias %(matching_name)s (%(current_id)s) is already linked with "
 "%(alias_model_name)s (%(matching_id)s)."
 msgstr ""
+"Псевдонім %(matching_name)s (%(current_id)s) вже зʼєднано з "
+"%(alias_model_name)s (%(matching_id)s)."
 
 #. module: mail
 #: model:ir.model.fields,field_description:mail.field_mail_alias__alias_contact
@@ -999,7 +1038,7 @@ msgstr "Назва домену псевдоніму"
 #: model_terms:ir.ui.view,arch_db:mail.mail_alias_domain_view_search
 #: model_terms:ir.ui.view,arch_db:mail.mail_alias_domain_view_tree
 msgid "Alias Domains"
-msgstr ""
+msgstr "Домени псевдоніму"
 
 #. module: mail
 #: model:ir.model.fields,field_description:mail.field_mail_alias__alias_full_name
@@ -1021,7 +1060,7 @@ msgstr "Статус псевдоніма"
 #. module: mail
 #: model:ir.model.fields,field_description:mail.field_mail_alias__alias_domain
 msgid "Alias domain name"
-msgstr ""
+msgstr "Назва домену псевдоніму"
 
 #. module: mail
 #: model:ir.model.fields,help:mail.field_mail_alias__alias_status
@@ -1047,6 +1086,8 @@ msgid ""
 "Aliases %(alias_names)s is already used as bounce or catchall address. "
 "Please choose another alias."
 msgstr ""
+"Псевдоніми %(alias_names)s уже використовуються як адреси для повернення або"
+" catchall. Виберіть інший псевдонім."
 
 #. module: mail
 #. odoo-javascript
@@ -1061,12 +1102,12 @@ msgstr "Всі"
 #: code:addons/mail/static/src/discuss/core/common/thread_model_patch.js:0
 #, python-format
 msgid "All Messages"
-msgstr ""
+msgstr "Усі повідомлення"
 
 #. module: mail
 #: model:ir.model.fields,help:mail.field_discuss_channel_member__custom_notifications
 msgid "All Messages if not specified"
-msgstr ""
+msgstr "Усі повідомлення, якщо не вказано"
 
 #. module: mail
 #. odoo-python
@@ -1078,7 +1119,7 @@ msgstr "Усі партнери повинні належати до того ж
 #. module: mail
 #: model:ir.model.fields,field_description:mail.field_discuss_channel__allow_public_upload
 msgid "Allow Public Upload"
-msgstr ""
+msgstr "Дозволити публічне завантаження"
 
 #. module: mail
 #. odoo-python
@@ -1181,7 +1222,7 @@ msgstr ""
 #. module: mail
 #: model_terms:ir.ui.view,arch_db:mail.mail_template_view_form_confirm_delete
 msgid "Are you sure you want to delete this Mail Template?"
-msgstr ""
+msgstr "Ви впевнені, що хочете видалити цей шаблон листа?"
 
 #. module: mail
 #. odoo-javascript
@@ -1211,7 +1252,7 @@ msgstr "Ви впевнені, що хочете забрати з чорног�
 #. module: mail
 #: model:ir.model.fields.selection,name:mail.selection__mail_activity_plan_template__responsible_type__on_demand
 msgid "Ask at launch"
-msgstr ""
+msgstr "Запитувати при запуску"
 
 #. module: mail
 #. odoo-javascript
@@ -1483,7 +1524,7 @@ msgstr "Базові шбалони"
 #. module: mail
 #: model:ir.model.fields,help:mail.field_res_config_settings__sfu_server_key
 msgid "Base64 encoded key"
-msgstr ""
+msgstr "Закодований ключ Base64"
 
 #. module: mail
 #: model:ir.model.fields,field_description:mail.field_mail_compose_message__composition_batch
@@ -1581,13 +1622,13 @@ msgstr "Повернення"
 #. module: mail
 #: model:ir.model.fields,field_description:mail.field_mail_alias_domain__bounce_alias
 msgid "Bounce Alias"
-msgstr ""
+msgstr "Псевдонім повернень"
 
 #. module: mail
 #: model:ir.model.fields,field_description:mail.field_mail_alias_domain__bounce_email
 #: model:ir.model.fields,field_description:mail.field_res_company__bounce_email
 msgid "Bounce Email"
-msgstr ""
+msgstr "Email повернень"
 
 #. module: mail
 #. odoo-python
@@ -1597,11 +1638,14 @@ msgid ""
 "Bounce alias %(bounce)s is already used for another domain with same name. "
 "Use another bounce or simply use the other alias domain."
 msgstr ""
+"Псевдонім повернень %(bounce)s вже використовується для іншого домену з "
+"такою ж назвою. Використовуйте іншу відмову або просто використовуйте інший "
+"псевдонім домену."
 
 #. module: mail
 #: model:ir.model.constraint,message:mail.constraint_mail_alias_domain_bounce_email_uniques
 msgid "Bounce emails should be unique"
-msgstr ""
+msgstr "Листи повернень повинні бути унікальними"
 
 #. module: mail
 #. odoo-python
@@ -1611,6 +1655,9 @@ msgid ""
 "Bounce/Catchall '%(matching_alias_name)s' is already used by "
 "%(document_name)s. Choose another alias or change it on the other document."
 msgstr ""
+"Повернення/Catchall '%(matching_alias_name)s' вже використовується "
+"%(document_name)s. Виберіть інший псевдонім або змініть його в іншому "
+"документі."
 
 #. module: mail
 #. odoo-python

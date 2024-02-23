@@ -996,10 +996,6 @@ $-transition-duration: 200ms;
     }
 }
 
-.o_hoverable_dropdown .nav-link.dropdown-toggle:focus {
-    outline: none;
-}
-
 // Navbar
 .navbar .o_extra_menu_items > .show {
     > li {
@@ -1673,6 +1669,11 @@ input[value*="data-oe-translation-initial-sha"] {
         box-shadow: none;
         z-index: 0;
     }
+}
+
+// Notification
+.o_notification_manager .o_notification {
+    --Notification__background-color: #{$body-bg};
 }
 
 //------------------------------------------------------------------------------
