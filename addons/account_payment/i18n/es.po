@@ -65,7 +65,7 @@ msgstr "<i class=\"fa fa-fw fa-check-circle\"/> Pagado"
 #. module: account_payment
 #: model_terms:ir.ui.view,arch_db:account_payment.portal_invoice_page_inherit_payment
 msgid "<i class=\"fa fa-fw fa-check-circle\"/> Pending"
-msgstr "<i class=\"fa fa-fw fa-check-circle\"/> Pendientes"
+msgstr "<i class=\"fa fa-fw fa-check-circle\"/> Pendiente"
 
 #. module: account_payment
 #: model_terms:ir.ui.view,arch_db:account_payment.portal_my_invoices_payment
@@ -305,7 +305,7 @@ msgstr ""
 #. module: account_payment
 #: model:onboarding.onboarding.step,step_image_alt:account_payment.onboarding_onboarding_step_payment_provider
 msgid "Onboarding Online Payments"
-msgstr "Integración de pagos en línea"
+msgstr "Incorporación de pagos en línea"
 
 #. module: account_payment
 #: model:ir.model,name:account_payment.model_onboarding_onboarding_step
@@ -346,12 +346,12 @@ msgstr "Pagar con"
 #: model:ir.model.fields,field_description:account_payment.field_payment_refund_wizard__payment_id
 #: model:ir.model.fields,field_description:account_payment.field_payment_transaction__payment_id
 msgid "Payment"
-msgstr "Pagos"
+msgstr "Pago"
 
 #. module: account_payment
 #: model:ir.model.fields,field_description:account_payment.field_payment_refund_wizard__payment_amount
 msgid "Payment Amount"
-msgstr "Cantidad a pagar"
+msgstr "Importe de pago"
 
 #. module: account_payment
 #: model:ir.model.fields,field_description:account_payment.field_payment_provider__journal_id
@@ -544,7 +544,7 @@ msgstr ""
 #. module: account_payment
 #: model_terms:ir.ui.view,arch_db:account_payment.portal_invoice_error
 msgid "There was an error processing your payment: transaction failed.<br/>"
-msgstr "Hubo un error al procesar tu pago: la transacción falló. <br/>"
+msgstr "Hubo un error al procesar su pago: la transacción falló.<br/>"
 
 #. module: account_payment
 #: model_terms:ir.ui.view,arch_db:account_payment.portal_invoice_error

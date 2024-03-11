@@ -5034,7 +5034,7 @@ msgstr "Alamat Pelanggan"
 #. module: account
 #: model:ir.actions.act_window,name:account.action_open_sale_payment_items
 msgid "Customer Amounts to Settle"
-msgstr "Jumlah Pelanggan tunuk Dilunasi"
+msgstr "Jumlah Pelanggan untuk Dilunasi"
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_account_payment_form
@@ -8014,7 +8014,7 @@ msgstr "\"Kode Pos\" tidak valid, silakan konfigurasi yang betul."
 #: code:addons/account/models/account_report.py:0
 #, python-format
 msgid "Invalid domain for expression '%s' of line '%s': %s"
-msgstr ""
+msgstr "Domain tidak valid untuk ekspresi '%s' dari baris '%s': %s"
 
 #. module: account
 #. odoo-python
@@ -9744,6 +9744,13 @@ msgstr "Bersih"
 #: model:ir.model.fields.selection,name:account.selection__account_report__filter_hierarchy__never
 msgid "Never"
 msgstr "Tidak pernah"
+
+#. module: account
+#. odoo-python
+#: code:addons/account/models/account_tax.py:0
+#, python-format
+msgid "New"
+msgstr "Baru"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_setup_bank_manual_config__new_journal_name
@@ -11923,6 +11930,14 @@ msgstr ""
 #: model:ir.model,name:account.model_account_resequence_wizard
 msgid "Remake the sequence of Journal Entries."
 msgstr "Buat kembali nomor urut dari Entri Jurnal"
+
+#. module: account
+#. odoo-python
+#: code:addons/account/models/account_tax.py:0
+#: code:addons/account/models/account_tax.py:0
+#, python-format
+msgid "Removed"
+msgstr "Dihapus"
 
 #. module: account
 #: model:account.account,name:account.1_expense_rent
@@ -16889,6 +16904,13 @@ msgstr ""
 
 #. module: account
 #. odoo-python
+#: code:addons/account/models/account_account.py:0
+#, python-format
+msgid "You cannot create recursive groups."
+msgstr ""
+
+#. module: account
+#. odoo-python
 #: code:addons/account/models/account_move_line.py:0
 #, python-format
 msgid ""
@@ -17017,6 +17039,9 @@ msgid ""
 "already posted. If you are absolutely sure you want to modify the opening "
 "balance of your accounts, reset the move to draft."
 msgstr ""
+"Anda tidak dapat mengimpor \"openning_balance\" bila opening move (%s) sudah"
+" dipost. Bila Anda benar-benar yakin Anda ingin memodifikasi saldo awal "
+"akun-akun Anda, reset pergerakkan tersebut menjadi draft."
 
 #. module: account
 #. odoo-python

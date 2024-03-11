@@ -5,6 +5,8 @@
 # Translators:
 # Wil Odoo, 2024
 # Jolien De Paepe, 2024
+# Paul Stroobant, 2024
+# Larissa Manderfeld, 2024
 # Erwin van der Ploeg <erwin@odooexperts.nl>, 2024
 # 
 msgid ""
@@ -350,7 +352,7 @@ msgid ""
 "label=\"Next\" title=\"Next\"/>"
 msgstr ""
 "<span class=\"oi oi-chevron-right fa-2x oe_unmovable\" role=\"img\" aria-"
-"label=\"Next\" title=\"Volgende\"/>"
+"label=\"Next\" title=\"Next\"/>"
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.address
@@ -1160,7 +1162,7 @@ msgstr ""
 #: code:addons/website_sale/models/website.py:0
 #, python-format
 msgid "Checkout"
-msgstr "Verificatie"
+msgstr "Afrekenen"
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.snippet_options
@@ -4693,6 +4695,11 @@ msgstr "E-commerce verkopen"
 #: model_terms:ir.ui.view,arch_db:website_sale.product_template_form_view
 msgid "eCommerce Shop"
 msgstr "e-commerce winkel"
+
+#. module: website_sale
+#: model_terms:ir.ui.view,arch_db:website_sale.header_cart_link
+msgid "eCommerce cart"
+msgstr "eCommerce winkelmandje"
 
 #. module: website_sale
 #: model:ir.actions.server,name:website_sale.ir_cron_send_availability_email_ir_actions_server

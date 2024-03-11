@@ -3,9 +3,10 @@
 # 	* account
 # 
 # Translators:
+# Nancy Momoland <thanh.np2502@gmail.com>, 2024
 # Thi Huong Nguyen, 2024
 # Wil Odoo, 2024
-# Nancy Momoland <thanh.np2502@gmail.com>, 2024
+# Tâm Doãn Bắc, 2024
 # 
 msgid ""
 msgstr ""
@@ -13,7 +14,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-01-29 10:44+0000\n"
 "PO-Revision-Date: 2023-10-26 23:09+0000\n"
-"Last-Translator: Nancy Momoland <thanh.np2502@gmail.com>, 2024\n"
+"Last-Translator: Tâm Doãn Bắc, 2024\n"
 "Language-Team: Vietnamese (https://app.transifex.com/odoo/teams/41243/vi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -256,7 +257,7 @@ msgstr ").<br/>"
 #: code:addons/account/models/account_tax.py:0
 #, python-format
 msgid "- %(name)s in %(company)s"
-msgstr ""
+msgstr "- %(name)s trong %(company)s"
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.res_config_settings_view_form
@@ -1546,7 +1547,7 @@ msgstr ""
 #: code:addons/account/models/account_move_line.py:0
 #, python-format
 msgid "A temporary number can not be used in a real matching"
-msgstr ""
+msgstr "Không thể sử dụng số tạm thời trong so khớp thực tế"
 
 #. module: account
 #: model:res.groups,name:account.group_warning_account
@@ -4248,7 +4249,7 @@ msgstr "Công ty liên quan tới sổ nhật ký này"
 #: code:addons/account/static/src/js/tours/account.js:0
 #, python-format
 msgid "Complete the partner data with email"
-msgstr ""
+msgstr "Hoàn thành dữ liệu đối tác bằng email"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_report__use_sections
@@ -6371,6 +6372,7 @@ msgid ""
 "Error while loading the localization. You should probably update your "
 "localization app first."
 msgstr ""
+"Lỗi khi tải gói ngôn ngữ bản địa . Bạn vui lòng cập nhật gói ngôn ngữ trước"
 
 #. module: account
 #. odoo-python
@@ -7082,7 +7084,7 @@ msgstr ""
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.account_journal_dashboard_kanban_view
 msgid "Gaps in the sequence"
-msgstr ""
+msgstr "Có chỗ trống trong số thứ tự"
 
 #. module: account
 #: model:ir.ui.menu,name:account.menu_finance_entries_generate_entries
@@ -7124,7 +7126,7 @@ msgstr "Nhận cảnh báo khi xuất hoá đơn cho một khách hàng nào đ�
 #: code:addons/account/static/src/js/tours/account.js:0
 #, python-format
 msgid "Go back"
-msgstr "Trở lại"
+msgstr "Quay lại"
 
 #. module: account
 #. odoo-python
@@ -8302,7 +8304,7 @@ msgstr ""
 #: code:addons/account/models/account_move.py:0
 #, python-format
 msgid "Invoices in error"
-msgstr ""
+msgstr "Hóa đơn có lỗi"
 
 #. module: account
 #. odoo-python
@@ -8323,7 +8325,7 @@ msgstr ""
 #: code:addons/account/models/account_move.py:0
 #, python-format
 msgid "Invoices sent successfully."
-msgstr ""
+msgstr "Hóa đơn đã được gửi thành công"
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.account_journal_dashboard_kanban_view
@@ -9728,6 +9730,13 @@ msgstr "Số tiền thực"
 #: model:ir.model.fields.selection,name:account.selection__account_report__filter_hierarchy__never
 msgid "Never"
 msgstr "Không bao giờ"
+
+#. module: account
+#. odoo-python
+#: code:addons/account/models/account_tax.py:0
+#, python-format
+msgid "New"
+msgstr "Mới"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_setup_bank_manual_config__new_journal_name
@@ -11918,6 +11927,14 @@ msgid "Remake the sequence of Journal Entries."
 msgstr "Tạo lại số thứ tự bút toán."
 
 #. module: account
+#. odoo-python
+#: code:addons/account/models/account_tax.py:0
+#: code:addons/account/models/account_tax.py:0
+#, python-format
+msgid "Removed"
+msgstr "Đã xoá"
+
+#. module: account
 #: model:account.account,name:account.1_expense_rent
 msgid "Rent"
 msgstr "Cho thuê"
@@ -12767,7 +12784,7 @@ msgstr ""
 #: code:addons/account/wizard/account_move_send.py:0
 #, python-format
 msgid "Sending invoices"
-msgstr ""
+msgstr "Gửi hóa đơn"
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_account_payment_search
@@ -12779,7 +12796,7 @@ msgstr "Đã gửi"
 #: code:addons/account/models/account_move.py:0
 #, python-format
 msgid "Sent invoices"
-msgstr ""
+msgstr "Hóa đơn đã gửi"
 
 #. module: account
 #: model:mail.template,description:account.mail_template_data_payment_receipt
@@ -16857,6 +16874,13 @@ msgstr ""
 
 #. module: account
 #. odoo-python
+#: code:addons/account/models/account_account.py:0
+#, python-format
+msgid "You cannot create recursive groups."
+msgstr ""
+
+#. module: account
+#. odoo-python
 #: code:addons/account/models/account_move_line.py:0
 #, python-format
 msgid ""
@@ -17552,7 +17576,7 @@ msgstr "theo phần trăm"
 #: code:addons/account/wizard/account_move_send.py:0
 #, python-format
 msgid "invoices"
-msgstr "hoá đơn"
+msgstr "hóa đơn"
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_partner_bank_form_inherit_account

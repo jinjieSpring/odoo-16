@@ -7756,7 +7756,7 @@ msgstr "無效的\"郵編範圍\"，請正確的設定."
 #: code:addons/account/models/account_report.py:0
 #, python-format
 msgid "Invalid domain for expression '%s' of line '%s': %s"
-msgstr ""
+msgstr "表達式 %s（行數：%s）的域無效：%s"
 
 #. module: account
 #. odoo-python
@@ -8163,7 +8163,7 @@ msgstr "大於"
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_report_expression__green_on_positive
 msgid "Is Growth Good when Positive"
-msgstr "當積極時增長好嗎"
+msgstr "當正數時，增長是否良好"
 
 #. module: account
 #: model:ir.model.fields.selection,name:account.selection__account_reconcile_model__match_amount__lower
@@ -9447,6 +9447,13 @@ msgstr "淨額"
 #: model:ir.model.fields.selection,name:account.selection__account_report__filter_hierarchy__never
 msgid "Never"
 msgstr "從不"
+
+#. module: account
+#. odoo-python
+#: code:addons/account/models/account_tax.py:0
+#, python-format
+msgid "New"
+msgstr "新增"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_setup_bank_manual_config__new_journal_name
@@ -11581,6 +11588,14 @@ msgstr "如果發現不一致，請重新載入會計數據（稅款、賬戶等
 #: model:ir.model,name:account.model_account_resequence_wizard
 msgid "Remake the sequence of Journal Entries."
 msgstr "重新建立日記帳分錄的序列."
+
+#. module: account
+#. odoo-python
+#: code:addons/account/models/account_tax.py:0
+#: code:addons/account/models/account_tax.py:0
+#, python-format
+msgid "Removed"
+msgstr "已刪除"
 
 #. module: account
 #: model:account.account,name:account.1_expense_rent
@@ -16232,6 +16247,13 @@ msgstr "您不能建立已處於已過帳狀態的日記帳傳票. 請建立草�
 
 #. module: account
 #. odoo-python
+#: code:addons/account/models/account_account.py:0
+#, python-format
+msgid "You cannot create recursive groups."
+msgstr ""
+
+#. module: account
+#. odoo-python
 #: code:addons/account/models/account_move_line.py:0
 #, python-format
 msgid ""
@@ -16340,7 +16362,7 @@ msgid ""
 "You cannot import the \"openning_balance\" if the opening move (%s) is "
 "already posted. If you are absolutely sure you want to modify the opening "
 "balance of your accounts, reset the move to draft."
-msgstr ""
+msgstr "若開始記賬分錄 (%s) 已過賬，便不能再匯入「openning_balance」。若你絕對確定要修改賬戶的期初結餘，請將分錄重設為草稿。"
 
 #. module: account
 #. odoo-python

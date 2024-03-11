@@ -995,7 +995,12 @@ class SaleOrderLine(models.Model):
         if 'product_uom_qty' in values:
             precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
             self.filtered(
-                lambda r: r.state == 'sale' and float_compare(r.product_uom_qty, values['product_uom_qty'], precision_digits=precision) != 0)._update_line_quantity(values)
+                lambda r: r.state == 'sale' and float_compare(
+                    r.product_uom_qty,
+                    values['product_uom_qty'],
+                    precision_digits=precision
+                ) != 0
+            )._update_line_quantity(values)
 
         # Prevent writing on a locked SO.
         protected_fields = self._get_protected_fields()
@@ -1214,7 +1219,6 @@ class SaleOrderLine(models.Model):
                 'quantity': self.product_uom_qty,
                 'price': self.price_unit,
                 'readOnly': self.order_id._is_readonly() or (self.product_id.sale_line_warn == "block"),
-                'warning': self.product_id.sale_line_warn_msg,
             }
             if self.product_id.sale_line_warn_msg:
                 res['warning'] = self.product_id.sale_line_warn_msg

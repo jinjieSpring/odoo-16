@@ -122,7 +122,7 @@ msgid ""
 "more graphical blogs."
 msgstr ""
 "<b>Escriba su historia aquí.</b> Use la barra de herramientas para diseñar "
-"su texto (añadir una imagen o tabla, utilizar negrita o cursiva, etc.). "
+"su texto (agregar una imagen o tabla, utilizar negrita o cursiva, etc.). "
 "Arrastre y suelte componentes para hacer más vistosos y gráficos los blogs."
 
 #. module: website_blog
@@ -300,7 +300,7 @@ msgstr ""
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.blog_post_template_new_post
 msgid "A new post"
-msgstr "Una nueva entrada"
+msgstr "Una nueva publicación"
 
 #. module: website_blog
 #: model_terms:blog.post,content:website_blog.blog_post_1
@@ -602,14 +602,14 @@ msgstr "Nombre del blog"
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.snippet_options
 msgid "Blog Page"
-msgstr "Página del blog "
+msgstr "Página del blog"
 
 #. module: website_blog
 #: model:ir.model,name:website_blog.model_blog_post
 #: model_terms:ir.ui.view,arch_db:website_blog.view_blog_post_form
 #: model_terms:ir.ui.view,arch_db:website_blog.view_blog_post_search
 msgid "Blog Post"
-msgstr "Entrada del blog"
+msgstr "Publicación de blog"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.blog_post_complete
@@ -629,14 +629,14 @@ msgstr "Páginas de publicaciones de blog"
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_blog_post_read_next
 #: model_terms:ir.ui.view,arch_db:website_blog.view_blog_post_form
 msgid "Blog Post Title"
-msgstr "Título de la entrada del blog"
+msgstr "Título de la publicación del blog"
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__blog_post_ids
 #: model:ir.ui.menu,name:website_blog.menu_blog_post_pages
 #: model_terms:ir.ui.view,arch_db:website_blog.website_blog
 msgid "Blog Posts"
-msgstr "Entradas del blog"
+msgstr "Publicaciones del blog"
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__subtitle
@@ -663,7 +663,7 @@ msgstr "Etiquetas del blog"
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_blog_cover_post_fullwidth_design
 msgid "Blog Title"
-msgstr "Titulo de Blog"
+msgstr "Título del blog"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_blog_cover_post
@@ -686,7 +686,7 @@ msgstr "Lista de blogs"
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.snippet_options
 msgid "Blogs Page"
-msgstr "Página del blogs"
+msgstr "Página de blogs"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.snippet_options
@@ -831,7 +831,7 @@ msgstr ""
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.snippet_options
 msgid "Cover"
-msgstr "Cubrir"
+msgstr "Portada"
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__cover_properties
@@ -933,7 +933,7 @@ msgstr "Edite el encabezado de la página 'Filtrar resultados'."
 #: code:addons/website_blog/static/src/js/tours/website_blog.js:0
 #, python-format
 msgid "Edit your title, the subtitle is optional."
-msgstr "Edita tu título, el subtítulo es opcional."
+msgstr "Edite su título, el subtítulo es opcional."
 
 #. module: website_blog
 #. odoo-javascript
@@ -951,7 +951,7 @@ msgstr "Facebook"
 #. module: website_blog
 #: model:blog.post,subtitle:website_blog.blog_post_3
 msgid "Facts you should bear in mind."
-msgstr "Hechos que debes tener en cuenta."
+msgstr "Hechos que debe tener en cuenta."
 
 #. module: website_blog
 #: model_terms:blog.post,content:website_blog.blog_post_3
@@ -972,7 +972,7 @@ msgstr ""
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_sidebar_blog_index_follow_us
 msgid "Follow Us"
-msgstr "Síguenos"
+msgstr "Síganos"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.snippet_options
@@ -1030,7 +1030,7 @@ msgstr ""
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.snippet_options
 msgid "Full-Width"
-msgstr "Anchura completa"
+msgstr "Ancho completo"
 
 #. module: website_blog
 #: model_terms:blog.post,content:website_blog.blog_post_5
@@ -1444,7 +1444,7 @@ msgstr "Metadescripción"
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.view_blog_post_form
 msgid "Meta Keywords"
-msgstr "Palabras clave"
+msgstr "Palabras clave meta"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.view_blog_post_form
@@ -1526,7 +1526,7 @@ msgstr "Nº de visitas"
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.posts_loop
 msgid "No results for \"%s\"."
-msgstr "No hay resultados para \"%s\"."
+msgstr "Sin resultados para \"%s\"."
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.blog_post_short
@@ -1709,7 +1709,7 @@ msgstr "Foto de Teddy Kelley, @teddykelley"
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__blog_post_count
 #: model:ir.model.fields,field_description:website_blog.field_blog_tag__post_ids
 msgid "Posts"
-msgstr "Posts"
+msgstr "Publicaciones"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.snippet_options
@@ -1822,7 +1822,7 @@ msgstr "Satélites"
 #: code:addons/website_blog/static/src/js/tours/website_blog.js:0
 #, python-format
 msgid "Search for an image. (eg: type \"business\")"
-msgstr "Busca una imagen. (p. ej., escriba \"empresa\")"
+msgstr "Busque una imagen. (p. ej. escriba \"empresa\")"
 
 #. module: website_blog
 #. odoo-python
@@ -1856,7 +1856,8 @@ msgstr "Seleccione el blog al que desea agregar la publicación."
 #, python-format
 msgid "Select this menu item to create a new blog post."
 msgstr ""
-"Seleccione este elemento de menú para crear una nueva entrada del blog."
+"Seleccione este elemento de menú para crear una nueva publicación en el "
+"blog."
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.snippet_options
@@ -1866,7 +1867,7 @@ msgstr "Seleccionar para comentar"
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.snippet_options
 msgid "Select to Tweet"
-msgstr "Seleccionar para twittear"
+msgstr "Seleccionar para tuit"
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__seo_name
@@ -1885,7 +1886,7 @@ msgstr "Separe cada palabra clave con una coma."
 #: code:addons/website_blog/static/src/js/tours/website_blog.js:0
 #, python-format
 msgid "Set a blog post <b>cover</b>."
-msgstr "Ponga una <b>portada</b> a su entrada de blog."
+msgstr "Establezca la <b>portada</b> de una publicación del blog."
 
 #. module: website_blog
 #: model_terms:blog.post,content:website_blog.blog_post_1
@@ -1901,7 +1902,7 @@ msgstr ""
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.snippet_options
 msgid "Share Links"
-msgstr "Compartir vínculos"
+msgstr "Compartir enlaces"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_blog_post_share_links_display
@@ -1921,7 +1922,7 @@ msgstr "Compartir en Twitter"
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_blog_post_share_links_display
 msgid "Share this post"
-msgstr "Compartir"
+msgstr "Compartir esta publicación"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.snippet_options
@@ -2493,7 +2494,7 @@ msgstr "No publicado ("
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.post_heading
 msgid "Untitled Post"
-msgstr "Post sin título"
+msgstr "Publicación sin título"
 
 #. module: website_blog
 #. odoo-javascript
@@ -2501,8 +2502,8 @@ msgstr "Post sin título"
 #, python-format
 msgid "Use this icon to preview your blog post on <b>mobile devices</b>."
 msgstr ""
-"Use este icono para previsualizar su entrada de blog en <b>dispositivos "
-"móviles</b>."
+"Use este icono para previsualizar su publicación en el blog desde "
+"<b>dispositivos móviles</b>."
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.blog_tag_form
@@ -2557,7 +2558,7 @@ msgstr "Mensajes del sitio web"
 #. module: website_blog
 #: model:ir.model,name:website_blog.model_website_snippet_filter
 msgid "Website Snippet Filter"
-msgstr "Filtro de fragmentos del sitio web"
+msgstr "Filtro de snippets del sitio web"
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_post__website_url
@@ -2670,7 +2671,7 @@ msgstr ""
 " lugares que no están disponibles a pie o en vehículo pueden verse por aire."
 " Impresionantes vistas aguardan a aquellos que estén dispuestos a disfrutar "
 "de divertidos recorridos en helicóptero por Maui. Si permanecerá en la isla "
-"durante un período de tiempo considerable, es posible que desee pensar en "
+"durante un periodo de tiempo considerable, es posible que desee pensar en "
 "hacer varios recorridos en helicóptero por Maui."
 
 #. module: website_blog
@@ -2737,7 +2738,7 @@ msgstr "telescopios"
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.opt_blog_post_comment
 msgid "to leave a comment"
-msgstr "dejar un comentario"
+msgstr "para dejar un comentario"
 
 #. module: website_blog
 #: model_terms:ir.ui.view,arch_db:website_blog.posts_loop

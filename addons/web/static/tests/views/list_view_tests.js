@@ -11509,7 +11509,7 @@ QUnit.module("Views", (hooks) => {
                     </tree>`,
                 mockRPC(route, args) {
                     if (args.method === "write") {
-                        assert.deepEqual(args.args, [[1, 2], { date_start: "2021-04-01" }]);
+                        assert.deepEqual(args.args, [[1, 2], { date_start: "2021-04-01",  date_end: "2017-01-26"}]);
                     }
                 },
             });
@@ -11535,7 +11535,7 @@ QUnit.module("Views", (hooks) => {
             const changesTable = target.querySelector(".modal-body .o_modal_changes");
             assert.strictEqual(
                 changesTable.innerText.replaceAll("\n", "").replaceAll("\t", ""),
-                "Field:Date StartUpdate to:04/01/202101/26/2017"
+                "Field:Date StartUpdate to:04/01/202101/26/2017Field:Date EndUpdate to:01/26/2017"
             );
 
             // Valid the confirm dialog
@@ -19970,4 +19970,37 @@ QUnit.module("Views", (hooks) => {
             assert.verifySteps(["switch to form - resId: 5 activeIds: 5,1,2,3,4"]);
         }
     );
+
+    QUnit.test("onchange should only be called once after pressing enter on a field", async function (assert) {
+        serverData.models.foo.onchanges = {
+            foo(record) {
+                if (record.foo) {
+                    record.int_field = 1;
+                }
+            },
+        };
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: `
+                <tree editable="top">
+                    <field name="foo"/>
+                    <field name="int_field"/>
+                </tree>`,
+            async mockRPC(_, { method }) {
+                if (method === "onchange") {
+                    assert.step(method);
+                }
+            },
+        });
+        await click(target.querySelector(".o_data_cell"));
+        target.querySelector(".o_field_widget[name=foo] input").value = "1";
+        await triggerEvents(target, ".o_field_widget[name=foo] input", [
+            ["keydown", { key: "Enter" }],
+            ["change"],
+        ]);
+        await nextTick();
+        assert.verifySteps(["onchange"], "There should only be one onchange call");
+    });
 });

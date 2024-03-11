@@ -4,8 +4,8 @@
 # 
 # Translators:
 # Martin Trigaux, 2023
-# Sergio Zanchetta <primes2h@gmail.com>, 2024
 # Wil Odoo, 2024
+# Sergio Zanchetta <primes2h@gmail.com>, 2024
 # Marianna Ciofani, 2024
 # 
 msgid ""
@@ -9786,6 +9786,13 @@ msgid "Never"
 msgstr "Mai"
 
 #. module: account
+#. odoo-python
+#: code:addons/account/models/account_tax.py:0
+#, python-format
+msgid "New"
+msgstr "Nuovo"
+
+#. module: account
 #: model:ir.model.fields,field_description:account.field_account_setup_bank_manual_config__new_journal_name
 msgid "New Journal Name"
 msgstr "Nuovo nome registro"
@@ -11977,6 +11984,14 @@ msgstr ""
 #: model:ir.model,name:account.model_account_resequence_wizard
 msgid "Remake the sequence of Journal Entries."
 msgstr "Ricreazione sequenza delle registrazioni contabili."
+
+#. module: account
+#. odoo-python
+#: code:addons/account/models/account_tax.py:0
+#: code:addons/account/models/account_tax.py:0
+#, python-format
+msgid "Removed"
+msgstr "Cancellato"
 
 #. module: account
 #: model:account.account,name:account.1_expense_rent
@@ -16985,6 +17000,13 @@ msgid ""
 msgstr ""
 "Impossibile creare un movimento con stato generato. Creare prima un "
 "movimento in bozza, quindi registrarlo."
+
+#. module: account
+#. odoo-python
+#: code:addons/account/models/account_account.py:0
+#, python-format
+msgid "You cannot create recursive groups."
+msgstr "Non è possibile creare gruppi ricorsivi."
 
 #. module: account
 #. odoo-python

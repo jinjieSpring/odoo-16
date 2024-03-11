@@ -28,7 +28,7 @@ msgstr "<i class=\"fa fa-bolt\"/> Comprar ahora"
 #. module: website_sale_slides
 #: model_terms:ir.ui.view,arch_db:website_sale_slides.course_buy_course_button
 msgid "<i class=\"fa fa-shopping-cart\"/> Add to Cart"
-msgstr "<i class=\"fa fa-shopping-cart\"/> Agregar al carrito"
+msgstr "<i class=\"fa fa-shopping-cart\"/> Añadir a la cesta"
 
 #. module: website_sale_slides
 #: model:ir.model.fields,help:website_sale_slides.field_product_product__detailed_type
@@ -38,8 +38,8 @@ msgid ""
 "A consumable product is a product for which stock is not managed.\n"
 "A service is a non-material product you provide."
 msgstr ""
-"Un producto almacenable es un producto para el que gestiona stock. La aplicación de inventario debe estar instalada.\n"
-"Un producto consumible es un producto para el que no se gestionan las existencias.\n"
+"Un producto almacenable es un producto para el que se gestiona el stock. La aplicación de inventario debe estar instalada.\n"
+"Un producto consumible es un producto para el que no se gestiona el stock.\n"
 "Un servicio es un producto no material."
 
 #. module: website_sale_slides
@@ -294,7 +294,7 @@ msgstr ""
 #: code:addons/website_sale_slides/models/sale_order.py:0
 #, python-format
 msgid "You can only add a course once in your cart."
-msgstr "Solo puede añadir un curso una vez en su carrito."
+msgstr "Solo puede agregar un curso una vez en su carrito."
 
 #. module: website_sale_slides
 #: model_terms:ir.ui.view,arch_db:website_sale_slides.course_purchased_confirmation_message

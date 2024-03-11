@@ -1331,7 +1331,7 @@ msgstr "<strong>Lieferadresse:</strong>"
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.report_invoice_document
 msgid "<strong>Source:</strong><br/>"
-msgstr "<strong>Quelle:</strong><br/>"
+msgstr "<strong>Verweis:</strong><br/>"
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.report_statement
@@ -9793,6 +9793,13 @@ msgid "Never"
 msgstr "Niemals"
 
 #. module: account
+#. odoo-python
+#: code:addons/account/models/account_tax.py:0
+#, python-format
+msgid "New"
+msgstr "Neu"
+
+#. module: account
 #: model:ir.model.fields,field_description:account.field_account_setup_bank_manual_config__new_journal_name
 msgid "New Journal Name"
 msgstr "Neuer Journalname"
@@ -11989,6 +11996,14 @@ msgstr ""
 #: model:ir.model,name:account.model_account_resequence_wizard
 msgid "Remake the sequence of Journal Entries."
 msgstr "Ändern Sie die Reihenfolge der Journalbuchungen."
+
+#. module: account
+#. odoo-python
+#: code:addons/account/models/account_tax.py:0
+#: code:addons/account/models/account_tax.py:0
+#, python-format
+msgid "Removed"
+msgstr "Entfernt"
 
 #. module: account
 #: model:account.account,name:account.1_expense_rent
@@ -17023,6 +17038,13 @@ msgstr ""
 "Sie können keine Bewegung anlegen, die sich bereits im gebuchten Zustand "
 "befindet. Bitte erstellen Sie einen Buchungsentwurf und buchen Sie ihn "
 "danach."
+
+#. module: account
+#. odoo-python
+#: code:addons/account/models/account_account.py:0
+#, python-format
+msgid "You cannot create recursive groups."
+msgstr "Sie können keine rekursiven Gruppen erstellen."
 
 #. module: account
 #. odoo-python

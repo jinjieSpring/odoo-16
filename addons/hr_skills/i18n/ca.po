@@ -1036,6 +1036,11 @@ msgid "Progress (%)"
 msgstr "Progrés (%)"
 
 #. module: hr_skills
+#: model_terms:ir.ui.view,arch_db:hr_skills.report_employee_cv_main_panel
+msgid "Progress bar"
+msgstr ""
+
+#. module: hr_skills
 #: model:ir.model.fields,help:hr_skills.field_hr_employee_skill__level_progress
 #: model:ir.model.fields,help:hr_skills.field_hr_employee_skill_log__level_progress
 #: model:ir.model.fields,help:hr_skills.field_hr_skill_level__level_progress
@@ -1310,7 +1315,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:hr_skills.report_employee_cv_main_panel
 #: model_terms:ir.ui.view,arch_db:hr_skills.report_employee_cv_sidepanel
 msgid "Software Developer"
-msgstr ""
+msgstr " Desarrollador de software"
 
 #. module: hr_skills
 #: model:hr.resume.line,description:hr_skills.employee_resume_lur_whitebell

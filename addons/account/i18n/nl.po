@@ -5,8 +5,8 @@
 # Translators:
 # Martin Trigaux, 2023
 # Dylan Kiss, 2023
-# Wil Odoo, 2024
 # Jolien De Paepe, 2024
+# Wil Odoo, 2024
 # Erwin van der Ploeg <erwin@odooexperts.nl>, 2024
 # 
 msgid ""
@@ -9769,6 +9769,13 @@ msgid "Never"
 msgstr "Nooit"
 
 #. module: account
+#. odoo-python
+#: code:addons/account/models/account_tax.py:0
+#, python-format
+msgid "New"
+msgstr "Nieuw"
+
+#. module: account
 #: model:ir.model.fields,field_description:account.field_account_setup_bank_manual_config__new_journal_name
 msgid "New Journal Name"
 msgstr "Nieuwe dagboeknaam"
@@ -11962,6 +11969,14 @@ msgid "Remake the sequence of Journal Entries."
 msgstr "Hernummer een reeks voor dit dagboek."
 
 #. module: account
+#. odoo-python
+#: code:addons/account/models/account_tax.py:0
+#: code:addons/account/models/account_tax.py:0
+#, python-format
+msgid "Removed"
+msgstr "Verwijderd"
+
+#. module: account
 #: model:account.account,name:account.1_expense_rent
 msgid "Rent"
 msgstr "Huur"
@@ -12192,7 +12207,7 @@ msgstr "Boekingen omkeren"
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_account_move_reversal
 msgid "Reverse and Create Invoice"
-msgstr "Terugboeken en factuur aanmaken"
+msgstr "Tegenboeken en factuur aanmaken"
 
 #. module: account
 #: model:ir.model.fields.selection,name:account.selection__account_invoice_report__payment_state__reversed
@@ -16953,6 +16968,13 @@ msgid ""
 msgstr ""
 "Je kunt geen boeking maken die al in de geboekte staat is. Maak een "
 "conceptboeking en boek deze daarna."
+
+#. module: account
+#. odoo-python
+#: code:addons/account/models/account_account.py:0
+#, python-format
+msgid "You cannot create recursive groups."
+msgstr ""
 
 #. module: account
 #. odoo-python

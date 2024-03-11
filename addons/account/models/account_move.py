@@ -751,7 +751,7 @@ class AccountMove(models.Model):
 
     @api.depends('posted_before', 'state', 'journal_id', 'date', 'move_type', 'payment_id')
     def _compute_name(self):
-        self = self.sorted(lambda m: (m.date, m.ref or '', m.id))
+        self = self.sorted(lambda m: (m.date, m.ref or '', m._origin.id))
 
         for move in self:
             move_has_name = move.name and move.name != '/'
@@ -1288,6 +1288,7 @@ class AccountMove(models.Model):
                             price_subtotal=values['price_subtotal'],
                             is_refund=move.move_type in ('out_refund', 'in_refund'),
                             handle_price_include=False,
+                            extra_context={'_extra_grouping_key_': 'epd'},
                         ))
                 kwargs['is_company_currency_requested'] = move.currency_id != move.company_id.currency_id
                 move.tax_totals = self.env['account.tax']._prepare_tax_totals(**kwargs)
@@ -3169,11 +3170,9 @@ class AccountMove(models.Model):
                 except RedirectWarning:
                     raise
                 except Exception:
-                    _logger.exception(
-                        "Error importing attachment '%s' as invoice (decoder=%s)",
-                        file_data['filename'],
-                        decoder.__name__
-                    )
+                    message = _("Error importing attachment '%s' as invoice (decoder=%s)", file_data['filename'], decoder.__name__)
+                    invoice.sudo().message_post(body=message)
+                    _logger.exception(message)
 
             passed_file_data_list.append(file_data)
             close_file(file_data)
@@ -3413,7 +3412,6 @@ class AccountMove(models.Model):
                     'name': _("Early Payment Discount (%s)", tax.name),
                     'amount_currency': payment_term_line.currency_id.round(tax_detail['amount_currency'] * percentage_paid),
                     'balance': payment_term_line.company_currency_id.round(tax_detail['balance'] * percentage_paid),
-                    'tax_tag_invert': True,
                 }
 
             for grouping_dict, base_detail in bases_details.items():

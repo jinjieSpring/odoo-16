@@ -583,7 +583,9 @@ class Channel(models.Model):
         # notification of the message itself to ensure the channel automatically opens.
         payload = {"id": self.id, "last_interest_dt": fields.Datetime.now()}
         bus_notifications = [
-            ((self, "members"), "mail.record/insert", {"Thread": {"id": self.id, "is_pinned": True}}),
+            ((self, "members"), "mail.record/insert", {
+                "Thread": {"id": self.id, "is_pinned": True, "model": "discuss.channel"}
+            }),
             (self, "discuss.channel/last_interest_dt_changed", payload),
             (self, "discuss.channel/new_message", {"id": self.id, "message": message_format}),
         ]
@@ -1043,6 +1045,8 @@ class Channel(models.Model):
             ])
         ])
         member = self.env['discuss.channel.member'].search(channel_member_domain)
+        if not member:
+            return
         member.write({
             'fetched_message_id': max(member.fetched_message_id.id, last_message.id),
             'seen_message_id': last_message.id,

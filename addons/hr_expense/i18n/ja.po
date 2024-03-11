@@ -46,7 +46,7 @@ msgstr "$600.00"
 #: code:addons/hr_expense/models/hr_expense.py:0
 #, python-format
 msgid "%(date_from)s - %(date_to)s"
-msgstr ""
+msgstr "%(date_from)s - %(date_to)s"
 
 #. module: hr_expense
 #. odoo-python
@@ -432,7 +432,7 @@ msgstr "経費入力可"
 #: model_terms:ir.ui.view,arch_db:hr_expense.hr_expense_refuse_wizard_view_form
 #: model_terms:ir.ui.view,arch_db:hr_expense.hr_expense_split
 msgid "Cancel"
-msgstr "キャンセル"
+msgstr "取消"
 
 #. module: hr_expense
 #: model:ir.model.fields,field_description:hr_expense.field_hr_expense_sheet__cannot_approve_reason
@@ -1376,7 +1376,7 @@ msgstr "名称"
 #: code:addons/hr_expense/models/hr_expense.py:0
 #, python-format
 msgid "New Expense Report, paid by %(paid_by)s"
-msgstr ""
+msgstr "新規経費レポート、支払者:%(paid_by)s"
 
 #. module: hr_expense
 #. odoo-python
@@ -2070,10 +2070,10 @@ msgstr "一部の従業員の会社Eメールがありません。従業員フ�
 #: code:addons/hr_expense/models/product_product.py:0
 #, python-format
 msgid ""
-"There are unposted expenses linked to this category. Updating the category "
-"cost will change expense amounts. Make sure it is what you want to do."
+"There are unsubmitted expenses linked to this category. Updating the "
+"category cost will change expense amounts. Make sure it is what you want to "
+"do."
 msgstr ""
-"このカテゴリには未計上の経費がリンクされています。カテゴリ経費を更新すると、経費の金額が変更されます。本当にそれがやりたいことなのかをご確認下さい。"
 
 #. module: hr_expense
 #. odoo-javascript
