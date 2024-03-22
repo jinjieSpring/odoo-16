@@ -1012,23 +1012,24 @@ export class ListRenderer extends Component {
         if (this.hasSelectors) {
             colspan++;
         }
-        if (this.props.onOpenFormView) {
-            colspan++;
-        }
         return colspan;
     }
 
     getGroupPagerCellColspan(group) {
         const lastAggregateIndex = this.getLastAggregateIndex(group);
+        let colspan;
         if (lastAggregateIndex > -1) {
-            let colspan = this.state.columns.length - lastAggregateIndex - 1;
+            colspan = this.state.columns.length - lastAggregateIndex - 1;
             if (this.displayOptionalFields) {
                 colspan++;
             }
-            return colspan;
         } else {
-            return this.state.columns.length > 1 ? DEFAULT_GROUP_PAGER_COLSPAN : 0;
+            colspan = this.state.columns.length > 1 ? DEFAULT_GROUP_PAGER_COLSPAN : 0;
         }
+        if (this.props.onOpenFormView) {
+            colspan++;
+        }
+        return colspan;
     }
 
     getGroupPagerProps(group) {
@@ -1036,7 +1037,7 @@ export class ListRenderer extends Component {
         return {
             offset: list.offset,
             limit: list.limit,
-            total: group.count,
+            total: list.isGrouped ? list.count : group.count,
             onUpdate: async ({ offset, limit }) => {
                 await list.load({ limit, offset });
                 this.render(true);
@@ -1777,7 +1778,10 @@ export class ListRenderer extends Component {
     }
 
     showGroupPager(group) {
-        return !group.isFolded && group.list.limit < group.count;
+        return (
+            !group.isFolded &&
+            group.list.limit < (group.list.isGrouped ? group.list.count : group.count)
+        );
     }
 
     /**
