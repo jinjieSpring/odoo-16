@@ -1406,7 +1406,7 @@ class AccountMove(models.Model):
     @api.depends('currency_id')
     def _compute_display_inactive_currency_warning(self):
         for move in self.with_context(active_test=False):
-            move.display_inactive_currency_warning = move.currency_id and not move.currency_id.active
+            move.display_inactive_currency_warning = move.state == 'draft' and move.currency_id and not move.currency_id.active
 
     @api.depends('company_id.account_fiscal_country_id', 'fiscal_position_id', 'fiscal_position_id.country_id', 'fiscal_position_id.foreign_vat')
     def _compute_tax_country_id(self):
@@ -3550,7 +3550,8 @@ class AccountMove(models.Model):
             }[self.move_type]
             name += ' '
         if not self.name or self.name == '/':
-            name += '(* %s)' % str(self.id)
+            if self.id:
+                name += '(* %s)' % str(self.id)
         else:
             name += self.name
             if self.env.context.get('input_full_display_name'):
@@ -3929,7 +3930,7 @@ class AccountMove(models.Model):
     def _link_bill_origin_to_purchase_orders(self, timeout=10):
         for move in self.filtered(lambda m: m.move_type in self.get_purchase_types()):
             references = [move.invoice_origin] if move.invoice_origin else []
-            move._find_and_set_purchase_orders(references, move.partner_id.id, move.amount_total, timeout)
+            move._find_and_set_purchase_orders(references, move.partner_id.id, move.amount_total, timeout=timeout)
         return self
 
     # -------------------------------------------------------------------------
@@ -4635,11 +4636,11 @@ class AccountMove(models.Model):
 
         # Search for partners in copy.
         cc_mail_addresses = email_split(msg_dict.get('cc', ''))
-        followers = [partner for partner in self._mail_find_partner_from_emails(cc_mail_addresses, extra_domain) if partner]
+        followers = [partner for partner in self._mail_find_partner_from_emails(cc_mail_addresses, extra_domain=extra_domain) if partner]
 
         # Search for partner that sent the mail.
         from_mail_addresses = email_split(msg_dict.get('from', ''))
-        senders = partners = [partner for partner in self._mail_find_partner_from_emails(from_mail_addresses, extra_domain) if partner]
+        senders = partners = [partner for partner in self._mail_find_partner_from_emails(from_mail_addresses, extra_domain=extra_domain) if partner]
 
         # Search for partners using the user.
         if not senders:
@@ -4652,7 +4653,7 @@ class AccountMove(models.Model):
                 body_mail_addresses = set(email_re.findall(msg_dict.get('body')))
                 partners = [
                     partner
-                    for partner in self._mail_find_partner_from_emails(body_mail_addresses, extra_domain)
+                    for partner in self._mail_find_partner_from_emails(body_mail_addresses, extra_domain=extra_domain)
                     if not is_internal_partner(partner) and partner.company_id.id in (False, company.id)
                 ]
         # Little hack: Inject the mail's subject in the body.
