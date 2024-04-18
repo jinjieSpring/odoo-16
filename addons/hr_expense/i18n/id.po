@@ -27,7 +27,7 @@ msgstr ""
 #: code:addons/hr_expense/models/hr_expense.py:0
 #, python-format
 msgid "%(date_from)s - %(date_to)s"
-msgstr ""
+msgstr "%(date_from)s - %(date_to)s"
 
 #. module: hr_expense
 #. odoo-python
@@ -351,7 +351,7 @@ msgstr "Lampiran"
 #. module: hr_expense
 #: model:ir.model.fields,field_description:hr_expense.field_hr_expense_sheet__attachment_ids
 msgid "Attachments of expenses"
-msgstr ""
+msgstr "Lampiran pengeluaran"
 
 #. module: hr_expense
 #: model:ir.model.fields,field_description:hr_expense.field_hr_expense_sheet__bank_journal_id
@@ -1314,7 +1314,7 @@ msgstr ""
 #: code:addons/hr_expense/models/hr_expense.py:0
 #, python-format
 msgid "New Expense Report, paid by %(paid_by)s"
-msgstr ""
+msgstr "Laporan Pengeluaran Baru, dibayar oleh %(paid_by)s"
 
 #. module: hr_expense
 #. odoo-python
@@ -1738,6 +1738,7 @@ msgstr "Pindai"
 
 #. module: hr_expense
 #. odoo-javascript
+#: code:addons/hr_expense/static/src/components/qrcode_action.xml:0
 #: code:addons/hr_expense/static/src/xml/expense_qr_modal_template.xml:0
 #, python-format
 msgid "Scan this QR code to get the Odoo app:"
@@ -1905,6 +1906,11 @@ msgid "Tax"
 msgstr "Pajak"
 
 #. module: hr_expense
+#: model_terms:ir.ui.view,arch_db:hr_expense.report_expense_sheet
+msgid "Tax 15%"
+msgstr "Pajak 15%"
+
+#. module: hr_expense
 #: model:ir.model.fields,field_description:hr_expense.field_hr_expense__amount_tax_company
 msgid "Tax amount"
 msgstr "Jumlah pajak"
@@ -2036,11 +2042,12 @@ msgstr ""
 #: code:addons/hr_expense/models/product_product.py:0
 #, python-format
 msgid ""
-"There are unposted expenses linked to this category. Updating the category "
-"cost will change expense amounts. Make sure it is what you want to do."
+"There are unsubmitted expenses linked to this category. Updating the "
+"category cost will change expense amounts. Make sure it is what you want to "
+"do."
 msgstr ""
-"Terdapat pengeluaran yang belom diposting yang dihubungkan ke kategori ini. "
-"Mengupdate biaya kategori akan mengubah jumlah pengeluaran. Pastikan Anda "
+"Terdapat pengeluaran yang belom diserahkan yang dihubungkan ke kategori ini."
+" Mengupdate biaya kategori akan mengubah jumlah pengeluaran. Pastikan Anda "
 "betul-betul ingin melakukan ini."
 
 #. module: hr_expense

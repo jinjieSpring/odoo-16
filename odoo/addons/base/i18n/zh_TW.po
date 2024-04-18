@@ -6,9 +6,9 @@
 # Shigurefox <tom.liang@omniwaresoft.com.tw>, 2023
 # 敬雲 林 <chingyun@yuanchih-consult.com>, 2024
 # Benson <Benson.Dr@Gmail.com>, 2024
-# Tony Ng, 2024
 # Martin Trigaux, 2024
 # Wil Odoo, 2024
+# Tony Ng, 2024
 # 
 msgid ""
 msgstr ""
@@ -16,7 +16,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-06 13:33+0000\n"
 "PO-Revision-Date: 2022-09-22 05:44+0000\n"
-"Last-Translator: Wil Odoo, 2024\n"
+"Last-Translator: Tony Ng, 2024\n"
 "Language-Team: Chinese (Taiwan) (https://app.transifex.com/odoo/teams/41243/zh_TW/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2840,8 +2840,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"Accounting Data for Hong Kong Payroll Rules\n"
-"香港薪資規則的會計數據\n"
+"香港薪酬規則的會計數據\n"
 "===========================================\n"
 "    "
 
@@ -6140,7 +6139,6 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"Hong Kong Payroll Rules\n"
 "香港薪酬規則\n"
 "========================\n"
 "    "
@@ -7541,10 +7539,10 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"Odoo 企業 Web 客戶端.\n"
+"Odoo 企業版網頁客戶端\n"
 "===========================\n"
 "\n"
-"模組會修改 web 外掛以提供企業設計和響應.\n"
+"此模組修改網頁附加組件，以提供企業版設計及回應能力。\n"
 "        "
 
 #. module: base
@@ -8281,7 +8279,7 @@ msgid ""
 "Shorten URLs and use them to track clicks and UTMs\n"
 msgstr ""
 "\n"
-"縮短 URL 並使用它們來追踪點擊次數和整合式威脅管理 \n"
+"縮短網址並使用它們追蹤點擊及 UTM\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_website_google_map
@@ -10895,7 +10893,7 @@ msgstr " 將審批、採購和庫存連結在一起的技術模組. "
 msgid ""
 " This is the base module to manage chart of accounting and localization for "
 "Hong Kong "
-msgstr " 這是管理香港會計和本地化圖表的基礎模組 "
+msgstr " 基本模組，用於管理香港會計賬目總表及本地化功能"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_pk
@@ -11357,7 +11355,7 @@ msgstr "%(xmlid)s 是 %(xmlid_model)s 類型，應為 ir.actions.actions 的子�
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.res_lang_form
 msgid "%A - Full day of the week."
-msgstr "%A - 一周中的全天."
+msgstr "%A - 星期幾全寫。"
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.res_lang_form
@@ -11392,7 +11390,7 @@ msgstr "%Y - 4位數的年份. \""
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.res_lang_form
 msgid "%a - Abbreviated day of the week."
-msgstr "%a - 星期幾的縮寫."
+msgstr "%a - 星期幾縮寫。"
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.res_lang_form
@@ -11447,7 +11445,7 @@ msgstr "每單位可兌 %s"
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.res_lang_form
 msgid "%w - Day of the week number [0(Sunday),6].\""
-msgstr "%w - 星期 [0(Sunday),6].\""
+msgstr "%w - 星期幾數字 [0(星期日),6]。\""
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.res_lang_form
@@ -11901,9 +11899,9 @@ msgid ""
 "                                <span colspan=\"2\">Week of the Year: %(woy)s</span>\n"
 "                                <span colspan=\"2\">Day of the Week (0:Monday): %(weekday)s</span>"
 msgstr ""
-"<span colspan=\"2\">某年某日: %(doy)s</span>\n"
-"                                <span colspan=\"2\">某年某周: %(woy)s</span>\n"
-"                                <span colspan=\"2\">某周某天 (0:週一): %(weekday)s</span>"
+"<span colspan=\"2\">年內第幾天：%(doy)s</span>\n"
+"                                <span colspan=\"2\">年內第幾週：%(woy)s</span>\n"
+"                                <span colspan=\"2\">星期幾（0 = 週一）：%(weekday)s</span>"
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.sequence_view
@@ -15350,7 +15348,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,summary:base.module_website_event_twitter_wall
 msgid "Bridge module to configure a twitter wall on your event"
-msgstr "用於在您的活動中設定推特牆的橋接模組"
+msgstr "橋接模組，用於在你的活動上配置 Twitter 訊息牆"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_website_event_social
@@ -18602,7 +18600,7 @@ msgstr "厄瓜多爾"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ec_reports_ats
 msgid "Ecuador - ATS Report"
-msgstr ""
+msgstr "Ecuador - ATS Report"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ec
@@ -19597,7 +19595,7 @@ msgstr "法羅群島"
 #. module: base
 #: model:ir.module.module,summary:base.module_l10n_it_edi_website_sale
 msgid "Features for Italian eCommerce eInvoicing"
-msgstr ""
+msgstr "意大利電子商務電子發票功能"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_res_bank__state
@@ -20099,7 +20097,7 @@ msgstr "芬蘭本地化"
 #. module: base
 #: model:ir.model.fields,field_description:base.field_res_lang__week_start
 msgid "First Day of Week"
-msgstr "每周開始於"
+msgstr "星期起首日"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_base_language_install__first_lang_id
@@ -21313,17 +21311,17 @@ msgstr "香港 - 會計"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_hk_hr_payroll
 msgid "Hong Kong - Payroll"
-msgstr "香港 - 工資發放"
+msgstr "香港 - 薪酬管理"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_hk_hr_payroll_hsbc_autopay
 msgid "Hong Kong - Payroll HSBC AutoPay"
-msgstr ""
+msgstr "香港 - 薪酬管理 - 滙豐自動轉賬 HSBC AutoPay"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_hk_hr_payroll_account
 msgid "Hong Kong - Payroll with Accounting"
-msgstr "香港 - 工資發放及會計"
+msgstr "香港 - 薪酬管理及會計"
 
 #. module: base
 #: model:ir.model.fields,help:base.field_ir_mail_server__smtp_host
@@ -22453,7 +22451,7 @@ msgstr "%(use)s 中的域名格式 %(expr)s 無效"
 #: code:addons/base/models/ir_rule.py:0
 #, python-format
 msgid "Invalid domain: %s"
-msgstr ""
+msgstr "網域無效：%s"
 
 #. module: base
 #. odoo-python
@@ -22780,7 +22778,7 @@ msgstr "Italy - E-invoicing (Withholding)"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_it_edi_website_sale
 msgid "Italy eCommerce eInvoicing"
-msgstr ""
+msgstr "意大利電子商務電子發票"
 
 #. module: base
 #: model:res.partner.industry,full_name:base.res_partner_industry_J
@@ -23588,7 +23586,7 @@ msgstr "pos_hr 和 pos_restaurant 之間的鏈接模塊"
 #. module: base
 #: model:ir.module.module,summary:base.module_l10n_be_pos_sale
 msgid "Link module between pos_sale and l10n_be"
-msgstr ""
+msgstr "連結模組，連接 pos_sale 與 l10n_be"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_pos_sale_loyalty
@@ -23630,7 +23628,7 @@ msgstr "Lithuania - Accounting Reports"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_lt_intrastat
 msgid "Lithuanian Intrastat Declaration"
-msgstr ""
+msgstr "Lithuanian Intrastat Declaration"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_lt_saft
@@ -23790,7 +23788,7 @@ msgstr "MRP外包企業"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_mrp_subcontracting_quality
 msgid "MRP Subcontracting Quality"
-msgstr "MRP外包質量"
+msgstr "製造管理外包品質"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_mrp_subcontracting_repair
@@ -29216,7 +29214,7 @@ msgstr "銷售點租賃庫存"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_pos_settle_due
 msgid "Point of Sale Settle Due"
-msgstr "POS營業點結清到期"
+msgstr "營業點清繳到期款項"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_pos_enterprise
@@ -30874,12 +30872,12 @@ msgstr "重置檢視"
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.reset_view_arch_wizard_view
 msgid "Reset View Architecture"
-msgstr "重置檢視架構"
+msgstr "重設檢視畫面架構"
 
 #. module: base
 #: model:ir.model,name:base.model_reset_view_arch_wizard
 msgid "Reset View Architecture Wizard"
-msgstr "重置檢視架構引導"
+msgstr "重設檢視畫面架構精靈"
 
 #. module: base
 #: model:ir.model.fields.selection,name:base.selection__reset_view_arch_wizard__reset_mode__other_view
@@ -31549,6 +31547,12 @@ msgid "Scheduled Actions Triggers"
 msgstr "安排的動觸發"
 
 #. module: base
+#: code:addons/base/models/ir_cron.py:0
+#, python-format
+msgid "Scheduled action disabled"
+msgstr "排定的操作已停用"
+
+#. module: base
 #: model:ir.model.fields,field_description:base.field_ir_cron__user_id
 msgid "Scheduler User"
 msgstr "調度程式使用者"
@@ -32101,7 +32105,7 @@ msgstr "設定"
 #. module: base
 #: model:ir.module.module,summary:base.module_pos_settle_due
 msgid "Settle partner's due in the POS UI."
-msgstr "在POS UI 中結算合伙人的到期應付款項。"
+msgstr "在 POS 程式操作介面中，向合作夥伴清繳到期款項。"
 
 #. module: base
 #: model:res.country,name:base.sc
@@ -32765,7 +32769,7 @@ msgstr "工時表試算表概覽畫面"
 #: model:ir.module.module,shortdesc:base.module_l10n_in_reports_gstr_spreadsheet
 #: model:ir.module.module,summary:base.module_l10n_in_reports_gstr_spreadsheet
 msgid "Spreadsheet document for GSTR1 Report"
-msgstr ""
+msgstr "GSTR1 報表的試算表文件"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_profile__sql
@@ -34769,6 +34773,14 @@ msgid "Those modules cannot be uninstalled: %s"
 msgstr "這些模塊無法卸載：%s"
 
 #. module: base
+#: code:addons/base/models/ir_cron.py:0
+#, python-format
+msgid ""
+"This scheduled action has been disabled because its interval number is not a"
+" strictly positive value."
+msgstr "此排定操作已停用，因為其間隔數目不是嚴格的正數值。"
+
+#. module: base
 #: model:ir.model.fields,field_description:base.field_res_lang__thousands_sep
 msgid "Thousands Separator"
 msgstr "千位分隔符"
@@ -35189,7 +35201,7 @@ msgstr "圖瓦魯"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_website_twitter
 msgid "Twitter Snippet"
-msgstr "推特片段"
+msgstr "Twitter 小片段"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_website_twitter_wall
@@ -35345,7 +35357,7 @@ msgstr "UTM 追蹤器"
 #. module: base
 #: model:ir.module.module,description:base.module_mass_mailing_crm
 msgid "UTM and mass mailing on lead / opportunities"
-msgstr "批次郵寄潛在商機/商機"
+msgstr "潛在客戶/銷售機會 UTM 及群發郵件"
 
 #. module: base
 #: model:ir.module.module,description:base.module_mass_mailing_sale
@@ -35952,7 +35964,7 @@ msgstr "使用者:"
 #: code:addons/base/models/ir_rule.py:0
 #, python-format
 msgid "User: %s"
-msgstr "User: %s"
+msgstr "使用者: %s"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_mail_server__smtp_user
@@ -37112,6 +37124,15 @@ msgstr "不能刪除 %s 記錄。"
 
 #. module: base
 #. odoo-python
+#: code:addons/base/models/res_users.py:0
+#, python-format
+msgid ""
+"You cannot delete the admin user because it is utilized in various places "
+"(such as security configurations,...). Instead, archive it."
+msgstr "管理員使用者不可刪除，因為它需要在多個地方使用（例如：保安配置等）。請改為將其封存。"
+
+#. module: base
+#. odoo-python
 #: code:addons/base/models/res_lang.py:0
 #, python-format
 msgid ""
@@ -37664,7 +37685,7 @@ msgstr "json"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_be_pos_sale
 msgid "l10n_be_pos_sale"
-msgstr ""
+msgstr "l10n_be_pos_sale"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_it_stock_ddt

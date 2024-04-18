@@ -989,7 +989,7 @@
         }
         // Generate new Id if the item didn't exist in the dictionary
         const ids = Object.keys(itemsDic);
-        const maxId = ids.length === 0 ? 0 : Math.max(...ids.map((id) => parseInt(id, 10)));
+        const maxId = ids.length === 0 ? 0 : largeMax(ids.map((id) => parseInt(id, 10)));
         itemsDic[maxId + 1] = item;
         return maxId + 1;
     }
@@ -1080,7 +1080,7 @@
         if (typeof o1 !== typeof o2)
             return false;
         if (typeof o1 !== "object")
-            return o1 === o2;
+            return false;
         // Objects can have different keys if the values are undefined
         const keys = new Set();
         Object.keys(o1).forEach((key) => keys.add(key));
@@ -1135,6 +1135,34 @@
                 return cache.get(args[0]);
             },
         }[funcName];
+    }
+    /**
+     * Alternative to Math.max that works with large arrays.
+     * Typically useful for arrays bigger than 100k elements.
+     */
+    function largeMax(array) {
+        let len = array.length;
+        if (len < 100000)
+            return Math.max(...array);
+        let max = -Infinity;
+        while (len--) {
+            max = array[len] > max ? array[len] : max;
+        }
+        return max;
+    }
+    /**
+     * Alternative to Math.min that works with large arrays.
+     * Typically useful for arrays bigger than 100k elements.
+     */
+    function largeMin(array) {
+        let len = array.length;
+        if (len < 100000)
+            return Math.min(...array);
+        let min = +Infinity;
+        while (len--) {
+            min = array[len] < min ? array[len] : min;
+        }
+        return min;
     }
 
     const RBA_REGEX = /rgba?\(|\s+|\)/gi;
@@ -4682,6 +4710,7 @@
                     if (this.state.link.url) {
                         this.save();
                     }
+                    ev.preventDefault();
                     break;
                 case "Escape":
                     this.cancel();
@@ -5097,8 +5126,8 @@
         let last;
         const activesRows = env.model.getters.getActiveRows();
         if (activesRows.size !== 0) {
-            first = Math.min(...activesRows);
-            last = Math.max(...activesRows);
+            first = largeMin([...activesRows]);
+            last = largeMax([...activesRows]);
         }
         else {
             const zone = env.model.getters.getSelectedZones()[0];
@@ -5126,8 +5155,8 @@
         let last;
         const activeCols = env.model.getters.getActiveCols();
         if (activeCols.size !== 0) {
-            first = Math.min(...activeCols);
-            last = Math.max(...activeCols);
+            first = largeMin([...activeCols]);
+            last = largeMax([...activeCols]);
         }
         else {
             const zone = env.model.getters.getSelectedZones()[0];
@@ -5155,8 +5184,8 @@
         let last;
         const activesRows = env.model.getters.getActiveRows();
         if (activesRows.size !== 0) {
-            first = Math.min(...activesRows);
-            last = Math.max(...activesRows);
+            first = largeMin([...activesRows]);
+            last = largeMax([...activesRows]);
         }
         else {
             const zone = env.model.getters.getSelectedZones()[0];
@@ -5197,8 +5226,8 @@
         let last;
         const activeCols = env.model.getters.getActiveCols();
         if (activeCols.size !== 0) {
-            first = Math.min(...activeCols);
-            last = Math.max(...activeCols);
+            first = largeMin([...activeCols]);
+            last = largeMax([...activeCols]);
         }
         else {
             const zone = env.model.getters.getSelectedZones()[0];
@@ -5267,7 +5296,7 @@
         let row;
         let quantity;
         if (activeRows.size) {
-            row = Math.min(...activeRows);
+            row = largeMin([...activeRows]);
             quantity = activeRows.size;
         }
         else {
@@ -5299,7 +5328,7 @@
         let row;
         let quantity;
         if (activeRows.size) {
-            row = Math.max(...activeRows);
+            row = largeMax([...activeRows]);
             quantity = activeRows.size;
         }
         else {
@@ -5340,7 +5369,7 @@
         let column;
         let quantity;
         if (activeCols.size) {
-            column = Math.min(...activeCols);
+            column = largeMin([...activeCols]);
             quantity = activeCols.size;
         }
         else {
@@ -5374,7 +5403,7 @@
         let column;
         let quantity;
         if (activeCols.size) {
-            column = Math.max(...activeCols);
+            column = largeMax([...activeCols]);
             quantity = activeCols.size;
         }
         else {
@@ -5925,17 +5954,20 @@
     });
 
     function interactiveRenameSheet(env, sheetId, errorText) {
+        if (env.model.getters.isReadonly()) {
+            return;
+        }
         const placeholder = env.model.getters.getSheetName(sheetId);
         const title = _lt("Rename Sheet");
         const callback = (name) => {
             if (name === null || name === placeholder) {
                 return;
             }
-            if (name === "") {
-                interactiveRenameSheet(env, sheetId, _lt("The sheet name cannot be empty."));
-            }
             const result = env.model.dispatch("RENAME_SHEET", { sheetId, name });
             if (!result.isSuccessful) {
+                if (result.reasons.includes(10 /* CommandResult.MissingSheetName */)) {
+                    interactiveRenameSheet(env, sheetId, _lt("The sheet name cannot be empty."));
+                }
                 if (result.reasons.includes(11 /* CommandResult.DuplicatedSheetName */)) {
                     interactiveRenameSheet(env, sheetId, _lt("A sheet with the name %s already exists. Please select another name.", name));
                 }
@@ -7927,7 +7959,7 @@
             return undefined;
         }
         const labelsTimestamps = labelDates.map((date) => date.getTime());
-        const period = Math.max(...labelsTimestamps) - Math.min(...labelsTimestamps);
+        const period = largeMax(labelsTimestamps) - largeMin(labelsTimestamps);
         const minUnit = getFormatMinDisplayUnit(format);
         if (UNIT_LENGTH.second >= UNIT_LENGTH[minUnit] && Milliseconds.inSeconds(period) < 180) {
             return "second";
@@ -8343,7 +8375,7 @@
     }
     function getPieColors(colors, dataSetsValues) {
         const pieColors = [];
-        const maxLength = Math.max(...dataSetsValues.map((ds) => ds.data.length));
+        const maxLength = largeMax(dataSetsValues.map((ds) => ds.data.length));
         for (let i = 0; i <= maxLength; i++) {
             pieColors.push(colors.next());
         }
@@ -20431,6 +20463,10 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                 if (!this.isKeyStillDown) {
                     this.processContent();
                 }
+                // Required because typing '=SUM' and double-clicking another cell leaves ShowProvider and ShowDescription true
+                if (this.env.model.getters.getEditionMode() === "inactive") {
+                    this.processTokenAtCursor();
+                }
             });
         }
         // ---------------------------------------------------------------------------
@@ -20628,6 +20664,12 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
         }
         onCompleted(text) {
             text && this.autoComplete(text);
+        }
+        onContextMenu(ev) {
+            var _a, _b;
+            if (this.env.model.getters.getEditionMode() === "inactive") {
+                (_b = (_a = this.props).onInputContextMenu) === null || _b === void 0 ? void 0 : _b.call(_a, ev);
+            }
         }
         // ---------------------------------------------------------------------------
         // Private
@@ -20862,6 +20904,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                 isDefaultFocus: true,
                 onComposerContentFocused: this.props.onComposerContentFocused,
                 onComposerCellFocused: this.props.onComposerCellFocused,
+                onInputContextMenu: this.props.onInputContextMenu,
             };
         }
         get containerStyle() {
@@ -21143,6 +21186,9 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                     el === null || el === void 0 ? void 0 : el.focus({ preventScroll: true });
                 }
             }, () => [this.env.model.getters.getSelectedFigureId(), this.props.figure.id, this.figureRef.el]);
+            owl.onWillUnmount(() => {
+                this.props.onFigureDeleted();
+            });
         }
         clickAnchor(dirX, dirY, ev) {
             this.props.onClickAnchor(dirX, dirY, ev);
@@ -21160,6 +21206,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                     });
                     this.props.onFigureDeleted();
                     ev.preventDefault();
+                    ev.stopPropagation();
                     break;
                 case "ArrowDown":
                 case "ArrowLeft":
@@ -21179,6 +21226,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                         y: figure.y + delta[1],
                     });
                     ev.preventDefault();
+                    ev.stopPropagation();
                     break;
             }
         }
@@ -21403,6 +21451,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
             ev.stopPropagation();
             const initialX = ev.clientX;
             const initialY = ev.clientY;
+            const { scrollX, scrollY } = this.env.model.getters.getActiveSheetScrollInfo();
             const { x: dndInitialX, y: dndInitialY } = this.internalToScreenCoordinates(figure);
             this.dnd.x = dndInitialX;
             this.dnd.y = dndInitialY;
@@ -21421,13 +21470,14 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                 if (dirY < 0) {
                     this.dnd.y = dndInitialY - deltaY;
                 }
-                if (this.dnd.x < 0) {
-                    this.dnd.width += this.dnd.x;
-                    this.dnd.x = 0;
+                // Adjusts figure dimensions to ensure it remains within header boundaries and viewport during resizing.
+                if (this.dnd.x + scrollX <= 0) {
+                    this.dnd.width = this.dnd.width + this.dnd.x + scrollX;
+                    this.dnd.x = -scrollX;
                 }
-                if (this.dnd.y < 0) {
-                    this.dnd.height += this.dnd.y;
-                    this.dnd.y = 0;
+                if (this.dnd.y + scrollY <= 0) {
+                    this.dnd.height = this.dnd.height + this.dnd.y + scrollY;
+                    this.dnd.y = -scrollY;
                 }
             };
             const onMouseUp = (ev) => {
@@ -23005,8 +23055,8 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
             else if (this.env.model.getters.getActiveRows().has(row)) {
                 type = "ROW";
             }
-            const { x, y, width, height } = this.env.model.getters.getVisibleRect(lastZone);
-            this.toggleContextMenu(type, x + width, y + height);
+            const { x, y, width } = this.env.model.getters.getVisibleRect(lastZone);
+            this.toggleContextMenu(type, this.canvasPosition.x + x + width, this.canvasPosition.y + y);
         }
         onCellRightClicked(col, row, { x, y }) {
             const zones = this.env.model.getters.getSelectedZones();
@@ -24640,29 +24690,12 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
             return width;
         return Math.round((width / WIDTH_FACTOR) * 100) / 100;
     }
-    function convertBorderDescr(descr) {
-        if (!descr) {
-            return undefined;
-        }
-        return {
-            style: descr[0],
-            color: { rgb: descr[1] },
-        };
-    }
     function extractStyle(cell, data) {
         let style = {};
         if (cell.style) {
             style = data.styles[cell.style];
         }
         const format = extractFormat(cell, data);
-        const exportedBorder = {};
-        if (cell.border) {
-            const border = data.borders[cell.border];
-            exportedBorder.left = convertBorderDescr(border.left);
-            exportedBorder.right = convertBorderDescr(border.right);
-            exportedBorder.bottom = convertBorderDescr(border.bottom);
-            exportedBorder.top = convertBorderDescr(border.top);
-        }
         const styles = {
             font: {
                 size: (style === null || style === void 0 ? void 0 : style.fontSize) || DEFAULT_FONT_SIZE,
@@ -24676,7 +24709,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                 }
                 : { reservedAttribute: "none" },
             numFmt: format ? { format: format, id: 0 /* id not used for export */ } : undefined,
-            border: exportedBorder || {},
+            border: cell.border || 0,
             alignment: {
                 vertical: "center",
                 horizontal: style.align,
@@ -24705,23 +24738,19 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
         return undefined;
     }
     function normalizeStyle(construct, styles) {
-        const { id: fontId } = pushElement(styles["font"], construct.fonts);
-        const { id: fillId } = pushElement(styles["fill"], construct.fills);
-        const { id: borderId } = pushElement(styles["border"], construct.borders);
         // Normalize this
         const numFmtId = convertFormat(styles["numFmt"], construct.numFmts);
         const style = {
-            fontId,
-            fillId,
-            borderId,
+            fontId: pushElement(styles.font, construct.fonts),
+            fillId: pushElement(styles.fill, construct.fills),
+            borderId: styles.border,
             numFmtId,
             alignment: {
                 vertical: styles.alignment.vertical,
                 horizontal: styles.alignment.horizontal,
             },
         };
-        const { id } = pushElement(style, construct.styles);
-        return id;
+        return pushElement(style, construct.styles);
     }
     function convertFormat(format, numFmtStructure) {
         if (!format) {
@@ -24729,8 +24758,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
         }
         let formatId = XLSX_FORMAT_MAP[format.format];
         if (!formatId) {
-            const { id } = pushElement(format, numFmtStructure);
-            formatId = id + FIRST_NUMFMT_ID;
+            formatId = pushElement(format, numFmtStructure) + FIRST_NUMFMT_ID;
         }
         return formatId;
     }
@@ -24755,20 +24783,15 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
         return id;
     }
     function pushElement(property, propertyList) {
-        for (let [key, value] of Object.entries(propertyList)) {
-            if (JSON.stringify(value) === JSON.stringify(property)) {
-                return { id: parseInt(key, 10), list: propertyList };
+        let len = propertyList.length;
+        const operator = typeof property === "object" ? deepEquals : (a, b) => a === b;
+        for (let i = 0; i < len; i++) {
+            if (operator(property, propertyList[i])) {
+                return i;
             }
         }
-        let elemId = propertyList.findIndex((elem) => JSON.stringify(elem) === JSON.stringify(property));
-        if (elemId === -1) {
-            propertyList.push(property);
-            elemId = propertyList.length - 1;
-        }
-        return {
-            id: elemId,
-            list: propertyList,
-        };
+        propertyList[propertyList.length] = property;
+        return propertyList.length - 1;
     }
     const chartIds = [];
     /**
@@ -25172,7 +25195,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
     function getSheetDims(sheet) {
         const dims = [0, 0];
         for (let row of sheet.rows) {
-            dims[0] = Math.max(dims[0], ...row.cells.map((cell) => toCartesian(cell.xc).col));
+            dims[0] = Math.max(dims[0], largeMax(row.cells.map((cell) => toCartesian(cell.xc).col)));
             dims[1] = Math.max(dims[1], row.index);
         }
         dims[0] = Math.max(dims[0], EXCEL_IMPORT_DEFAULT_NUMBER_OF_COLS);
@@ -25442,7 +25465,25 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
         }
         return document;
     }
-    function getDefaultXLSXStructure() {
+    function convertBorderDescr(descr) {
+        if (!descr) {
+            return undefined;
+        }
+        return {
+            style: descr[0],
+            color: { rgb: descr[1] },
+        };
+    }
+    function getDefaultXLSXStructure(data) {
+        const xlsxBorders = Object.values(data.borders).map((border) => {
+            return {
+                left: convertBorderDescr(border.left),
+                right: convertBorderDescr(border.right),
+                bottom: convertBorderDescr(border.bottom),
+                top: convertBorderDescr(border.top),
+            };
+        });
+        const borders = [{}, ...xlsxBorders];
         return {
             relsFiles: [],
             sharedStrings: [],
@@ -25465,7 +25506,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                 },
             ],
             fills: [{ reservedAttribute: "none" }, { reservedAttribute: "gray125" }],
-            borders: [{}],
+            borders,
             numFmts: [],
             dxfs: [],
         };
@@ -28797,6 +28838,15 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                     return 0 /* CommandResult.Success */;
             }
         }
+        beforeHandle(cmd) {
+            switch (cmd.type) {
+                case "DELETE_SHEET":
+                    this.getters.getFigures(cmd.sheetId).forEach((figure) => {
+                        this.dispatch("DELETE_FIGURE", { id: figure.id, sheetId: cmd.sheetId });
+                    });
+                    break;
+            }
+        }
         handle(cmd) {
             switch (cmd.type) {
                 case "CREATE_SHEET":
@@ -29200,7 +29250,17 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
             }
         }
         exportForExcel(data) {
-            this.export(data);
+            for (const sheet of data.sheets) {
+                for (const filterTable of this.getFilterTables(sheet.id)) {
+                    if (zoneToDimension(filterTable.zone).height === 1) {
+                        continue;
+                    }
+                    sheet.filterTables.push({
+                        range: zoneToXc(filterTable.zone),
+                        filters: [],
+                    });
+                }
+            }
         }
     }
     FiltersPlugin.getters = [
@@ -29256,7 +29316,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                     for (let headerIndex of [...cmd.elements].sort((a, b) => b - a)) {
                         sizes.splice(headerIndex, 1);
                     }
-                    const min = Math.min(...cmd.elements);
+                    const min = largeMin(cmd.elements);
                     sizes = sizes.map((size, row) => {
                         if (cmd.dimension === "ROW" && row >= min) {
                             // invalidate sizes
@@ -29484,7 +29544,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                     if (hiddenElements.size >= elements) {
                         return 66 /* CommandResult.TooManyHiddenElements */;
                     }
-                    else if (Math.min(...cmd.elements) < 0 || Math.max(...cmd.elements) > elements) {
+                    else if (largeMin(cmd.elements) < 0 || largeMax(cmd.elements) > elements) {
                         return 86 /* CommandResult.InvalidHeaderIndex */;
                     }
                     else {
@@ -30159,7 +30219,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                     const elements = cmd.dimension === "COL"
                         ? this.getNumberCols(cmd.sheetId)
                         : this.getNumberRows(cmd.sheetId);
-                    if (Math.min(...cmd.elements) < 0 || Math.max(...cmd.elements) > elements) {
+                    if (largeMin(cmd.elements) < 0 || largeMax(cmd.elements) > elements) {
                         return 86 /* CommandResult.InvalidHeaderIndex */;
                     }
                     else if (this.checkElementsIncludeAllNonFrozenHeaders(cmd.sheetId, cmd.dimension, cmd.elements)) {
@@ -31532,13 +31592,13 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
             const cells = this.getters.getCellsInZone(sheet.id, zone);
             const cellPositions = range(end, -1, -1);
             const invalidCells = cellPositions.filter((position) => { var _a; return cells[position] && !((_a = cells[position]) === null || _a === void 0 ? void 0 : _a.isAutoSummable); });
-            const maxValidPosition = Math.max(...invalidCells);
+            const maxValidPosition = largeMax(invalidCells);
             const numberSequences = groupConsecutive(cellPositions.filter((position) => this.isNumber(cells[position])));
             const firstSequence = numberSequences[0] || [];
-            if (Math.max(...firstSequence) < maxValidPosition) {
+            if (largeMax(firstSequence) < maxValidPosition) {
                 return Infinity;
             }
-            return Math.min(...firstSequence);
+            return largeMin(firstSequence);
         }
         shouldFindData(sheetId, zone) {
             return this.getters.isEmpty(sheetId, zone) || this.getters.isSingleCellOrMerge(sheetId, zone);
@@ -33221,13 +33281,13 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                 .filter(this.isCellValueNumber);
             switch (threshold.type) {
                 case "value":
-                    const result = functionName === "max" ? Math.max(...rangeValues) : Math.min(...rangeValues);
+                    const result = functionName === "max" ? largeMax(rangeValues) : largeMin(rangeValues);
                     return result;
                 case "number":
                     return Number(threshold.value);
                 case "percentage":
-                    const min = Math.min(...rangeValues);
-                    const max = Math.max(...rangeValues);
+                    const min = largeMin(rangeValues);
+                    const max = largeMax(rangeValues);
                     const delta = max - min;
                     return min + (delta * Number(threshold.value)) / 100;
                 case "percentile":
@@ -34945,6 +35005,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                     this.gridSelection.zones = this.gridSelection.zones.map((z) => this.getters.expandZone(sheetId, z));
                     this.gridSelection.anchor.zone = this.getters.expandZone(sheetId, this.gridSelection.anchor.zone);
                     this.setSelectionMixin(this.gridSelection.anchor, this.gridSelection.zones);
+                    this.selectedFigureId = null;
                     break;
             }
             /** Any change to the selection has to be  reflected in the selection processor. */
@@ -36924,12 +36985,13 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                 case "AlterZoneCorner":
                     break;
                 case "ZonesSelected":
+                    const sheetId = this.getters.getActiveSheetId();
                     let { col, row } = findCellInNewZone(event.previousAnchor.zone, event.anchor.zone);
                     if (event.mode === "updateAnchor") {
                         const oldZone = event.previousAnchor.zone;
                         const newZone = event.anchor.zone;
                         // altering a zone should not move the viewport in a dimension that wasn't changed
-                        const { top, bottom, left, right } = this.getters.getActiveMainViewport();
+                        const { top, bottom, left, right } = this.getMainInternalViewport(sheetId);
                         if (oldZone.left === newZone.left && oldZone.right === newZone.right) {
                             col = left > col || col > right ? left : col;
                         }
@@ -36937,10 +36999,9 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                             row = top > row || row > bottom ? top : row;
                         }
                     }
-                    const sheetId = this.getters.getActiveSheetId();
                     col = Math.min(col, this.getters.getNumberCols(sheetId) - 1);
                     row = Math.min(row, this.getters.getNumberRows(sheetId) - 1);
-                    this.refreshViewport(this.getters.getActiveSheetId(), { col, row });
+                    this.refreshViewport(sheetId, { col, row });
                     break;
             }
         }
@@ -36965,16 +37026,16 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                     this.setSheetViewOffset(cmd.offsetX, cmd.offsetY);
                     break;
                 case "SHIFT_VIEWPORT_DOWN":
-                    const { top } = this.getActiveMainViewport();
                     const sheetId = this.getters.getActiveSheetId();
-                    const shiftedOffsetY = this.clipOffsetY(this.getters.getRowDimensions(sheetId, top).start + this.sheetViewHeight);
-                    this.shiftVertically(shiftedOffsetY);
+                    const { top, viewportHeight, offsetCorrectionY } = this.getMainInternalViewport(sheetId);
+                    const topRowDims = this.getters.getRowDimensions(sheetId, top);
+                    this.shiftVertically(topRowDims.start + viewportHeight - offsetCorrectionY);
                     break;
                 case "SHIFT_VIEWPORT_UP": {
-                    const { top } = this.getActiveMainViewport();
                     const sheetId = this.getters.getActiveSheetId();
-                    const shiftedOffsetY = this.clipOffsetY(this.getters.getRowDimensions(sheetId, top).end - this.sheetViewHeight);
-                    this.shiftVertically(shiftedOffsetY);
+                    const { top, viewportHeight, offsetCorrectionY } = this.getMainInternalViewport(sheetId);
+                    const topRowDims = this.getters.getRowDimensions(sheetId, top);
+                    this.shiftVertically(topRowDims.end - offsetCorrectionY - viewportHeight);
                     break;
                 }
                 case "REMOVE_COLUMNS_ROWS":
@@ -37333,17 +37394,6 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
             const { maxOffsetX, maxOffsetY } = this.getMaximumSheetOffset();
             Object.values(this.getSubViewports(sheetId)).forEach((viewport) => viewport.setViewportOffset(clip(offsetX, 0, maxOffsetX), clip(offsetY, 0, maxOffsetY)));
         }
-        /**
-         * Clip the vertical offset within the allowed range.
-         * Not above the sheet, nor below the sheet.
-         */
-        clipOffsetY(offsetY) {
-            const { height } = this.getMainViewportRect();
-            const maxOffset = height - this.sheetViewHeight;
-            offsetY = Math.min(offsetY, maxOffset);
-            offsetY = Math.max(offsetY, 0);
-            return offsetY;
-        }
         getViewportOffset(sheetId) {
             var _a, _b;
             return {
@@ -37397,12 +37447,15 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
          * viewport top.
          */
         shiftVertically(offset) {
-            const { top } = this.getActiveMainViewport();
+            const sheetId = this.getters.getActiveSheetId();
+            const { top } = this.getMainInternalViewport(sheetId);
             const { scrollX } = this.getActiveSheetScrollInfo();
             this.setSheetViewOffset(scrollX, offset);
             const { anchor } = this.getters.getSelection();
-            const deltaRow = this.getActiveMainViewport().top - top;
-            this.selection.selectCell(anchor.cell.col, anchor.cell.row + deltaRow);
+            if (anchor.cell.row >= this.getters.getPaneDivisions(sheetId).ySplit) {
+                const deltaRow = this.getMainInternalViewport(sheetId).top - top;
+                this.selection.selectCell(anchor.cell.col, anchor.cell.row + deltaRow);
+            }
         }
         getVisibleFigures() {
             const sheetId = this.getters.getActiveSheetId();
@@ -37963,7 +38016,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
         getColMaxWidth(sheetId, index) {
             const cellsPositions = positions(this.getters.getColsZone(sheetId, index, index));
             const sizes = cellsPositions.map((position) => this.getCellWidth(sheetId, position));
-            return Math.max(0, ...sizes);
+            return Math.max(0, largeMax(sizes));
         }
         splitWordToSpecificWidth(ctx, word, width, style) {
             const wordWidth = computeTextWidth(ctx, word, style);
@@ -40314,8 +40367,8 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                         let newRange = range;
                         let changeType = "NONE";
                         for (let group of groups) {
-                            const min = Math.min(...group);
-                            const max = Math.max(...group);
+                            const min = largeMin(group);
+                            const max = largeMax(group);
                             if (range.zone[start] <= min && min <= range.zone[end]) {
                                 const toRemove = Math.min(range.zone[end], max) - min + 1;
                                 changeType = "RESIZE";
@@ -41573,7 +41626,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
     }
     function addDoughnutChart(chart, chartSheetIndex, data, { holeSize } = { holeSize: 50 }) {
         const colors = new ChartColors();
-        const maxLength = Math.max(...chart.dataSets.map((ds) => getRangeSize(ds.range, chartSheetIndex, data)));
+        const maxLength = largeMax(chart.dataSets.map((ds) => getRangeSize(ds.range, chartSheetIndex, data)));
         const doughnutColors = range(0, maxLength).map(() => toXlsxHexColor(colors.next()));
         const dataSetsNodes = [];
         for (const [dsIndex, dataset] of Object.entries(chart.dataSets).reverse()) {
@@ -41722,8 +41775,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
             attrs.push(["t", "b"]);
         }
         else if (forceString || !isNumber(value)) {
-            const { id } = pushElement(content, sharedStrings);
-            value = id.toString();
+            value = pushElement(content, sharedStrings);
             attrs.push(["t", "s"]);
         }
         return { attrs, node: escapeXml /*xml*/ `<v>${value}</v>` };
@@ -41848,8 +41900,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
         if (rule.style.fillColor) {
             dxf.fill = { fgColor: { rgb: rule.style.fillColor } };
         }
-        const { id } = pushElement(dxf, dxfs);
-        ruleAttributes.push(["dxfId", id]);
+        ruleAttributes.push(["dxfId", pushElement(dxf, dxfs)]);
         return escapeXml /*xml*/ `
     <conditionalFormatting sqref="${cf.ranges.join(" ")}">
       <cfRule ${formatAttributes(ruleAttributes)}>
@@ -42560,7 +42611,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
      */
     function getXLSX(data) {
         const files = [];
-        const construct = getDefaultXLSXStructure();
+        const construct = getDefaultXLSXStructure(data);
         files.push(createWorkbook(data, construct));
         files.push(...createWorksheets(data, construct));
         files.push(createStylesSheet(construct));
@@ -43270,9 +43321,9 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
     Object.defineProperty(exports, '__esModule', { value: true });
 
 
-    __info__.version = '16.0.33';
-    __info__.date = '2024-02-16T14:59:44.946Z';
-    __info__.hash = 'c0cefe8';
+    __info__.version = '16.0.38';
+    __info__.date = '2024-04-10T12:32:46.699Z';
+    __info__.hash = '6c7d510';
 
 
 })(this.o_spreadsheet = this.o_spreadsheet || {}, owl);

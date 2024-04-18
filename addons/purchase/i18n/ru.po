@@ -23,10 +23,10 @@
 # Диляра Дельтаева <dilya.kz93@gmail.com>, 2022
 # Martin Trigaux, 2022
 # valmasone, 2022
-# Сергей Шебанин <sergey@shebanin.ru>, 2023
 # alenafairy, 2023
 # Wil Odoo, 2024
 # Смородин Даниил, 2024
+# Сергей Шебанин <sergey@shebanin.ru>, 2024
 # 
 msgid ""
 msgstr ""
@@ -34,7 +34,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-06 13:31+0000\n"
 "PO-Revision-Date: 2022-09-22 05:54+0000\n"
-"Last-Translator: Смородин Даниил, 2024\n"
+"Last-Translator: Сергей Шебанин <sergey@shebanin.ru>, 2024\n"
 "Language-Team: Russian (https://app.transifex.com/odoo/teams/41243/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -254,6 +254,11 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:purchase.purchase_order_portal_content
 msgid "<i class=\"fa fa-fw fa-check\"/> <b>Paid</b>"
 msgstr "<i class=\"fa fa-fw fa-check\"/><b>оплатить</b></i>"
+
+#. module: purchase
+#: model_terms:ir.ui.view,arch_db:purchase.purchase_order_portal_content
+msgid "<i class=\"fa fa-fw fa-check\"/> <b>Reversed</b>"
+msgstr ""
 
 #. module: purchase
 #: model_terms:ir.ui.view,arch_db:purchase.purchase_order_portal_content
@@ -782,8 +787,8 @@ msgid ""
 "Automatically send a confirmation email to the vendor X days before the "
 "expected receipt date, asking him to confirm the exact date."
 msgstr ""
-"Автоматически отправьте продавцу письмо с подтверждением за X дней до "
-"предполагаемой даты получения, попросив его подтвердить точную дату."
+"Автоматически отправить поставщику электронное письмо с подтверждением за X "
+"дней до ожидаемой даты получения с просьбой подтвердить точную дату."
 
 #. module: purchase
 #: model:ir.model.fields,field_description:purchase.field_purchase_report__price_average
@@ -948,7 +953,7 @@ msgstr "Конфигурационные настройки"
 #. module: purchase
 #: model:ir.ui.menu,name:purchase.menu_purchase_config
 msgid "Configuration"
-msgstr "Настройки"
+msgstr "Конфигурация"
 
 #. module: purchase
 #. odoo-python
@@ -965,7 +970,7 @@ msgstr "Подтвердить заказ"
 #. module: purchase
 #: model_terms:ir.ui.view,arch_db:purchase.purchase_order_form
 msgid "Confirm Receipt Date"
-msgstr "Подтверждение даты получения"
+msgstr "Подтвердить дату поступления"
 
 #. module: purchase
 #: model:ir.model.fields.selection,name:purchase.selection__res_company__po_double_validation__one_step
@@ -1152,8 +1157,8 @@ msgid ""
 "Depicts the date within which the Quotation should be confirmed and "
 "converted into a purchase order."
 msgstr ""
-"Указывает дату, в течение которой предложение должно быть подтверждено и "
-"преобразовано в заказ на поставку."
+"Указывает дату, в течение которой коммерческое предложение должно быть "
+"подтверждено и преобразовано в заказ на поставку."
 
 #. module: purchase
 #: model:ir.model.fields,field_description:purchase.field_purchase_order_line__name
@@ -1456,7 +1461,7 @@ msgstr "Последнее обновление"
 #: code:addons/purchase/static/src/views/purchase_dashboard.xml:0
 #, python-format
 msgid "Late"
-msgstr "Ранее"
+msgstr "В прошлом"
 
 #. module: purchase
 #: model_terms:ir.ui.view,arch_db:purchase.purchase_order_view_search
@@ -1492,8 +1497,8 @@ msgid ""
 "Let's try the Purchase app to manage the flow from purchase to reception and"
 " invoice control."
 msgstr ""
-"Попробуем приложение \"Закупки\" для управления потоком от покупки до "
-"получения и контроля счетов-фактур."
+"Давайте попробуем приложение \"Закупки\" для управления потоком от покупки "
+"до получения и контроля актов."
 
 #. module: purchase
 #: model:ir.model.fields,field_description:purchase.field_res_company__po_double_validation
@@ -1710,7 +1715,7 @@ msgstr "Не предупреждать"
 #. module: purchase
 #: model_terms:ir.actions.act_window,help:purchase.action_purchase_order_report_all
 msgid "No Purchase Analysis"
-msgstr "Отсутствие анализа покупок"
+msgstr "Отсутствует анализ закупок"
 
 #. module: purchase
 #: model_terms:ir.actions.act_window,help:purchase.product_normal_action_puchased
@@ -1720,7 +1725,7 @@ msgstr "Нет продуктов. Можете создать."
 #. module: purchase
 #: model_terms:ir.actions.act_window,help:purchase.purchase_form_action
 msgid "No purchase order found. Let's create one!"
-msgstr "Заказ на покупку не найден. Давайте создадим его!"
+msgstr "Заказ на поставку не найден. Давайте создадим его!"
 
 #. module: purchase
 #: model_terms:ir.actions.act_window,help:purchase.action_purchase_history
@@ -1944,7 +1949,7 @@ msgstr "Печать"
 #. module: purchase
 #: model_terms:ir.ui.view,arch_db:purchase.purchase_order_form
 msgid "Print RFQ"
-msgstr "Распечатать Запрос предложений"
+msgstr "Распечатать Запрос цен"
 
 #. module: purchase
 #: model:ir.model.fields,field_description:purchase.field_purchase_order__priority
@@ -2450,8 +2455,8 @@ msgid ""
 "Reference of the document that generated this purchase order request (e.g. a"
 " sales order)"
 msgstr ""
-"Reference of the document that generated this purchase order request (e.g. a"
-" sales order)"
+"Ссылка на документ, который сгенерировал этот запрос заказа на поставку "
+"(например, заказ на продажу)"
 
 #. module: purchase
 #: model:ir.model.fields,help:purchase.field_purchase_order__partner_ref
@@ -2515,7 +2520,7 @@ msgid ""
 "Requests for quotation are documents that will be sent to your suppliers to request prices for different products you consider buying.\n"
 "                Once an agreement has been found with the supplier, they will be confirmed and turned into purchase orders."
 msgstr ""
-"Запросы на коммерческое предложение - это документы, которые отправляются вашим поставщикам для запроса цен на различные товары, которые вы собираетесь приобрести.\n"
+"Запросы на коммерческое предложение — это документы, отправляемые вашим поставщикам для запроса цен на различные продукты, которые вы собираетесь приобрести.\n"
 "                После достижения договоренности с поставщиком они будут подтверждены и превратятся в заказы на поставку."
 
 #. module: purchase
@@ -2854,8 +2859,8 @@ msgid ""
 "This analysis allows you to easily check and analyse your company purchase history and performance.\n"
 "                You can track your negotiation performance, the delivery performance of your vendors, etc"
 msgstr ""
-"Этот анализ позволяет легко проверить и проанализировать историю и результаты закупок вашей компании.\n"
-"                Вы можете отслеживать результаты своих переговоров, эффективность поставок ваших поставщиков и т. д"
+"Этот анализ позволяет легко проверить и проанализировать историю и эффективность закупок вашей компании.\n"
+"                Вы можете отслеживать результаты переговоров, эффективность поставок ваших поставщиков и т. д"
 
 #. module: purchase
 #: model:ir.model.fields,help:purchase.field_res_partner__property_purchase_currency_id

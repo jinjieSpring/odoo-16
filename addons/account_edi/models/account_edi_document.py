@@ -145,10 +145,7 @@ class AccountEdiDocument(models.Model):
                         reconciled_lines = move.line_ids.filtered(lambda line: line.account_id.account_type in ('asset_receivable', 'liability_payable'))
                         reconciled_amls = reconciled_lines.mapped('matched_debit_ids.debit_move_id') \
                                           | reconciled_lines.mapped('matched_credit_ids.credit_move_id')
-                        reconciled_amls\
-                            .filtered(lambda x: x.move_id.payment_id or x.move_id.statement_line_id)\
-                            .move_id\
-                            ._update_payments_edi_documents()
+                        reconciled_amls.move_id._update_payments_edi_documents()
                 else:
                     document.write({
                         'error': move_result.get('error', False),
@@ -157,7 +154,7 @@ class AccountEdiDocument(models.Model):
 
             # Attachments that are not explicitly linked to a business model could be removed because they are not
             # supposed to have any traceability from the user.
-            attachments_to_unlink.unlink()
+            attachments_to_unlink.sudo().unlink()
 
         def _postprocess_cancel_edi_results(documents, edi_result):
             move_ids_to_cancel = set()  # Avoid duplicates

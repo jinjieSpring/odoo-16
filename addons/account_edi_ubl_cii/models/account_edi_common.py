@@ -78,13 +78,13 @@ COUNTRY_EAS = {
     'SM': 9951,
     'TR': 9952,
     'VA': 9953,
-    'SE': 9955,
+    'SE': '0007',
     'FR': 9957,
     'NO': '0192',
     'SG': '0195',
     'AU': '0151',
     'NZ': '0088',
-    'FI': '0213',
+    'FI': '0216',
 }
 
 
@@ -111,9 +111,9 @@ class AccountEdiCommon(models.AbstractModel):
             return UOM_TO_UNECE_CODE.get(xmlid[line.product_uom_id.id], 'C62')
         return 'C62'
 
-    def _find_value(self, xpath, tree):
+    def _find_value(self, xpath, tree, nsmap=False):
         # avoid 'TypeError: empty namespace prefix is not supported in XPath'
-        nsmap = {k: v for k, v in tree.nsmap.items() if k is not None}
+        nsmap = nsmap or {k: v for k, v in tree.nsmap.items() if k is not None}
         return self.env['account.edi.format']._find_value(xpath=xpath, xml_element=tree, namespaces=nsmap)
 
     # -------------------------------------------------------------------------
@@ -170,7 +170,7 @@ class AccountEdiCommon(models.AbstractModel):
             else:
                 return create_dict(tax_category_code='S')  # standard VAT
 
-        if supplier.country_id.code in european_economic_area:
+        if supplier.country_id.code in european_economic_area and supplier.vat:
             if tax.amount != 0:
                 # otherwise, the validator will complain because G and K code should be used with 0% tax
                 return create_dict(tax_category_code='S')
@@ -338,7 +338,9 @@ class AccountEdiCommon(models.AbstractModel):
     def _import_retrieve_and_fill_partner(self, invoice, name, phone, mail, vat, country_code=False):
         """ Retrieve the partner, if no matching partner is found, create it (only if he has a vat and a name)
         """
-        invoice.partner_id = self.env['account.edi.format']._retrieve_partner(name=name, phone=phone, mail=mail, vat=vat)
+        invoice.partner_id = self.env['account.edi.format'] \
+            .with_company(invoice.company_id) \
+            ._retrieve_partner(name=name, phone=phone, mail=mail, vat=vat)
         if not invoice.partner_id and name and vat:
             partner_vals = {'name': name, 'email': mail, 'phone': phone}
             country = self.env.ref(f'base.{country_code.lower()}', raise_if_not_found=False) if country_code else False
@@ -619,7 +621,7 @@ class AccountEdiCommon(models.AbstractModel):
                     # Handle Fixed Taxes: when exporting from Odoo, we use the allowance_charge node
                     fixed_taxes_list.append({
                         'tax_name': reason.text,
-                        'tax_amount': float(amount.text),
+                        'tax_amount': float(amount.text) / billed_qty,
                     })
                 else:
                     allow_charge_amount += float(amount.text) * discount_factor
@@ -649,7 +651,7 @@ class AccountEdiCommon(models.AbstractModel):
 
         # discount
         discount = 0
-        amount_fixed_taxes = sum(d['tax_amount'] for d in fixed_taxes_list)
+        amount_fixed_taxes = sum(d['tax_amount'] * billed_qty for d in fixed_taxes_list)
         if billed_qty * price_unit != 0 and price_subtotal is not None:
             discount = 100 * (1 - (price_subtotal - amount_fixed_taxes) / (billed_qty * price_unit))
 

@@ -318,3 +318,44 @@ ProductScreen.check.totalAmountIs('50.00');
 PosLoyalty.exec.finalizeOrder('Cash', '50');
 
 Tour.register('PosLoyaltyTour11.2', { test: true, url: '/pos/web' }, getSteps());
+
+startSteps();
+
+ProductScreen.do.confirmOpeningPopup();
+ProductScreen.do.clickHomeCategory();
+
+ProductScreen.exec.addOrderline('Free Product A', '2');
+ProductScreen.do.clickDisplayedProduct('Free Product A');
+ProductScreen.check.totalAmountIs('2.00');
+PosLoyalty.check.hasRewardLine('Free Product', '-1.00');
+
+ProductScreen.exec.addOrderline('Free Product B', '2');
+ProductScreen.do.clickDisplayedProduct('Free Product B');
+ProductScreen.check.totalAmountIs('4.00');
+PosLoyalty.check.hasRewardLine('Free Product', '-2.00');
+
+ProductScreen.exec.addOrderline('Free Product B', '5');
+ProductScreen.do.clickDisplayedProduct('Free Product B');
+ProductScreen.check.totalAmountIs('6.00');
+PosLoyalty.check.hasRewardLine('Free Product', '-3.00');
+
+Tour.register('PosLoyaltyTour12', { test: true, url: '/pos/web' }, getSteps());
+
+startSteps();
+
+ProductScreen.do.clickHomeCategory();
+ProductScreen.do.confirmOpeningPopup();
+
+ProductScreen.do.clickDisplayedProduct('Product A');
+ProductScreen.check.selectedOrderlineHas('Product A', '1.00', '20.00');
+PosLoyalty.check.orderTotalIs('20.00');
+
+ProductScreen.do.clickDisplayedProduct('Product B');
+ProductScreen.check.selectedOrderlineHas('Product B', '1.00', '30.00');
+PosLoyalty.check.orderTotalIs('50.00');
+
+ProductScreen.do.clickDisplayedProduct('Product A');
+ProductScreen.check.selectedOrderlineHas('Product A', '2.00', '40.00');
+PosLoyalty.check.orderTotalIs('66.00');
+
+Tour.register('PosLoyaltyMinAmountAndSpecificProductTour', {test: true, url: '/pos/web'}, getSteps());

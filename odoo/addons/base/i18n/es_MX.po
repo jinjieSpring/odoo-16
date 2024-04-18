@@ -7,10 +7,10 @@
 # Braulio D. López Vázquez <bdl@odoo.com>, 2023
 # Aimée Mendoza Sánchez, 2024
 # Iran Villalobos López, 2024
-# Patricia Gutiérrez Capetillo <pagc@odoo.com>, 2024
 # Lucia Pacheco, 2024
 # Martin Trigaux, 2024
 # Wil Odoo, 2024
+# Patricia Gutiérrez Capetillo <pagc@odoo.com>, 2024
 # Fernanda Alvarez, 2024
 # 
 msgid ""
@@ -1317,7 +1317,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"        Datos de gastos no permitidos para Bélgica\n"
+"        Datos de gastos rechazados para Bélgica\n"
 "    "
 
 #. module: base
@@ -12405,7 +12405,7 @@ msgid ""
 "<code>timezone</code>: useful Python libraries"
 msgstr ""
 "<code>time</code>, <code>datetime</code>, <code>dateutil</code>, "
-"<code>timezone</code>: useful Python libraries"
+"<code>timezone</code>: bibliotecas útiles de Python"
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_res_company_kanban
@@ -15755,7 +15755,7 @@ msgstr "Bélgica - Reportes contables - SMS"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_be_disallowed_expenses
 msgid "Belgium - Disallowed Expenses Data"
-msgstr "Bélgica - Gastos no permitidos"
+msgstr "Bélgica - Gastos rechazados"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_be_coda
@@ -18882,7 +18882,7 @@ msgstr "Gastos rechazados"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_account_disallowed_expenses_fleet
 msgid "Disallowed Expenses on Fleets"
-msgstr "Gastos no permitidos en Flotas"
+msgstr "Gastos rechazados en Flotas"
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_base_module_uninstall
@@ -21666,12 +21666,12 @@ msgstr "Usuarios de Google"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_website_sale_autocomplete
 msgid "Google places autocompletion"
-msgstr "Autocompletado de Google places"
+msgstr "Autocompletado de Google Places"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_google_recaptcha
 msgid "Google reCAPTCHA integration"
-msgstr "Integración de Google con reCAPTCHA"
+msgstr "Integración con Google reCAPTCHA"
 
 #. module: base
 #: model_terms:res.partner,website_description:base.res_partner_address_18
@@ -21870,7 +21870,7 @@ msgstr "Gamificación en RR. HH."
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_hr_org_chart
 msgid "HR Org Chart"
-msgstr "Gráfico de org. de RR. HH."
+msgstr "Organigrama de RR. HH."
 
 #. module: base
 #: model:res.country,vat_label:base.ca
@@ -22890,7 +22890,7 @@ msgstr "Importar estado de cuenta bancario QIF"
 #: code:addons/base/models/res_partner.py:0
 #, python-format
 msgid "Import Template for Customers"
-msgstr "Importar plantillas para clientes"
+msgstr "Plantilla de importación para clientes"
 
 #. module: base
 #: model:ir.actions.act_window,name:base.action_view_base_import_language
@@ -25153,12 +25153,12 @@ msgstr "Gestione activos con Flota"
 #: model:ir.module.module,description:base.module_account_disallowed_expenses
 #: model:ir.module.module,summary:base.module_account_disallowed_expenses
 msgid "Manage disallowed expenses"
-msgstr "Gestione gastos no permitidos"
+msgstr "Gestione gastos rechazados"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_account_disallowed_expenses_fleet
 msgid "Manage disallowed expenses with fleets"
-msgstr "Gestione gastos no permitidos con Flota"
+msgstr "Gestione gastos rechazados con Flota"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_sale_loyalty_taxcloud_delivery
@@ -30538,12 +30538,12 @@ msgstr "Privacidad"
 #. module: base
 #: model:ir.model.fields.selection,name:base.selection__res_partner__type__private
 msgid "Private Address"
-msgstr "Dirección privada"
+msgstr "Dirección particular"
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.res_partner_view_form_private
 msgid "Private Address Form"
-msgstr "Formulario de dirección privada"
+msgstr "Formulario de dirección particular"
 
 #. module: base
 #. odoo-python
@@ -31111,7 +31111,7 @@ msgstr "Compra"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_purchase_requisition
 msgid "Purchase Agreements"
-msgstr "Acuerdos de compra"
+msgstr "Contratos de compra"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_purchase_intrastat
@@ -32511,15 +32511,12 @@ msgstr ""
 #: model:ir.module.module,summary:base.module_industry_fsm_sale
 msgid "Schedule and track onsite operations, invoice time and material"
 msgstr ""
-"Programar y dar seguimiento a operaciones in situ, facturar tiempo y "
-"materiales"
+"Programe y monitoree operaciones presenciales, facture tiempo y materiales"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_industry_fsm
 msgid "Schedule and track onsite operations, time and material"
-msgstr ""
-"Programa y da seguimiento a operaciones in situ, tiempo y materiales de "
-"facturación"
+msgstr "Programe y monitoree operaciones presenciales, tiempo y materiales"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_calendar
@@ -32557,6 +32554,12 @@ msgstr "Acciones planificadas"
 #: model:ir.ui.menu,name:base.ir_cron_trigger_menu
 msgid "Scheduled Actions Triggers"
 msgstr "Activadores de tareas programadas"
+
+#. module: base
+#: code:addons/base/models/ir_cron.py:0
+#, python-format
+msgid "Scheduled action disabled"
+msgstr "Acción programada deshabilitada"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_cron__user_id
@@ -35142,8 +35145,8 @@ msgid ""
 "The path to the main report file (depending on Report Type) or empty if the "
 "content is in another field"
 msgstr ""
-"La ruta al fichero del informe principal (dependiendo del tipo de informe) o"
-" vacío si el contenido es otro campo"
+"La ruta al archivo del reporte principal (según el tipo de reporte) o vacío "
+"si el contenido está en otro campo"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_payment
@@ -35934,6 +35937,16 @@ msgid "Those modules cannot be uninstalled: %s"
 msgstr "Esos módulos no se pueden desinstalar: %s"
 
 #. module: base
+#: code:addons/base/models/ir_cron.py:0
+#, python-format
+msgid ""
+"This scheduled action has been disabled because its interval number is not a"
+" strictly positive value."
+msgstr ""
+"Esta acción programada ha sido desactivada. Su número de intervalo no es un "
+"valor estrictamente positivo."
+
+#. module: base
 #: model:ir.model.fields,field_description:base.field_res_lang__thousands_sep
 msgid "Thousands Separator"
 msgstr "Separador de millares"
@@ -36472,7 +36485,7 @@ msgstr "Envíos por UPS"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_delivery_ups
 msgid "UPS Shipping (Legacy)"
-msgstr "UPS Shipping (sistema heredado)"
+msgstr "Envíos por UPS (heredado)"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_website_delivery_ups
@@ -38375,6 +38388,17 @@ msgstr "No puede eliminar el registro %s."
 
 #. module: base
 #. odoo-python
+#: code:addons/base/models/res_users.py:0
+#, python-format
+msgid ""
+"You cannot delete the admin user because it is utilized in various places "
+"(such as security configurations,...). Instead, archive it."
+msgstr ""
+"No puede eliminar al usuario administrador, pues se usa en muchos lugares "
+"(como en configuraciones de seguridad). Mejor archívelo."
+
+#. module: base
+#. odoo-python
 #: code:addons/base/models/res_lang.py:0
 #, python-format
 msgid ""
@@ -38454,7 +38478,7 @@ msgstr "Tiene que especificar un filtro para su selección."
 #. module: base
 #: model_terms:ir.actions.act_window,help:base.open_module_tree
 msgid "You should try other search criteria."
-msgstr "Debería probar otro criterio de búsqueda."
+msgstr "Intente usar otro criterio de búsqueda."
 
 #. module: base
 #: model_terms:res.company,invoice_terms_html:base.main_company

@@ -1122,6 +1122,18 @@ class MailThread(models.AbstractModel):
                     email_from, email_to, message_id, fallback_model, thread_id, custom_values, user_id)
                 return [route]
 
+        # 4. Recipients contain catchall and unroutable emails -> bounce
+        if rcpt_tos_localparts and catchall_alias and any(email_localpart == catchall_alias for email_localpart in email_to_localparts):
+            _logger.info(
+                'Routing mail from %s to %s with Message-Id %s: write to catchall + other unroutable emails, bounce',
+                email_from, email_to, message_id
+            )
+            body = self.env['ir.qweb']._render('mail.mail_bounce_catchall', {
+                'message': message,
+            })
+            self._routing_create_bounce_email(email_from, body, message, references=message_id, reply_to=self.env.company.email)
+            return []
+
         # ValueError if no routes found and if no bounce occurred
         raise ValueError(
             'No possible route found for incoming message from %s to %s (Message-Id %s:). '
@@ -1653,7 +1665,8 @@ class MailThread(models.AbstractModel):
         """ Returns suggested recipients for ids. Those are a list of
         tuple (partner_id, partner_name, reason), to be managed by Chatter. """
         result = dict((res_id, []) for res_id in self.ids)
-        if 'user_id' in self._fields:
+        user_field = self._fields.get('user_id')
+        if user_field and user_field.type == 'many2one' and user_field.comodel_name == 'res.users':
             for obj in self.sudo():  # SUPERUSER because of a read on res.users that would crash otherwise
                 if not obj.user_id or not obj.user_id.partner_id:
                     continue
@@ -1762,6 +1775,14 @@ class MailThread(models.AbstractModel):
             followers = records.mapped('message_partner_ids')
         else:
             followers = self.env['res.partner']
+        if records and 'company_id' in records:
+            sort_key = lambda p: (
+                self.env.user.partner_id == p,      # prioritize user
+                p.company_id in records.company_id, # then partner associated w/ records
+                not p.company_id,                   # otherwise prefer partner w/out company_id
+            )
+        else:
+            sort_key = lambda p: (self.env.user.partner_id == p, not p.company_id)
         catchall_domain = self.env['ir.config_parameter'].sudo().get_param("mail.catchall.domain")
 
         # first, build a normalized email list and remove those linked to aliases
@@ -1786,10 +1807,9 @@ class MailThread(models.AbstractModel):
 
         partners = self._mail_search_on_partner(remaining, extra_domain=extra_domain)
         done_partners += [partner for partner in partners]
-        remaining = [email for email in normalized_emails if email not in [partner.email_normalized for partner in done_partners]]
 
-        # prioritize current user if exists in list
-        done_partners.sort(key=lambda p: self.env.user.partner_id != p)
+        # prioritize current user if exists in list, and partners with matching company ids
+        done_partners.sort(key=sort_key, reverse=True) # reverse because False < True
 
         # iterate and keep ordering
         partners = []

@@ -2185,12 +2185,8 @@ msgstr "Icon, um eine Ausnahmeaktivität anzuzeigen."
 
 #. module: hr_holidays
 #: model:ir.model.fields,help:hr_holidays.field_hr_leave_allocation__number_of_days_display
-msgid ""
-"If Accrual Allocation: Number of days allocated in addition to the ones you "
-"will get via the accrual' system."
-msgstr ""
-"Bei Urlaubsrückstellung: Anzahl der Tage, die zusätzlich zu den Tagen, die "
-"Sie über das Rückstelllungssystem erhalten, zugeteilt werden."
+msgid "If Accrual Allocation: Days given by the accrual system."
+msgstr "Wenn Urlaubsrückstellung: vom Rückstellungssystem vorgegebene Tage."
 
 #. module: hr_holidays
 #: model:ir.model.fields,help:hr_holidays.field_hr_leave_allocation__number_of_hours_display
@@ -2748,7 +2744,7 @@ msgstr "Neu"
 #: code:addons/hr_holidays/models/hr_leave.py:0
 #, python-format
 msgid "New %(leave_type)s Request created by %(user)s"
-msgstr "Neue Antrag auf %(leave_type)s erstellt von %(user)s"
+msgstr "Neuer Antrag auf %(leave_type)s erstellt von %(user)s"
 
 #. module: hr_holidays
 #. odoo-javascript

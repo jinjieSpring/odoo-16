@@ -892,7 +892,7 @@ msgstr "Kontaktnavn"
 #: model:ir.model.fields,field_description:hr.field_hr_employee__emergency_phone
 #: model:ir.model.fields,field_description:hr.field_res_users__emergency_phone
 msgid "Contact Phone"
-msgstr ""
+msgstr "Kontakt telefon"
 
 #. module: hr
 #: model:ir.model,name:hr.model_hr_contract_type
@@ -1284,7 +1284,7 @@ msgstr "Ansatte koder"
 #: code:addons/hr/static/src/views/archive_employee_hook.js:0
 #, python-format
 msgid "Employee Termination"
-msgstr ""
+msgstr "Opsigelse af medarbejder"
 
 #. module: hr
 #: model:ir.model.fields,field_description:hr.field_hr_employee__employee_type
