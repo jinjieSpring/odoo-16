@@ -1364,7 +1364,7 @@ msgstr "Conecte su calendario"
 #. module: calendar
 #: model:onboarding.onboarding.step,title:calendar.onboarding_onboarding_step_setup_calendar_integration
 msgid "Connect your calendar"
-msgstr "Conectar su calendario"
+msgstr "Conecte su calendario"
 
 #. module: calendar
 #: model:ir.model,name:calendar.model_res_partner
@@ -1421,7 +1421,7 @@ msgstr "Personalizado"
 #. module: calendar
 #: model:ir.model.fields.selection,name:calendar.selection__calendar_event__rrule_type_ui__daily
 msgid "Daily"
-msgstr "Diariamente"
+msgstr "Diario"
 
 #. module: calendar
 #: model_terms:ir.ui.view,arch_db:calendar.invitation_page_anonymous

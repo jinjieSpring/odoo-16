@@ -1448,7 +1448,7 @@ msgstr "Estado del componente"
 #: code:addons/mrp/static/src/mrp_forecasted/forecasted_details.xml:0
 #, python-format
 msgid "Component of Draft MO"
-msgstr "Componente de borrador de orden de facturación"
+msgstr "Componentes necesarios para la orden de fabricación en borrador"
 
 #. module: mrp
 #: model:ir.model.fields,field_description:mrp.field_mrp_production__move_raw_ids
@@ -1586,8 +1586,8 @@ msgid ""
 "Conversion between Units of Measure can only occur if they belong to the "
 "same category. The conversion will be made based on the ratios."
 msgstr ""
-"La conversión entre las unidades de medidas solo puede ocurrir si pertenecen"
-" a la misma categoría. La conversión se realizará según las proporciones "
+"Las unidades de medida solo se pueden convertir si ambas unidades pertenecen"
+" a la misma categoría. La conversión se basará en las proporciones "
 "establecidas."
 
 #. module: mrp
@@ -5179,8 +5179,8 @@ msgstr "Mostrar producir todo"
 #: model_terms:ir.ui.view,arch_db:mrp.view_mrp_production_filter
 msgid "Show all records which has next action date is before today"
 msgstr ""
-"Mostrar todos los registros que tienen la próxima fecha de acción antes de "
-"hoy"
+"Mostrar todos los registros cuya próxima fecha de acción es antes de la "
+"fecha de hoy."
 
 #. module: mrp
 #: model:ir.model.fields,field_description:mrp.field_mrp_production_backorder__show_backorder_lines
@@ -6294,7 +6294,7 @@ msgstr "Anular reserva"
 #. module: mrp
 #: model_terms:ir.ui.view,arch_db:mrp.mrp_production_tree_view
 msgid "UoM"
-msgstr "Unidades de medida"
+msgstr "UdM"
 
 #. module: mrp
 #: model_terms:ir.ui.view,arch_db:mrp.mrp_production_form_view
@@ -7124,8 +7124,8 @@ msgid ""
 "You should update the components quantity instead of directly updating the "
 "quantity of the kit product."
 msgstr ""
-"Debe actualizar la cantidad de los componentes en lugar de actualizar "
-"directamente la cantidad del kit de producto."
+"Debe actualizar la cantidad de componentes en lugar de actualizar la "
+"cantidad del producto del kit."
 
 #. module: mrp
 #: model:ir.model.fields.selection,name:mrp.selection__stock_picking_type__done_mrp_lot_label_to_print__zpl

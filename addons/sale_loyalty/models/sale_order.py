@@ -139,7 +139,7 @@ class SaleOrder(models.Model):
         product = product or reward_products[:1]
         if not product or product not in reward_products:
             raise UserError(_('Invalid product to claim.'))
-        taxes = self.fiscal_position_id.map_tax(product.taxes_id.filtered(lambda t: t.company_id == self.company_id))
+        taxes = self.fiscal_position_id.map_tax(product.taxes_id._filter_taxes_by_company(self.company_id))
         points = self._get_real_points_for_coupon(coupon)
         claimable_count = float_round(points / reward.required_points, precision_rounding=1, rounding_method='DOWN') if not reward.clear_wallet else 1
         cost = points if reward.clear_wallet else claimable_count * reward.required_points
@@ -481,34 +481,6 @@ class SaleOrder(models.Model):
         """
         self.ensure_one()
         return self._get_points_programs() | self._get_reward_programs()
-
-    def _compute_invoice_status(self):
-        # Handling of a specific situation: an order contains
-        # a product invoiced on delivery and a promo line invoiced
-        # on order. We would avoid having the invoice status 'to_invoice'
-        # if the created invoice will only contain the promotion line
-        super()._compute_invoice_status()
-        for order in self:
-            if order.invoice_status != 'to invoice':
-                continue
-            if not any(not line.is_reward_line and line.invoice_status == 'to invoice' for line in order.order_line):
-                order.invoice_status = 'no'
-
-    def _get_invoiceable_lines(self, final=False):
-        """ Ensures we cannot invoice only reward lines.
-
-        Since promotion lines are specified with service products,
-        those lines are directly invoiceable when the order is confirmed
-        which can result in invoices containing only promotion lines.
-
-        To avoid those cases, we allow the invoicing of promotion lines
-        if at least another 'basic' lines is also invoiceable.
-        """
-        invoiceable_lines = super()._get_invoiceable_lines(final)
-        for line in invoiceable_lines:
-            if not line.is_reward_line:
-                return invoiceable_lines
-        return self.env['sale.order.line']
 
     def _recompute_prices(self):
         """Recompute coupons/promotions after pricelist prices reset."""

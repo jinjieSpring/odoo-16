@@ -414,20 +414,15 @@ class SaleOrderLine(models.Model):
 
     @api.depends('product_id', 'company_id')
     def _compute_tax_id(self):
-        taxes_by_product_company = defaultdict(lambda: self.env['account.tax'])
         lines_by_company = defaultdict(lambda: self.env['sale.order.line'])
         cached_taxes = {}
         for line in self:
             lines_by_company[line.company_id] += line
-        for product in self.product_id:
-            for tax in product.taxes_id:
-                taxes_by_product_company[(product, tax.company_id)] += tax
         for company, lines in lines_by_company.items():
             for line in lines.with_company(company):
-                taxes, comp = None, company
-                while not taxes and comp:
-                    taxes = taxes_by_product_company[(line.product_id, comp)]
-                    comp = comp.parent_id
+                taxes = None
+                if line.product_id:
+                    taxes = line.product_id.taxes_id._filter_taxes_by_company(company)
                 if not line.product_id or not taxes:
                     # Nothing to map
                     line.tax_id = False
@@ -825,6 +820,16 @@ class SaleOrderLine(models.Model):
                 line.invoice_status = 'invoiced'
             else:
                 line.invoice_status = 'no'
+
+    def _can_be_invoiced_alone(self):
+        """ Whether a given line is meaningful to invoice alone.
+
+        It is generally meaningless/confusing or even wrong to invoice some specific SOlines
+        (delivery, discounts, rewards, ...) without others, unless they are the only left to invoice
+        in the SO.
+        """
+        self.ensure_one()
+        return self.product_id.id != self.company_id.sale_discount_product_id.id
 
     @api.depends('invoice_lines', 'invoice_lines.price_total', 'invoice_lines.move_id.state', 'invoice_lines.move_id.move_type')
     def _compute_untaxed_amount_invoiced(self):

@@ -716,6 +716,7 @@ class PosOrder(models.Model):
                 'group_tax_id': None if tax_rep.tax_id.id == tax_line_vals['tax_id'] else tax_line_vals['tax_id'],
                 'amount_currency': amount_currency,
                 'balance': balance,
+                'tax_tag_invert': tax_rep.document_type != 'refund',
             })
             total_amount_currency += amount_currency
             total_balance += balance
@@ -734,6 +735,7 @@ class PosOrder(models.Model):
                 'tax_tag_ids': update_base_line_vals['tax_tag_ids'],
                 'amount_currency': amount_currency,
                 'balance': balance,
+                'tax_tag_invert': not base_line_vals['is_refund'],
             })
             total_amount_currency += amount_currency
             total_balance += balance
@@ -862,10 +864,9 @@ class PosOrder(models.Model):
         if len(self.company_id) > 1:
             raise UserError(_("You cannot invoice orders belonging to different companies."))
         self.write({'to_invoice': True})
-        res = self._generate_pos_order_invoice()
         if self.company_id.anglo_saxon_accounting and self.session_id.update_stock_at_closing and self.session_id.state != 'closed':
             self._create_order_picking()
-        return res
+        return self._generate_pos_order_invoice()
 
     def _generate_pos_order_invoice(self):
         moves = self.env['account.move']

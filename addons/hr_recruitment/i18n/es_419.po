@@ -3,10 +3,10 @@
 # 	* hr_recruitment
 # 
 # Translators:
-# Patricia Gutiérrez Capetillo <pagc@odoo.com>, 2023
 # Iran Villalobos López, 2023
 # Wil Odoo, 2024
 # Fernanda Alvarez, 2024
+# Patricia Gutiérrez Capetillo <pagc@odoo.com>, 2024
 # 
 msgid ""
 msgstr ""
@@ -14,7 +14,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-26 21:55+0000\n"
 "PO-Revision-Date: 2023-10-26 23:09+0000\n"
-"Last-Translator: Fernanda Alvarez, 2024\n"
+"Last-Translator: Patricia Gutiérrez Capetillo <pagc@odoo.com>, 2024\n"
 "Language-Team: Spanish (Latin America) (https://app.transifex.com/odoo/teams/41243/es_419/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1515,7 +1515,7 @@ msgstr "Salario adicional esperado"
 #. module: hr_recruitment
 #: model_terms:ir.ui.view,arch_db:hr_recruitment.hr_applicant_view_search
 msgid "Extended Filters"
-msgstr "Filtro avanzado"
+msgstr "Filtros avanzados"
 
 #. module: hr_recruitment
 #: model:ir.model.fields,field_description:hr_recruitment.field_hr_job__extended_interviewer_ids
@@ -1538,8 +1538,8 @@ msgid ""
 "Field used to store sanitized phone number. Helps speeding up searches and "
 "comparisons."
 msgstr ""
-"Campo utilizado para almacenar el número de teléfono válido. Ayuda a "
-"acelerar búsquedas y comparaciones."
+"Campo donde se almacena el número de teléfono válido. Ayuda a acelerar "
+"búsquedas y comparaciones."
 
 #. module: hr_recruitment
 #: model_terms:ir.ui.view,arch_db:hr_recruitment.ir_attachment_hr_recruitment_list_view
@@ -1787,9 +1787,9 @@ msgid ""
 "distinguish which number is blacklisted             when there is both a "
 "mobile and phone field in a model."
 msgstr ""
-"Indica si el número de teléfono depurado de la lista negra es un celular. "
-"Sirve para distinguir qué número está en la lista negra cuando hay un campo "
-"de celular y otro de teléfono fijo en un modelo."
+"Indica si el número de teléfono válido de la lista de exclusión es un "
+"celular. Sirve para distinguir qué número está en la lista de exclusión "
+"cuando hay un campo de celular y otro de teléfono fijo en un modelo."
 
 #. module: hr_recruitment
 #: model:ir.model.fields,help:hr_recruitment.field_hr_applicant__phone_blacklisted
@@ -2064,7 +2064,7 @@ msgstr "Perfil de LinkedIn"
 #. module: hr_recruitment
 #: model:ir.model.fields,field_description:hr_recruitment.field_hr_job__alias_incoming_local
 msgid "Local-part based incoming detection"
-msgstr "Detección de entradas basada en partes locales"
+msgstr "Detección de entradas según las partes locales"
 
 #. module: hr_recruitment
 #: model:ir.model.fields,field_description:hr_recruitment.field_applicant_send_mail__template_id
@@ -2445,10 +2445,10 @@ msgid ""
 "- partners: only authenticated partners\n"
 "- followers: only followers of the related document or members of following channels\n"
 msgstr ""
-"Política sobre cómo publicar un mensaje en el documento utilizando el servidor de correo.\n"
-"- todos: todos pueden publicar\n"
-"- contactos: solo los contactos verificados\n"
-"- seguidores: solo los seguidores del documento relacionado o los miembros de los canales\n"
+"La política sobre cómo publicar un mensaje en el documento con el servidor de correo.\n"
+"- Todos: todos pueden publicar\n"
+"- Contactos: solo los contactos verificados\n"
+"- Seguidores: solo los seguidores del documento relacionado o los miembros de los canales\n"
 
 #. module: hr_recruitment
 #: model:ir.model.fields,field_description:hr_recruitment.field_hr_applicant__probability
@@ -2852,8 +2852,8 @@ msgstr "Ajustes"
 #: model_terms:ir.ui.view,arch_db:hr_recruitment.hr_applicant_view_search_bis
 msgid "Show all records which has next action date is before today"
 msgstr ""
-"Mostrar todos los registros que tienen la próxima fecha de acción antes de "
-"hoy"
+"Mostrar todos los registros cuya próxima fecha de acción es antes de la "
+"fecha de hoy."
 
 #. module: hr_recruitment
 #: model:ir.model.fields,field_description:hr_recruitment.field_hr_applicant__source_id
@@ -3059,8 +3059,8 @@ msgid ""
 "The name of the email alias, e.g. 'jobs' if you want to catch emails for "
 "<jobs@example.odoo.com>"
 msgstr ""
-"Use el seudónimo del correo electrónico, por ejemplo, \"trabajos\" si desea "
-"recibir correos electrónicos en <trabajos@ejemplo.odoo.com>"
+"El nombre del seudónimo de correo electrónico. Por ejemplo, \"trabajos\" si "
+"desea recibir correos electrónicos en <trabajos@ejemplo.odoo.com>."
 
 #. module: hr_recruitment
 #: model:ir.model.fields,help:hr_recruitment.field_hr_applicant__email_normalized

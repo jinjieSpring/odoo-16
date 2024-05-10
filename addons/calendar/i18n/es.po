@@ -6,8 +6,8 @@
 # Martin Trigaux, 2023
 # Lucia Pacheco, 2024
 # Wil Odoo, 2024
-# Larissa Manderfeld, 2024
 # Pedro M. Baeza <pedro.baeza@tecnativa.com>, 2024
+# Larissa Manderfeld, 2024
 # 
 msgid ""
 msgstr ""
@@ -15,7 +15,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-01-05 12:31+0000\n"
 "PO-Revision-Date: 2023-10-26 23:09+0000\n"
-"Last-Translator: Pedro M. Baeza <pedro.baeza@tecnativa.com>, 2024\n"
+"Last-Translator: Larissa Manderfeld, 2024\n"
 "Language-Team: Spanish (https://app.transifex.com/odoo/teams/41243/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -981,7 +981,7 @@ msgstr "<span> horas</span>"
 msgid ""
 "<strong>Save</strong> this page and come back here to set up the feature."
 msgstr ""
-"<strong>Guarda</strong> esta página y regresa para configurar la función."
+"<strong>Guarde</strong> esta página y regrese para configurar la función."
 
 #. module: calendar
 #: model_terms:ir.ui.view,arch_db:calendar.view_calendar_event_form
@@ -1024,9 +1024,8 @@ msgid ""
 "Actions may trigger specific behavior like opening calendar view or "
 "automatically mark as done when a document is uploaded"
 msgstr ""
-"Las acciones pueden desencadenar comportamientos específicos como abrir la "
-"vista de calendario o marcar automáticamente como hecho cuando un documento "
-"es subido"
+"Las acciones pueden activar comportamientos específicos, como abrir la vista"
+" de calendario o marcar automáticamente como hecha al subir un documento"
 
 #. module: calendar
 #: model:ir.model.fields,field_description:calendar.field_calendar_event__active
@@ -1047,7 +1046,7 @@ msgstr "Actividad"
 #. module: calendar
 #: model:ir.model,name:calendar.model_mail_activity_mixin
 msgid "Activity Mixin"
-msgstr "Mezcla de actividades"
+msgstr "Mixin de actividad"
 
 #. module: calendar
 #: model:ir.model,name:calendar.model_mail_activity_type
@@ -1676,7 +1675,7 @@ msgstr "Cada %(interval)s días"
 #: code:addons/calendar/models/calendar_recurrence.py:0
 #, python-format
 msgid "Every %(interval)s Days for %(count)s events"
-msgstr "Cada %(interval)s días para %(count)s repeticiones"
+msgstr "Cada %(interval)s días para %(count)s eventos"
 
 #. module: calendar
 #. odoo-python
@@ -1751,7 +1750,7 @@ msgstr "Cada %(interval)s semanas en %(days)s para %(count)s repeticiones"
 #: code:addons/calendar/models/calendar_recurrence.py:0
 #, python-format
 msgid "Every %(interval)s Weeks on %(days)s until %(until)s"
-msgstr "Cada %(interval)s semanas en %(days)s hasta %(until)s"
+msgstr "Cada %(interval)s semanas el %(days)s hasta %(until)s"
 
 #. module: calendar
 #. odoo-python
@@ -1765,7 +1764,7 @@ msgstr "Cada %(interval)s años"
 #: code:addons/calendar/models/calendar_recurrence.py:0
 #, python-format
 msgid "Every %(interval)s Years for %(count)s events"
-msgstr "Cada %(interval)s años para %(count)s repeticiones"
+msgstr "Cada %(interval)s años para %(count)s eventos"
 
 #. module: calendar
 #. odoo-python
@@ -1936,7 +1935,7 @@ msgstr "Intervalo"
 #. module: calendar
 #: model:ir.model.fields,field_description:calendar.field_calendar_event__invalid_email_partner_ids
 msgid "Invalid Email Partner"
-msgstr "Correo electrónico de socio inválido"
+msgstr "Correo electrónico de contacto no válido"
 
 #. module: calendar
 #: model:mail.message.subtype,name:calendar.subtype_invitation
