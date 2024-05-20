@@ -178,9 +178,6 @@ class Warehouse(models.Model):
             warehouses._update_reception_delivery_resupply(vals.get('reception_steps'), vals.get('delivery_steps'))
 
         if vals.get('resupply_wh_ids') and not vals.get('resupply_route_ids'):
-            new_resupply_whs = self.new({
-                'resupply_wh_ids': vals['resupply_wh_ids']
-            }).resupply_wh_ids._origin
             old_resupply_whs = {warehouse.id: warehouse.resupply_wh_ids for warehouse in warehouses}
 
         # If another partner assigned
@@ -263,18 +260,20 @@ class Warehouse(models.Model):
 
         if vals.get('resupply_wh_ids') and not vals.get('resupply_route_ids'):
             for warehouse in warehouses:
+                new_resupply_whs = warehouse.resupply_wh_ids
                 to_add = new_resupply_whs - old_resupply_whs[warehouse.id]
                 to_remove = old_resupply_whs[warehouse.id] - new_resupply_whs
                 if to_add:
-                    existing_route = Route.search([
+                    existing_routes = Route.search([
                         ('supplied_wh_id', '=', warehouse.id),
-                        ('supplier_wh_id', 'in', to_remove.ids),
+                        ('supplier_wh_id', 'in', to_add.ids),
                         ('active', '=', False)
                     ])
-                    if existing_route:
-                        existing_route.toggle_active()
-                    else:
-                        warehouse.create_resupply_routes(to_add)
+                    if existing_routes:
+                        existing_routes.toggle_active()
+                    remaining_to_add = to_add - existing_routes.supplier_wh_id
+                    if remaining_to_add:
+                        warehouse.create_resupply_routes(remaining_to_add)
                 if to_remove:
                     to_disable_route_ids = Route.search([
                         ('supplied_wh_id', '=', warehouse.id),
@@ -1070,7 +1069,7 @@ class Warehouse(models.Model):
     @api.returns('self')
     def _get_all_routes(self):
         routes = self.mapped('route_ids') | self.mapped('mto_pull_id').mapped('route_id')
-        routes |= self.env["stock.route"].search([('supplied_wh_id', 'in', self.ids)])
+        routes |= self.env["stock.route"].with_context(active_test=False).search([('supplied_wh_id', 'in', self.ids)])
         return routes
 
     def action_view_all_routes(self):
