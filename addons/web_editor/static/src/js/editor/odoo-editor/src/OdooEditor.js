@@ -765,7 +765,11 @@ export class OdooEditor extends EventTarget {
             if (fontSizeInput && !fontSizeInput.readOnly && ev.target.closest('#font-size .dropdown-toggle')) {
                 // If the click opened the font size dropdown, select the input content.
                 fontSizeInput.select();
-            } else if (!this.isSelectionInEditable() && ev.target.nodeName !== 'INPUT') {
+            } else if (
+                !this.isSelectionInEditable() &&
+                ev.target.nodeName !== 'INPUT' &&
+                ev.target.id !== 'image-transform'
+            ) {
                 // Otherwise, if we lost the selection in the editable, restore it.
                 this.historyResetLatestComputedSelection(true);
             }
@@ -2058,17 +2062,19 @@ export class OdooEditor extends EventTarget {
      * @returns {boolean} true if a table was deselected
      */
     deselectTable() {
+        const tds = this.editable.querySelectorAll('.o_selected_table, .o_selected_td');
+        if (!tds.length) {
+            return false;
+        }
         this.observerUnactive('deselectTable');
-        let didDeselectTable = false;
-        for (const td of this.editable.querySelectorAll('.o_selected_table, .o_selected_td')) {
+        for (const td of tds) {
             td.classList.remove('o_selected_td', 'o_selected_table');
             if (!td.classList.length) {
                 td.removeAttribute('class');
             }
-            didDeselectTable = true;
         }
         this.observerActive('deselectTable');
-        return didDeselectTable;
+        return true;
     }
 
     /**
@@ -2674,8 +2680,11 @@ export class OdooEditor extends EventTarget {
      * @param {Range} range
      */
     _selectTableCells(range) {
-        this.observerUnactive('_selectTableCells');
         const table = closestElement(range.commonAncestorContainer, 'table');
+        if (!table) {
+            return;
+        }
+        this.observerUnactive('_selectTableCells');
         const alreadyHadSelection = table.classList.contains('o_selected_table');
         this.deselectTable(); // Undo previous selection.
         table.classList.toggle('o_selected_table', true);
@@ -4187,6 +4196,9 @@ export class OdooEditor extends EventTarget {
      */
     _resetLinkInSelection() {
         const selection = this.document.getSelection();
+        if (!selection) {
+            return;
+        }
         const [anchorLink, focusLink] = [selection.anchorNode, selection.focusNode]
             .map(node => closestElement(node, 'a:not(.btn)'));
         const singleLinkInSelection = anchorLink === focusLink && anchorLink && isLinkEligibleForZwnbsp(this.editable, anchorLink) && anchorLink;
@@ -4724,7 +4736,8 @@ export class OdooEditor extends EventTarget {
         }
     }
 
-    _onDocumentMouseup() {
+    _onDocumentMouseup(ev) {
+        this._currentMouseState = ev.type;
         if (this.toolbar) {
             this.toolbar.style.pointerEvents = 'auto';
         }
