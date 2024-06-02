@@ -5147,6 +5147,7 @@ msgstr "語法錯誤"
 
 #. module: web
 #. odoo-javascript
+#: code:addons/web/static/src/core/commands/command_items.xml:0
 #: code:addons/web/static/src/webclient/user_menu/user_menu_items.xml:0
 #, python-format
 msgid "TIP"
@@ -6168,6 +6169,13 @@ msgstr "所有記錄"
 
 #. module: web
 #. odoo-javascript
+#: code:addons/web/static/src/core/commands/command_items.xml:0
+#, python-format
+msgid "and"
+msgstr "及"
+
+#. module: web
+#. odoo-javascript
 #: code:addons/web/static/src/core/domain_selector/domain_selector_branch_operator.xml:0
 #: code:addons/web/static/src/core/domain_selector/domain_selector_branch_operator.xml:0
 #: code:addons/web/static/src/core/domain_selector/domain_selector_branch_operator.xml:0
@@ -6578,7 +6586,7 @@ msgstr "毫秒"
 #: code:addons/web/static/src/core/commands/command_palette.xml:0
 #, python-format
 msgid "new tab"
-msgstr ""
+msgstr "新分頁"
 
 #. module: web
 #. odoo-javascript
@@ -6675,7 +6683,7 @@ msgstr "是母項目，相對於"
 #: code:addons/web/static/src/core/debug/profiling/profiling_qweb.xml:0
 #, python-format
 msgid "query"
-msgstr ""
+msgstr "查詢"
 
 #. module: web
 #. odoo-javascript
@@ -6765,3 +6773,10 @@ msgstr "鍵入預設文字，或按輸入鍵"
 #, python-format
 msgid "— press"
 msgstr "— 按"
+
+#. module: web
+#. odoo-javascript
+#: code:addons/web/static/src/core/commands/command_items.xml:0
+#, python-format
+msgid "— search for"
+msgstr "— 搜尋："

@@ -6,6 +6,7 @@ from collections import defaultdict
 from odoo import fields, models, api, _
 from odoo.exceptions import UserError, AccessError
 from odoo.tools.float_utils import float_compare, float_is_zero, float_round
+from odoo.tools.misc import OrderedSet
 
 
 class StockMove(models.Model):
@@ -196,13 +197,19 @@ class StockMove(models.Model):
         return super(StockMove, self - move_untouchable)._set_quantities_to_reservation()
 
     def _action_cancel(self):
+        productions_to_cancel_ids = OrderedSet()
         for move in self:
             if move.is_subcontract:
                 active_productions = move.move_orig_ids.production_id.filtered(lambda p: p.state not in ('done', 'cancel'))
                 moves_todo = self.env.context.get('moves_todo')
                 not_todo_productions = active_productions.filtered(lambda p: p not in moves_todo.move_orig_ids.production_id) if moves_todo else active_productions
                 if not_todo_productions:
-                    not_todo_productions.with_context(skip_activity=True).action_cancel()
+                    productions_to_cancel_ids.update(not_todo_productions.ids)
+
+        if productions_to_cancel_ids:
+            productions_to_cancel = self.env['mrp.production'].browse(productions_to_cancel_ids)
+            productions_to_cancel.with_context(skip_activity=True).action_cancel()
+
         return super()._action_cancel()
 
     def _action_confirm(self, merge=True, merge_into=False):
@@ -289,18 +296,8 @@ class StockMove(models.Model):
 
     def _prepare_move_split_vals(self, qty):
         vals = super(StockMove, self)._prepare_move_split_vals(qty)
-        if self.is_subcontract:
-            vals['move_orig_ids'] = [] if not self.move_orig_ids else [(4, self.move_orig_ids[-1].id)]
         vals['location_id'] = self.location_id.id
         return vals
-
-    def _split(self, qty, restrict_partner_id=False):
-        self.ensure_one()
-        new_move_vals = super()._split(qty=qty, restrict_partner_id=restrict_partner_id)
-        # Update the origin moves to remove the split one
-        if self.move_orig_ids and self.is_subcontract:
-            self.move_orig_ids = (self.move_orig_ids - self.move_orig_ids[-1]).ids
-        return new_move_vals
 
     def _should_bypass_set_qty_producing(self):
         if (self.production_id | self.raw_material_production_id)._get_subcontract_move():

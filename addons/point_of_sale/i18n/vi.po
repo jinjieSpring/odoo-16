@@ -6456,12 +6456,10 @@ msgstr ""
 #, python-format
 msgid ""
 "The maximum difference allowed is %s.\n"
-"\n"
-"                        Please contact your manager to accept the closing difference."
+"Please contact your manager to accept the closing difference."
 msgstr ""
 "Chênh lệch tối đa được phép là %s.\n"
-"\n"
-"                        Vui lòng liên hệ với quản lý của bạn để chấp nhận chênh lệch đóng phiên."
+"Vui lòng liên hệ với quản lý của bạn để phê duyệt chênh lệch đóng phiên."
 
 #. module: point_of_sale
 #. odoo-python
@@ -6770,7 +6768,7 @@ msgstr "Không có phương thức thanh toán tiền mặt cho phiên PoS này"
 #: code:addons/point_of_sale/models/pos_session.py:0
 #, python-format
 msgid "There is no cash register in this session."
-msgstr "Không có ghi nhận tiền mặt cho phiên này. "
+msgstr "Không có máy tính tiền cho phiên này. "
 
 #. module: point_of_sale
 #. odoo-python

@@ -292,7 +292,7 @@ QUnit.module('web_editor', {}, function () {
                 "should close the color picker");
 
             assert.strictEqual($field.find('.note-editable').html(),
-                '<p>t<font style="background-color: rgb(0, 255, 255);">oto toto </font>toto</p><p>tata</p>',
+                '<p>t<font style="background-color: rgba(0, 255, 255, 0.6);">oto toto </font>toto</p><p>tata</p>',
                 "should have rendered the field correctly in edit");
 
             var fontElement = $field.find('.note-editable font')[0];
@@ -315,7 +315,7 @@ QUnit.module('web_editor', {}, function () {
             await testUtils.dom.click($('#toolbar .note-back-color-preview [style="background-color: var(--we-cp-o-color-3);"]'));
 
             assert.strictEqual($field.find('.note-editable').html(),
-                '<p>t<font style="background-color: rgb(0, 255, 255);">oto t</font><font class="bg-o-color-3">oto to</font>to</p><p>tata</p>',
+                '<p>t<font style="background-color: rgba(0, 255, 255, 0.6);">oto t</font><font class="bg-o-color-3">oto to</font>to</p><p>tata</p>',
                 "should have rendered the field correctly in edit");
 
             // Make sure the reset button works too
@@ -325,7 +325,7 @@ QUnit.module('web_editor', {}, function () {
             // TODO right now the behavior is to force "inherit" as background
             // but it should remove the useless font element when possible.
             assert.strictEqual($field.find('.note-editable').html(),
-                '<p>t<font style="background-color: rgb(0, 255, 255);">oto t</font>oto toto</p><p>tata</p>',
+                '<p>t<font style="background-color: rgba(0, 255, 255, 0.6);">oto t</font>oto toto</p><p>tata</p>',
                 "should have properly reset the background color");
 
             // Select the whole paragraph.
@@ -553,8 +553,8 @@ QUnit.module('web_editor', {}, function () {
                 }
             });
 
-            let pText = $field.find('.note-editable p').first().contents()[0];
-            Wysiwyg.setRange(pText.firstChild, 0, pText.firstChild, pText.firstChild.length);
+            let pText = $field.find('.note-editable p a')[0];
+            Wysiwyg.setRange(pText.firstChild, 0, pText.lastChild, pText.lastChild.length);
             await testUtils.dom.triggerEvent($('#toolbar #create-link'), 'click');
             // load static xml file (dialog, link dialog)
             await defLinkDialog;
@@ -602,8 +602,8 @@ QUnit.module('web_editor', {}, function () {
                 }
             });
 
-            let pText = $field.find('.note-editable p').first().contents()[0];
-            Wysiwyg.setRange(pText.firstChild, 0, pText.firstChild, pText.firstChild.length);
+            let pText = $field.find('.note-editable p a')[0];
+            Wysiwyg.setRange(pText.firstChild, 0, pText.lastChild, pText.lastChild.length);
             await testUtils.dom.triggerEvent($('#toolbar #create-link'), 'click');
             // load static xml file (dialog, link dialog)
             await defLinkDialog;
@@ -652,17 +652,18 @@ QUnit.module('web_editor', {}, function () {
                 }
             });
 
-            let pText = $field.find('.note-editable p').first().contents()[0];
-            Wysiwyg.setRange(pText.firstChild, 0, pText.firstChild, pText.firstChild.length);
+
+            let pText = $field.find('.note-editable p a')[0];
+            Wysiwyg.setRange(pText.firstChild, 0, pText.lastChild, pText.lastChild.length);
             await testUtils.dom.triggerEvent($('#toolbar #create-link'), 'click');
             // load static xml file (dialog, link dialog)
             await defLinkDialog;
             $('.modal .tab-content .tab-pane').removeClass('fade'); // to be sync in test
             const $labelInputField = $('input#o_link_dialog_label_input');
             const $linkPreview = $('a#link-preview');
-            assert.strictEqual($labelInputField.val(), 'This website',
+            assert.strictEqual($labelInputField.val().replaceAll('\ufeff', ''), 'This website',
                 "The label input field should match the link's content");
-            assert.strictEqual($linkPreview.text().replace(/\u200B/g, ''), 'This website',
+            assert.strictEqual($linkPreview.text().replaceAll('\ufeff', ''), 'This website',
                 "Link label in preview should match label input field");
             await testUtils.fields.editAndTrigger($labelInputField, "New label", ['input']);
             await testUtils.nextTick();

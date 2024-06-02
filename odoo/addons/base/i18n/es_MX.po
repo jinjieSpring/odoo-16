@@ -9181,20 +9181,20 @@ msgid ""
 "    Access to download the mandatory Certificate of Conformity delivered by Odoo SA (only for Odoo Enterprise users)\n"
 msgstr ""
 "\n"
-"Este complemento contiene los requisitos técnicos de la regulación francesa CGI art. 286, I. 3 ° bis que estipula ciertos criterios relativos a la inalterabilidad, seguridad, almacenamiento y archivo de los datos relacionados con las ventas a particulares (B2C).\n"
+"Este complemento incluye los requisitos técnicos de la regulación francesa CGI art. 286, I. 3 ° bis que estipula ciertos criterios relacionados con la inalterabilidad, seguridad, almacenamiento y archivado de los datos relacionados con las ventas a particulares (B2C).\n"
 "-------------------------------------------------- -------------------------------------------------- -------------------------------------------------- -------------------------------------------------- ---------------------------------------------\n"
 "\n"
 "Instálelo si usa la aplicación Punto de venta para vender a particulares.\n"
 "\n"
 "El módulo agrega las siguientes características:\n"
 "\n"
-" Inalterabilidad: desactivación de todas las formas de cancelar o modificar datos clave de órdenes POS, facturas y asientos diarios\n"
+" Inalterabilidad: desactivación de todas las formas de cancelar o modificar los datos clave de las órdenes del PdV, facturas y asientos contables.\n"
 "\n"
-" Seguridad: algoritmo de encadenamiento para verificar la inalterabilidad\n"
+" Seguridad: algoritmo de encadenamiento para verificar la inalterabilidad.\n"
 "\n"
-" Almacenamiento: cierres automáticos de ventas con el cálculo del período y totales acumulados (diarios, mensuales, anuales)\n"
+" Almacenamiento: cierres automáticos de ventas con el cálculo total del periodo y acumulativos (diarios, mensuales, anuales).\n"
 "\n"
-" Acceso para descargar el Certificado de Conformidad obligatorio entregado por Odoo SA (solo para usuarios de Odoo Enterprise)\n"
+" Acceso para descargar el Certificado de Conformidad obligatorio proporcionado por Odoo SA (solo para usuarios de Odoo Enterprise).\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_pos_cache
@@ -18266,7 +18266,7 @@ msgstr "D - SUMINISTRO DE ELECTRICIDAD, GAS, VAPOR Y AIRE ACONDICIONADO"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_delivery_dhl
 msgid "DHL Express Shipping"
-msgstr "Envio DHL Express"
+msgstr "Envío por DHL Express"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_din5008
@@ -21309,7 +21309,7 @@ msgstr "Pantalla completa"
 #: model:ir.module.module,shortdesc:base.module_purchase_mrp_workorder_quality
 #: model:ir.module.module,summary:base.module_purchase_mrp_workorder_quality
 msgid "Full Traceability Report Demo Data"
-msgstr "Informe de trazabilidad completo de los datos de demostración"
+msgstr "Datos de demostración del reporte de trazabilidad completo"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_logging__func
@@ -21920,7 +21920,7 @@ msgstr "Controlador de hardware para impresoras ESC/POS y cajas registradoras"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_hw_drivers
 msgid "Hardware Proxy"
-msgstr "Proxy hardware"
+msgstr "Proxy de hardware"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_reset_view_arch_wizard__has_diff
@@ -21930,7 +21930,7 @@ msgstr "Tiene diferencia"
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_module_module__has_iap
 msgid "Has Iap"
-msgstr "Tiene lap"
+msgstr "Tiene compras dentro de la aplicación"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_report_paperformat__header_spacing
@@ -22297,8 +22297,8 @@ msgid ""
 "How many times the method is called,\n"
 "a negative number indicates no limit."
 msgstr ""
-"No importa cuántas veces se llame al método,\n"
-"un número negativo indica que no tiene límite."
+"El número de veces que se llama al método,\n"
+"un número negativo indica que no hay límite."
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_model_fields_form
@@ -22858,7 +22858,7 @@ msgstr "Importe información de contabilidad desde archivos FEC"
 #. module: base
 #: model:ir.module.module,summary:base.module_sale_amazon
 msgid "Import Amazon orders and sync deliveries"
-msgstr "Importe las órdenes de Amazon y sincronice las entregas"
+msgstr "Importe órdenes de Amazon y sincronice las entregas"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_account_bank_statement_import_camt
@@ -24713,7 +24713,7 @@ msgstr "Registro"
 #: model:ir.model,name:base.model_ir_logging
 #: model:ir.ui.menu,name:base.ir_logging_all_menu
 msgid "Logging"
-msgstr "Registro"
+msgstr "Registros"
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.ir_logging_form_view
@@ -25062,44 +25062,44 @@ msgid ""
 "allowing you to easily find for specific skills and build up a database of\n"
 "profiles.\n"
 msgstr ""
-"Administrar aplicaciones de reclutamiento y trabajo\n"
+"Administre el proceso de reclutamiento y las solicitudes de empleo\n"
 "---------------------------------------\n"
 "\n"
 "Publique, promocione y organice sus ofertas de trabajo con la \n"
-"<a href=\"https://www.odoo.com/app/recruitment\">Solicitud de reclutamiento de código abierto</a>.\n"
+"<a href=\"https://www.odoo.com/app/recruitment\">aplicación Reclutamiento de código abierto</a> de Odoo.\n"
 "\n"
-"Organice su bolsa de trabajo, promueva sus anuncios de trabajo y haga un seguimiento de\n"
-"presentaciones de aplicaciones fácilmente. Siga a cada solicitante y construya una base de datos\n"
-"de habilidades y perfiles con documentos indexados.\n"
+"Organice su bolsa de trabajo, promueva sus anuncios de trabajo y lleve seguimiento de\n"
+"las solicitudes de empleo. Supervise a cada candidato y construya una base de datos\n"
+"que muestre las habilidades y los perfiles de cada uno con documentos adjuntos.\n"
 "\n"
-"Publique sus trabajos en las mejores plataformas de trabajo\n"
+"Publique sus empleos en las mejores plataformas de trabajo\n"
 "---------------------------------\n"
 "\n"
-"Conéctese automáticamente a los sitios web más famosos de la bolsa de trabajo; LinkedIn, Monster,\n"
-"Craigslist, ... Cada puesto de trabajo tiene una nueva dirección de correo electrónico automáticamente\n"
-"asignada para enrutar las aplicaciones automáticamente a la posición de trabajo correcta.\n"
+"Conéctese en automático a los sitios web de bolsas de trabajo más famosas: LinkedIn, Monster,\n"
+"Craigslist, etc. Cada puesto de trabajo tendrá una nueva dirección de correo electrónico asignada en automático\n"
+"para dirigir las solicitudes al puesto de trabajo correcto.\n"
 "\n"
-"Ya sea que los solicitantes se comuniquen con usted por correo electrónico o mediante un formulario en línea, usted obtiene todos\n"
-"los datos indexados automáticamente (currículum, carta de motivación) y usted puede responder\n"
-"con un solo clic, reutilizando plantillas de respuestas.\n"
+"Ya sea que los candidatos se comuniquen con usted por correo electrónico o mediante un formulario en línea, recibirá todos\n"
+"los datos en automático (currículum, carta de motivación) y podrá responder\n"
+"con un solo clic a través de plantillas de respuestas.\n"
 "\n"
 "Personalice su proceso de reclutamiento\n"
 "----------------------------------\n"
 "\n"
-"Use la vista kanban y personalice los pasos de su proceso de reclutamiento;\n"
-"pre-calificación, primera entrevista, segunda entrevista, negociación, ...\n"
+"Use la vista de kanban y personalice los pasos de su proceso de reclutamiento:\n"
+"prevaloración, primera entrevista, segunda entrevista, negociación, etc.\n"
 "\n"
-"Obtenga estadísticas precisas sobre su canal de reclutamiento. Obtenga informes para comparar\n"
+"Obtenga estadísticas precisas sobre su flujo de reclutamiento. Obtenga reportes que le permitan comparar\n"
 "el rendimiento de sus diferentes inversiones en bolsas de trabajo externas.\n"
 "\n"
 "Agilice su proceso de reclutamiento\n"
 "-----------------------------------\n"
 "\n"
-"Siga a los solicitantes en su proceso de contratación con la vista smart kanban. Ahorre\n"
+"Siga a los candidatos en su proceso de contratación con la vista inteligente de kanban. Ahorre\n"
 "tiempo al automatizar algunas comunicaciones con plantillas de correo electrónico.\n"
 "\n"
-"Documentos como currículums y cartas de motivación se indexan automáticamente,\n"
-"lo que le permite encontrar fácilmente habilidades específicas y crear una base de datos de\n"
+"Los documentos como currículums y cartas de motivación se adjuntan de forma automática,\n"
+"esto le permitirá encontrar habilidades específicas con facilidad y crear una base de datos de\n"
 "perfiles.\n"
 
 #. module: base
@@ -29785,12 +29785,12 @@ msgstr "Almacenamiento de parámetros"
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_module_category__parent_id
 msgid "Parent Application"
-msgstr "Aplicación madre"
+msgstr "Aplicación principal"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_res_partner_category__parent_id
 msgid "Parent Category"
-msgstr "Categoría madre"
+msgstr "Categoría principal"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_base_partner_merge_automatic_wizard__group_by_parent_id
@@ -29814,7 +29814,7 @@ msgstr "Ruta principal"
 #: model:ir.model.fields,field_description:base.field_res_partner__parent_name
 #: model:ir.model.fields,field_description:base.field_res_users__parent_name
 msgid "Parent name"
-msgstr "Nombre del producto padre"
+msgstr "Nombre principal"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_barcodes_gs1_nomenclature
@@ -31087,7 +31087,7 @@ msgstr "Publique su directorio de miembros"
 #. module: base
 #: model:ir.module.module,summary:base.module_website_crm_partner_assign
 msgid "Publish your resellers/partners and forward leads to them"
-msgstr "Publique sus revendedores/asociados y reenvíeles sus iniciativas."
+msgstr "Publique a sus distribuidores y contactos y reenvíeles sus leads"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_module_module__published_version
@@ -34320,7 +34320,7 @@ msgstr "Gneración de tareas a partir de una orden de venta"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_hr_timesheet
 msgid "Task Logs"
-msgstr "Registros de tareas"
+msgstr "Registros de la tarea"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_res_company__vat
@@ -34640,7 +34640,7 @@ msgstr ""
 #. module: base
 #: model:ir.model.fields,help:base.field_res_lang__url_code
 msgid "The Lang Code displayed in the URL"
-msgstr "El código de idioma que se muestra en el URL"
+msgstr "El código de idioma que aparece en la URL"
 
 #. module: base
 #: model:ir.model.fields,help:base.field_res_lang__grouping
@@ -35943,8 +35943,8 @@ msgid ""
 "This scheduled action has been disabled because its interval number is not a"
 " strictly positive value."
 msgstr ""
-"Esta acción programada ha sido desactivada. Su número de intervalo no es un "
-"valor estrictamente positivo."
+"Esta acción programada se deshabilitó porque el número de intervalo no es un"
+" valor estrictamente positivo."
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_res_lang__thousands_sep
@@ -36537,7 +36537,7 @@ msgstr "Rastreadores UTM"
 #. module: base
 #: model:ir.module.module,description:base.module_mass_mailing_crm
 msgid "UTM and mass mailing on lead / opportunities"
-msgstr "UTM y correos masivos en iniciativas y oportunidades"
+msgstr "UTM y correos masivos en leads y oportunidades"
 
 #. module: base
 #: model:ir.module.module,description:base.module_mass_mailing_sale
@@ -37287,7 +37287,7 @@ msgstr "Validación de RFC"
 #: model:ir.module.category,name:base.module_category_productivity_voip
 #: model:ir.module.module,shortdesc:base.module_voip
 msgid "VOIP"
-msgstr "VOIP"
+msgstr "VoIP"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_voip_onsip
@@ -37498,7 +37498,7 @@ msgstr "Modo de herencia de la vista"
 #. module: base
 #: model:ir.module.module,summary:base.module_website_crm_livechat
 msgid "View livechat sessions for leads"
-msgstr "Ver las sesiones de livechat para iniciativas"
+msgstr "Ver las sesiones de chat en vivo para leads"
 
 #. module: base
 #. odoo-python
@@ -37907,9 +37907,9 @@ msgid ""
 "When no specific mail server is requested for a mail, the highest priority "
 "one is used. Default priority is 10 (smaller number = higher priority)"
 msgstr ""
-"Cuando para un correo no se especifica un servidor de correo en concreto, se"
-" usa el de mayor prioridad. La prioridad por defecto es 10 (número más "
-"pequeño = mayor prioridad)"
+"Cuando no se solicita un servidor de correo específico para un correo, se "
+"usa la prioridad más alta. La prioridad predeterminada es 10 (número menor ="
+" mayor prioridad)."
 
 #. module: base
 #: model:ir.model.fields,help:base.field_res_partner__tz

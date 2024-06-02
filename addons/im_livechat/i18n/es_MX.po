@@ -1204,7 +1204,7 @@ msgstr ""
 #. module: im_livechat
 #: model_terms:ir.actions.act_window,help:im_livechat.im_livechat_report_channel_time_to_answer_action
 msgid "No data yet!"
-msgstr "¡No hay datos aún!"
+msgstr "Todavía no hay información"
 
 #. module: im_livechat
 #. odoo-python
@@ -1988,7 +1988,7 @@ msgstr ""
 #. module: im_livechat
 #: model_terms:ir.actions.act_window,help:im_livechat.mail_channel_action
 msgid "Your chatter history is empty"
-msgstr "Su historial de chatter está vacío"
+msgstr "El historial de su chatter está vacío"
 
 #. module: im_livechat
 #. odoo-javascript

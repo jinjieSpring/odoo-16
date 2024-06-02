@@ -1218,7 +1218,7 @@ header {
                             padding-right: $nav-link-padding-x;
                             padding-left: $nav-link-padding-x;
                         }
-                        .dropdown-menu {
+                        .dropdown-menu:not(.o_mega_menu) {
                             position: absolute;
                         }
                     }
@@ -1605,6 +1605,13 @@ $ribbon-padding: 100px;
     flex: 1;
 }
 
+.o_cookies_bar_toggle {
+    gap: 0.5rem;
+    inset-inline-end: 1rem;
+    inset-block-end: var(--cookies-bar-toggle-inset-block-end, 1rem);
+    z-index: $zindex-modal + 1; // Over the modal backdrop.
+}
+
 .o_website_btn_loading {
     opacity: $btn-disabled-opacity;
 
@@ -1694,7 +1701,7 @@ input[value*="data-oe-translation-initial-sha"] {
 .o_wanim_overflow_xy_hidden {
     overflow-x: hidden !important;
 
-    &.o_rtl {
+    &.o_rtl, .o_rtl {
         // Fix for Chrome and Edge bug: resolves slow/stuck scrolling during
         // left-overflowing animations on RTL web pages. Note: using overflow on
         // the main element hides animated elements outside of it (e.g. "Framed"

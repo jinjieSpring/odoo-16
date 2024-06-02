@@ -27,8 +27,8 @@
 # Mihkel avalah, 2023
 # Leaanika Randmets, 2023
 # Eneli Õigus <enelioigus@gmail.com>, 2024
-# Birgit Vijar, 2024
 # Anna, 2024
+# Birgit Vijar, 2024
 # 
 msgid ""
 msgstr ""
@@ -36,7 +36,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-06 13:31+0000\n"
 "PO-Revision-Date: 2022-09-22 05:44+0000\n"
-"Last-Translator: Anna, 2024\n"
+"Last-Translator: Birgit Vijar, 2024\n"
 "Language-Team: Estonian (https://app.transifex.com/odoo/teams/41243/et/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -402,6 +402,15 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:account.view_account_payment_register_form
 msgid "<b>Early Payment Discount applied.</b>"
 msgstr "<b>Ennetähtaegse maksele on rakendatud allahindlus. </b>"
+
+#. module: account
+#: model_terms:ir.ui.view,arch_db:account.report_invoice_document
+msgid ""
+"<br/>\n"
+"                            on this account:"
+msgstr ""
+"<br/>\n"
+"                            sellel kontol:"
 
 #. module: account
 #: model:mail.template,body_html:account.email_template_edi_credit_note
@@ -1348,7 +1357,7 @@ msgstr ""
 #: code:addons/account/models/account_report.py:0
 #, python-format
 msgid "A line cannot have both children and a groupby value (line '%s')."
-msgstr ""
+msgstr "Real ei saa korraga olla alam- ja peagrupi väärtust (rida '%s')."
 
 #. module: account
 #. odoo-python
@@ -1978,6 +1987,8 @@ msgid ""
 "Accrual entry created on %(date)s: %(accrual_entry)s.                    And"
 " its reverse entry: %(reverse_entry)s."
 msgstr ""
+"Periodiseerimise kanne on loodud %(date)s: %(accrual_entry)s."
+"                    ja selle pöördkanne: %(reverse_entry)s."
 
 #. module: account
 #. odoo-python
@@ -3159,6 +3170,8 @@ msgid ""
 "Bank Transactions are posted immediately after import or synchronization. Their counterparty is the bank suspense account.\n"
 "Reconciliation replaces the latter by the definitive account(s)."
 msgstr ""
+"Pangatehingud postitatakse automaatselt pärast importi või sünkroniseerimist. Vastaspooleks on panga vahekonto.\n"
+"Panga sidumisel asendatakse need õigete kontodega."
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_setup_bank_manual_config__acc_type
@@ -3393,6 +3406,8 @@ msgid ""
 "By default, we always unfold the lines that can be. If this is checked, the "
 "line won't be unfolded by default, and a folding button will be displayed."
 msgstr ""
+"Vaikimisi avatakse kõik võimalikud read. Kui see on märgitud, rida vaikimisi"
+" ei avata ning kuvatakse \"Ava kõik\" nupp. "
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_fiscal_position__active
@@ -3550,6 +3565,7 @@ msgid ""
 "Cannot generate an unused journal code. Please change the name for journal "
 "%s."
 msgstr ""
+"Ei saa luua kasutamata andmiku koodi. Palun muuda andmiku nimetust %s."
 
 #. module: account
 #. odoo-python
@@ -3892,6 +3908,8 @@ msgid ""
 "Check this box if you don't want to share the same sequence on payments and "
 "bank transactions posted on this journal"
 msgstr ""
+"Märgi see, kui ei soovi jagada sama numeratsiooni maksetel ja "
+"pangatehingutel sellel andmikul. "
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_account_tag__tax_negate
@@ -5245,7 +5263,7 @@ msgstr "Eraldi kreeditarve kirje järjekord"
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_journal__payment_sequence
 msgid "Dedicated Payment Sequence"
-msgstr ""
+msgstr "Maksete järjestus"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_journal__default_account_id
@@ -5965,17 +5983,6 @@ msgid "Duplicated Ref"
 msgstr "Dubleeritud viide"
 
 #. module: account
-#. odoo-python
-#: code:addons/account/models/account_move.py:0
-#, python-format
-msgid ""
-"Duplicated vendor reference detected. You probably encoded twice the same "
-"vendor bill/credit note."
-msgstr ""
-"Tegemist on duplikaat arvega. Ilmselt sisestasid ühte ja sama "
-"arvet/kreeditarvet topelt. "
-
-#. module: account
 #: model:ir.model.fields,field_description:account.field_res_config_settings__module_account_reports
 msgid "Dynamic Reports"
 msgstr "Dünaamilised aruanded"
@@ -6495,7 +6502,7 @@ msgstr "Maksuriik"
 #. module: account
 #: model:ir.model.fields,field_description:account.field_res_config_settings__account_fiscal_country_id
 msgid "Fiscal Country Code"
-msgstr ""
+msgstr "Riigikood"
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_partner_property_form
@@ -7037,7 +7044,7 @@ msgstr ""
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_journal__has_statement_lines
 msgid "Has Statement Lines"
-msgstr ""
+msgstr "on väljavõtte read"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_res_partner__has_unreconciled_entries
@@ -7445,7 +7452,7 @@ msgstr "Makses"
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.account_default_terms_and_conditions
 msgid "In order for it to be admissible,"
-msgstr ""
+msgstr "Selleks, et see oleks vastuvõetav, "
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_move_form
@@ -8299,6 +8306,8 @@ msgid ""
 "include one and only one receivable/payable account (with an exception of "
 "internal transfers)."
 msgstr ""
+"Andmiku kanne %s ei ole õige. Andmiku rida peab sisaldama ainult ühte "
+"nõuete/kohustuste kontot (välja arvatud ettevõtte siseste tehingute puhul)."
 
 #. module: account
 #. odoo-python
@@ -8908,7 +8917,7 @@ msgstr "Rida"
 #: code:addons/account/models/account_report.py:0
 #, python-format
 msgid "Line \"%s\" defines itself as its parent."
-msgstr ""
+msgstr "Rida \"%s\" tõlgendab ennast kui ülemkategooriat. "
 
 #. module: account
 #. odoo-python
@@ -8918,6 +8927,8 @@ msgid ""
 "Line \"%s\" defines line \"%s\" as its parent, but appears before it in the "
 "report. The parent must always come first."
 msgstr ""
+"Rida \"%s\" defineerib end selle rea \"%s\" ülemkategooriana, kuid ilmub "
+"aruandes ees pool. Ülemkategooria peab tulema alati esimesena. "
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_res_config_settings__show_line_subtotals_tax_selection
@@ -8966,7 +8977,7 @@ msgstr "Laadige rohkem limiiti"
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_automatic_entry_wizard__lock_date_message
 msgid "Lock Date Message"
-msgstr ""
+msgstr "Sulgemise kuupäeva sõnum"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_bank_statement_line__restrict_mode_hash_table
@@ -9270,7 +9281,7 @@ msgstr "Kirjeldus:"
 #. module: account
 #: model:ir.model,name:account.model_base_partner_merge_automatic_wizard
 msgid "Merge Partner Wizard"
-msgstr ""
+msgstr "Partnerite ühendamise viisard"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_account__message_has_error
@@ -9363,7 +9374,7 @@ msgstr "Puuduvad välisvaluutad osistes id-ga: %s"
 #. module: account
 #: model:ir.model.constraint,message:account.constraint_account_move_line_check_accountable_required_fields
 msgid "Missing required account on accountable line."
-msgstr ""
+msgstr "Puudub nõutav konto konteeritaval real."
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_reconcile_model_line__model_id
@@ -9787,6 +9798,7 @@ msgid ""
 "Note that the easiest way to create a vendor credit note is to do it "
 "directly from the vendor bill."
 msgstr ""
+"Lihtsaim viis tarnija kreeditarve loomiseks on teha seda otse ostuarvelt. "
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_fiscal_position__note
@@ -9847,7 +9859,7 @@ msgstr "Toimingute arv"
 #. module: account
 #: model:ir.model.fields,help:account.field_account_payment_term_line__discount_days
 msgid "Number of days before the early payment proposition expires"
-msgstr ""
+msgstr "Varajase makse aegumiseni jäänud päevade arv"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_reconcile_model__number_entries
@@ -10079,13 +10091,6 @@ msgstr "Oih!"
 #: model:ir.model.fields.selection,name:account.selection__account_journal__invoice_reference_type__none
 msgid "Open"
 msgstr "Avatud"
-
-#. module: account
-#. odoo-python
-#: code:addons/account/models/account_move.py:0
-#, python-format
-msgid "Open list"
-msgstr "Ava nimekiri"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_account__opening_balance
@@ -11871,7 +11876,7 @@ msgstr "Tagasipööramise kuupäev"
 #: code:addons/account/wizard/accrued_orders.py:0
 #, python-format
 msgid "Reversal date must be posterior to date."
-msgstr ""
+msgstr "Tühistamise kuupäev peab olema hilisem kui algne kuupäev. "
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_bank_statement_line__reversed_entry_id
@@ -12449,12 +12454,12 @@ msgstr ""
 #. module: account
 #: model:mail.template,description:account.email_template_edi_credit_note
 msgid "Sent to customers with the credit note in attachment"
-msgstr ""
+msgstr "Saadetud klientidele koos kreeditarvega manuses"
 
 #. module: account
 #: model:mail.template,description:account.email_template_edi_invoice
 msgid "Sent to customers with their invoices in attachment"
-msgstr ""
+msgstr "Saadetud klientidele koos arvega manuses"
 
 #. module: account
 #: model:ir.model.fields.selection,name:account.selection__res_company__fiscalyear_last_month__9
@@ -12583,7 +12588,7 @@ msgstr ""
 msgid ""
 "Setting this field will turn the line into a link, executing the action when"
 " clicked."
-msgstr ""
+msgstr "Selle välja seadistamine muudab rea lingiks ning klikkimisel avaneb."
 
 #. module: account
 #: model:ir.actions.act_window,name:account.action_account_config
@@ -12820,6 +12825,8 @@ msgid ""
 "Specify whether this entry is posted automatically on its accounting date, "
 "and any similar recurring invoices."
 msgstr ""
+"Täpsustage, kas see kanne postitatakse automaatselt raamatupidamise kande "
+"kuupäeval."
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_cash_rounding__strategy
@@ -13286,7 +13293,7 @@ msgstr "Tasumisele kuuluva maksukonto"
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_tax_group__property_tax_receivable_account_id
 msgid "Tax Receivable Account"
-msgstr ""
+msgstr "Enammakstud maksu konto "
 
 #. module: account
 #: model:ir.model,name:account.model_account_tax_repartition_line
@@ -13676,6 +13683,8 @@ msgid ""
 "The Journal Entry sequence is not conform to the current format. Only the "
 "Accountant can change it."
 msgstr ""
+"Andmiku kande järjestus ei ühti käesoleva formaadiga. Seda saab muuta ainult"
+" raamatupidaja. "
 
 #. module: account
 #. odoo-python
@@ -13693,6 +13702,8 @@ msgid ""
 "The Unit of Measure (UoM) '%s' you have selected for product '%s', is "
 "incompatible with its category : %s."
 msgstr ""
+"Valitud mõõtühik (UoM) '%s' mis on valitud sellele tootele '%s', on ebasobiv"
+" selles kategoorias : %s."
 
 #. module: account
 #. odoo-python
@@ -13707,7 +13718,7 @@ msgstr "Konto %s (%s) on aegunud."
 #: code:addons/account/models/chart_template.py:0
 #, python-format
 msgid "The account code can only contain alphanumeric characters and dots."
-msgstr ""
+msgstr "Konto kood võib sisaldada ainult tähti, numbreid ja punkte. "
 
 #. module: account
 #. odoo-python
@@ -13838,7 +13849,7 @@ msgstr "Ettevõtte kontonumber peab olema kordumatu!"
 #. module: account
 #: model:ir.model.constraint,message:account.constraint_account_payment_method_name_code_unique
 msgid "The combination code/payment type already exists!"
-msgstr ""
+msgstr "Kombinatsioonikood/maksetüüp juba eksisteerib!"
 
 #. module: account
 #. odoo-python
@@ -13857,12 +13868,12 @@ msgstr ""
 #. module: account
 #: model:ir.model.fields,help:account.field_account_tax_group__country_id
 msgid "The country for which this tax group is applicable."
-msgstr ""
+msgstr "Riik, millele see maksugrupp kehtib. "
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_tax__country_id
 msgid "The country for which this tax is applicable."
-msgstr ""
+msgstr "Riik, millele see maks kehtib. "
 
 #. module: account
 #. odoo-python
@@ -13913,7 +13924,7 @@ msgstr "Pangakonto väljavõttel kasutusel olev valuute"
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_move_form
 msgid "The current highest number is"
-msgstr ""
+msgstr "Praegune suurim number on"
 
 #. module: account
 #. odoo-python
@@ -13934,6 +13945,8 @@ msgid ""
 "The date is being set prior to the %(lock_type)s lock date %(lock_date)s. "
 "The Journal Entry will be accounted on %(invoice_date)s upon posting."
 msgstr ""
+"Kuupäev määratakse enne %(lock_type)s lukustuskuupäeva %(lock_date)s. Kanne "
+"kajastatakse %(invoice_date)s postitamisel."
 
 #. module: account
 #. odoo-python
@@ -14006,7 +14019,7 @@ msgstr "Väli 'Partner' on nõutud, palun lisa see, et kinnitada arve. "
 #: model:ir.model.fields,help:account.field_res_users__property_account_position_id
 msgid ""
 "The fiscal position determines the taxes/accounts used for this contact."
-msgstr ""
+msgstr "Finantspositsioon määrab kontaktil kasutatavad maksud/kontod."
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.account_automatic_entry_wizard_form
@@ -14021,6 +14034,8 @@ msgid ""
 "The following error prevented '%s' QR-code to be generated though it was "
 "detected as eligible: "
 msgstr ""
+"Järgmine viga takistas '%s' QR koodi loomist, kuigi see on tuvastatud kui "
+"sobiv:"
 
 #. module: account
 #. odoo-python
@@ -14044,7 +14059,7 @@ msgstr ""
 #: code:addons/account/models/account_bank_statement_line.py:0
 #, python-format
 msgid "The foreign currency must be different than the journal one: %s"
-msgstr ""
+msgstr "Välisvaluuta peab andmiku valuutast olema erinev: %s"
 
 #. module: account
 #. odoo-python
@@ -14054,6 +14069,7 @@ msgid ""
 "The foreign currency set on the journal '%(journal)s' and the account "
 "'%(account)s' must be the same."
 msgstr ""
+"Välisvaluuta andmikul '%(journal)s' ja kontol '%(account)s' peab olema sama."
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_report_external_value__foreign_vat_fiscal_position_id
@@ -14080,7 +14096,7 @@ msgstr "Andmiku pangakonto omanik peab olema ettevõte (%s)."
 #, python-format
 msgid ""
 "The invoice already contains lines, it was not updated from the attachment."
-msgstr ""
+msgstr "Manuse lisamisel arvet ei muudetud, kuna see sisaldab juba ridu. "
 
 #. module: account
 #. odoo-javascript
@@ -14104,6 +14120,8 @@ msgid ""
 "The journal entry %s reached an invalid state regarding its related statement line.\n"
 "To be consistent, the journal entry must always have exactly one journal item involving the bank/cash account."
 msgstr ""
+"Andmiku kanne %s on kehtetus olekus seoses seotud väljavõtte reaga.\n"
+"Andmik ukandel peab olema alati üks andmiku rida, mis on seotud panga/kassa kontoga."
 
 #. module: account
 #: model:ir.model.fields,help:account.field_res_company__account_opening_move_id
@@ -14254,7 +14272,7 @@ msgstr ""
 #. module: account
 #: model:ir.model.fields,help:account.field_account_move_line__payment_id
 msgid "The payment that created this entry"
-msgstr ""
+msgstr "Makse, mis loos selle kande "
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_payment__currency_id
@@ -14270,6 +14288,8 @@ msgid ""
 "The recipient bank account linked to this invoice is archived.\n"
 "So you cannot confirm the invoice."
 msgstr ""
+"Selle arvega seotud saaja pangakonto on arhiveeritud.\n"
+"Arvet ei saa kinnitada."
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_reconcile_model__match_partner_category_ids
@@ -14278,6 +14298,8 @@ msgid ""
 "The reconciliation model will only be applied to the selected "
 "customer/vendor categories."
 msgstr ""
+"Sobitamise mudel rakendatakse ainult valitud kliendi/tarnija kategooriatele."
+" "
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_reconcile_model__match_partner_ids
@@ -14286,6 +14308,7 @@ msgid ""
 "The reconciliation model will only be applied to the selected "
 "customers/vendors."
 msgstr ""
+"Sobitamise mudel rakendatakse ainult valitud klientidele/tarnijatele. "
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_reconcile_model__match_nature
@@ -14296,6 +14319,10 @@ msgid ""
 "        * Amount Paid: Only applied when paying an amount.\n"
 "        * Amount Paid/Received: Applied in both cases."
 msgstr ""
+"Sobitamise mudel rakendatakse ainult valitud tehingu tüübile:\n"
+"        * Saadud summa: rakendatakse ainult siis, kui saadakse summa.\n"
+"        * Makstud summa: rakendatakse ainult siis, kui makstakse summa. \n"
+"        * Saadud/makstud summa: Rakendatakse mõlemal juhul."
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_reconcile_model__match_partner
@@ -14303,6 +14330,7 @@ msgstr ""
 msgid ""
 "The reconciliation model will only be applied when a customer/vendor is set."
 msgstr ""
+"Sobitamise mudel rakendatakse ainult siis, kui klient/tarnija on määratud. "
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_reconcile_model__match_amount
@@ -14311,6 +14339,8 @@ msgid ""
 "The reconciliation model will only be applied when the amount being lower "
 "than, greater than or between specified amount(s)."
 msgstr ""
+"Sobitamise mudel rakendatakse ainult siis, kui summa on väiksem, suurem või "
+"määratud vahemikus. "
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_reconcile_model__match_label
@@ -14347,12 +14377,12 @@ msgstr ""
 #: model:ir.model.fields,help:account.field_account_reconcile_model_template__match_journal_ids
 msgid ""
 "The reconciliation model will only be available from the selected journals."
-msgstr ""
+msgstr "Sobitamise mudel on saadaval ainult valitud andmikele. "
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_move_form
 msgid "The recurrence will end on"
-msgstr ""
+msgstr "Korduvus lõpeb"
 
 #. module: account
 #. odoo-python
@@ -14369,6 +14399,8 @@ msgid ""
 "The register payment wizard should only be called on account.move or "
 "account.move.line records."
 msgstr ""
+"Makse registreerimise viisardit tuleks kasutada ainult account.move või "
+"account.move.line kirjetele. "
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_report__root_report_id
@@ -14408,6 +14440,8 @@ msgid ""
 "The selected destination account is set to use a specific currency. Every entry transferred to it will be converted into this currency, causing\n"
 "                        the loss of any pre-existing foreign currency amount."
 msgstr ""
+"Valitud kontol on määratud kindel valuuta. Iga tehing konverteeritakse antud valuutasse tekitades\n"
+"                        kahjumi välisvaluuta summast. "
 
 #. module: account
 #. odoo-python
@@ -14417,6 +14451,8 @@ msgid ""
 "The selected payment method is not available for this payment, please select"
 " the payment method again."
 msgstr ""
+"Valitud maksemeetod ei ole selle makse jaoks saadava. Palun vali teine "
+"maksemeetod. "
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_account_payment_form
@@ -14457,6 +14493,8 @@ msgid ""
 "The sequence will never restart.\n"
 "The incrementing number in this case is '%(formatted_seq)s'."
 msgstr ""
+"Järjestust ei alustata algusest peale\n"
+"Selisel juhul suureneb number '%(formatted_seq)s' võrra."
 
 #. module: account
 #. odoo-python
@@ -14478,6 +14516,9 @@ msgid ""
 "The year detected here is '%(year)s' and the month is '%(month)s'.\n"
 "The incrementing number in this case is '%(formatted_seq)s'."
 msgstr ""
+"Järjestus algab iga kuu algul 1-st.\n"
+"Siin on aasta '%(year)s' ja kuu '%(month)s'.\n"
+"Kasvav number on sellel juhul '%(formatted_seq)s'."
 
 #. module: account
 #. odoo-python
@@ -14488,6 +14529,9 @@ msgid ""
 "The year detected here is '%(year)s'.\n"
 "The incrementing number in this case is '%(formatted_seq)s'."
 msgstr ""
+"Järjestus algab iga aasta algul 1-st.\n"
+"Siin on aasta '%(year)s'.\n"
+"Kasvav number on siin '%(formatted_seq)s'."
 
 #. module: account
 #. odoo-python
@@ -14515,11 +14559,13 @@ msgid ""
 "The starting balance doesn't match the ending balance of the previous "
 "statement, or an earlier statement is missing."
 msgstr ""
+"Algsaldo ei võrdu eelmise väljavõtte lõppsaldoga või on varasem väljavõte "
+"puudu"
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_move_line__statement_line_id
 msgid "The statement line that created this entry"
-msgstr ""
+msgstr "Kande loonud väljavõtte rida"
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_reconcile_model__payment_tolerance_type
@@ -14549,7 +14595,7 @@ msgstr ""
 #: code:addons/account/models/account_tax.py:0
 #, python-format
 msgid "The tax group must have the same country_id as the tax using it."
-msgstr ""
+msgstr "Maksugrupil peab olema sama country_id kui seda kasutataval maksul. "
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_tax_repartition_line__invoice_tax_id
@@ -14585,6 +14631,8 @@ msgid ""
 "The type of the journal's default credit/debit account shouldn't be "
 "'receivable' or 'payable'."
 msgstr ""
+"Andmiku vaikimisi kreedit/deebet konto tüüp ei peaks olema \"nõuded\" ega "
+"\"kohustused\". "
 
 #. module: account
 #: model:ir.model.fields,help:account.field_res_currency__display_rounding_warning
@@ -14603,7 +14651,7 @@ msgstr "Hetkel ei ole selle kontoga seotud ühtegi arvet ega makset."
 #: code:addons/account/wizard/account_validate_account_move.py:0
 #, python-format
 msgid "There are no journal items in the draft state to post."
-msgstr ""
+msgstr "Mustandis kanded puuduvad. "
 
 #. module: account
 #. odoo-python
@@ -14770,6 +14818,8 @@ msgid ""
 "This allows you grouping payments into a single batch and eases the reconciliation process.\n"
 "-This installs the account_batch_payment module."
 msgstr ""
+"See lubab grupeerida maksed ühte koondmaksesse ja lihtsustab maksete sidumise protsessi.\n"
+"- See installib account_batch_payment mooduli."
 
 #. module: account
 #. odoo-python
@@ -14805,6 +14855,8 @@ msgid ""
 "This entry contains taxes that are not compatible with your fiscal position."
 " Check the country set in fiscal position and in your tax configuration."
 msgstr ""
+"Kanne sisaldab maksusid, mis ei sobi ettevõtte finantspositsiooniga. "
+"Kontrolli finantspositsioone ja maksuseadistusi. "
 
 #. module: account
 #. odoo-python
@@ -14844,6 +14896,8 @@ msgid ""
 "This is the default credit limit that will be used on partners that do not "
 "have a specific limit on them."
 msgstr ""
+"See on vaikimisi krediidilimiit, mida kasutatakse partnerite puhul, kellel "
+"ei ole määratud konkreetset limiiti."
 
 #. module: account
 #. odoo-python
@@ -14868,6 +14922,7 @@ msgstr ""
 msgid ""
 "This line and its children will be hidden when all of their columns are 0."
 msgstr ""
+"See rida ja selle alamread peidetakse, kui kõik nende veerud on nullid."
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_reconcile_model__to_check
@@ -14876,6 +14931,8 @@ msgid ""
 "This matching rule is used when the user is not certain of all the "
 "information of the counterpart."
 msgstr ""
+"Seda sobitamise reeglit kasutatakse siis, kui kasutaja ei ole vastaspoole "
+"teabes kindel."
 
 #. module: account
 #. odoo-python
@@ -14962,6 +15019,8 @@ msgid ""
 "This product is already being used in posted Journal Entries.\n"
 "If you want to change its Unit of Measure, please archive this product and create a new one."
 msgstr ""
+"Seda toodet on juba kasutatud postitatud andmiku kannetes.\n"
+"Mõõtühiku muutmiseks arhiveerige toode ja looge uus. "
 
 #. module: account
 #. odoo-python
@@ -14984,14 +15043,14 @@ msgstr "Antud sobitamismudel pole siiamaani loonud ühtegi kannet"
 #: code:addons/account/models/account_move.py:0
 #, python-format
 msgid "This recurring entry originated from %s"
-msgstr ""
+msgstr "See korduvkanne on loodud %s"
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_bank_statement_line__auto_post_until
 #: model:ir.model.fields,help:account.field_account_move__auto_post_until
 #: model:ir.model.fields,help:account.field_account_payment__auto_post_until
 msgid "This recurring move will be posted up to and including this date."
-msgstr ""
+msgstr "See korduvkanne postitatakse kuni selle kuupäevani (kaasa arvatud). "
 
 #. module: account
 #: model_terms:ir.actions.act_window,help:account.action_validate_account_move
@@ -15287,6 +15346,8 @@ msgid ""
 "printing it. If left blank, the first available and usable method will be "
 "used."
 msgstr ""
+"QR-koodi tüüp, mis luuakse selle arve tasumiseks. Kui jätate tühjaks, "
+"kasutatakse esimest saadaolevat ja kasutatavat meetodit."
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_bank_statement_line__activity_exception_decoration
@@ -15901,12 +15962,12 @@ msgstr ""
 msgid ""
 "When checked this line and everything after it will be printed on a new "
 "page."
-msgstr ""
+msgstr "Kui see ja järgmised read on valitud, prinditakse need uuele lehele. "
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_report_column__blank_if_zero
 msgid "When checked, 0 values will not show in this column."
-msgstr ""
+msgstr "Kui märgitud, ei kuvata selles veerus nullväärtusi."
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_report_expression__blank_if_zero
@@ -15951,7 +16012,7 @@ msgstr ""
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.account_tour_upload_bill
 msgid "With Odoo, you won't have to record bills manually"
-msgstr ""
+msgstr "Odoo abil ei pea te arveid käsitsi sisestama."
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_account_reconcile_model_search
@@ -16022,6 +16083,12 @@ msgid ""
 "2/ then filter on 'Draft' entries\n"
 "3/ select them all and post or delete them through the action menu"
 msgstr ""
+"Arhiveerida ei saa andmikku, mis sisaldab mustandis andmiku kandeid.\n"
+"\n"
+"Jätkamiseks:\n"
+"1/ vali ülevalt paremalt \"Andmiku kanded\"\n"
+"2/ filtreeri \"Mustand\" kanded\n"
+"3/ vali kõik ning postita või kustuta need \"toiming\" menüüst."
 
 #. module: account
 #. odoo-python
@@ -16050,13 +16117,15 @@ msgid ""
 "You can only change the period/account for items that are not yet "
 "reconciled."
 msgstr ""
+"Perioodi/kontot on võimalik muuta ainult kannetel, mis ei ole veel "
+"sobitatud. "
 
 #. module: account
 #. odoo-python
 #: code:addons/account/wizard/account_automatic_entry_wizard.py:0
 #, python-format
 msgid "You can only change the period/account for posted journal items."
-msgstr ""
+msgstr "Postitatud andmiku kannetel on võimalik muuta ainult perioodi/kontot"
 
 #. module: account
 #. odoo-python
@@ -16070,7 +16139,7 @@ msgstr "Teil on võimalik ainult postitatud kirjeid sobitada."
 #: code:addons/account/wizard/account_payment_register.py:0
 #, python-format
 msgid "You can only register payment for posted journal entries."
-msgstr ""
+msgstr "Makset saab registreerida ainult postitatud andmiku kannetele. "
 
 #. module: account
 #. odoo-python
@@ -16084,7 +16153,7 @@ msgstr ""
 #: code:addons/account/wizard/account_move_reversal.py:0
 #, python-format
 msgid "You can only reverse posted moves."
-msgstr ""
+msgstr "Postitatud kandeid saab ainult tühistada. "
 
 #. module: account
 #. odoo-python
@@ -16109,6 +16178,7 @@ msgid ""
 "You can't change the company of your account since there are some journal "
 "items linked to it."
 msgstr ""
+"Kontol ei saa muuta ettevõtet, kuna sellega on seotud andmiku kanded. "
 
 #. module: account
 #. odoo-python
@@ -16118,6 +16188,7 @@ msgid ""
 "You can't change the company of your journal since there are some journal "
 "entries linked to it."
 msgstr ""
+"Andmikul ei saa muuta ettevõtet, kuna sellega on seotud andmiku kanded. "
 
 #. module: account
 #. odoo-python
@@ -16137,6 +16208,8 @@ msgid ""
 "account set either on the company or the %s payment method in the %s "
 "journal."
 msgstr ""
+"Uut makset ei saa luua kui \"laekuvad/väljuvad maksed\" kontod on "
+"seadistamata või %s maksemeetod määramata %s andmikus."
 
 #. module: account
 #. odoo-python
@@ -16145,7 +16218,7 @@ msgstr ""
 msgid ""
 "You can't create a new statement line without a suspense account set on the "
 "%s journal."
-msgstr ""
+msgstr "Väljavõtte rida ei saa luua, millel puudub vahekonto %s andmikus."
 
 #. module: account
 #. odoo-python
@@ -16154,7 +16227,7 @@ msgstr ""
 #, python-format
 msgid ""
 "You can't create payments for entries belonging to different companies."
-msgstr ""
+msgstr "Ei saa luua makseid, mille kanded kuuluvad erinevatele ettevõtetele."
 
 #. module: account
 #. odoo-python
@@ -16171,6 +16244,8 @@ msgid ""
 "You can't have two payment method lines of the same payment type (%s) and "
 "with the same name (%s) on a single journal."
 msgstr ""
+"Kahel erineval maksemeetodil ei saa olla sama makse tüüpi (%s) ja sama makse"
+" nimetust (%s) ühel andmikul."
 
 #. module: account
 #. odoo-python
@@ -16195,7 +16270,7 @@ msgstr ""
 msgid ""
 "You can't provide a foreign currency without specifying an amount in 'Amount"
 " in Currency' field."
-msgstr ""
+msgstr "Välisvaluutat ei saa määrata ilma \"Summa valuutas\" välja täitmata. "
 
 #. module: account
 #. odoo-python
@@ -16204,7 +16279,7 @@ msgstr ""
 msgid ""
 "You can't provide an amount in foreign currency without specifying a foreign"
 " currency."
-msgstr ""
+msgstr "Välisvaluutas summat ei saa määrata ilma välisvaluutat määramata. "
 
 #. module: account
 #. odoo-python
@@ -16214,14 +16289,16 @@ msgid ""
 "You can't register a payment because there is nothing left to pay on the "
 "selected journal items."
 msgstr ""
+"Makset ei saa registreerida, kuna tasumisele kuuluvad maksed puuduvad "
+"valitud andmikus. "
 
 #. module: account
 #. odoo-python
 #: code:addons/account/wizard/account_payment_register.py:0
 #, python-format
 msgid ""
-"You can't register payments for journal items being either all inbound, "
-"either all outbound."
+"You can't register payments for both inbound and outbound moves at the same "
+"time."
 msgstr ""
 
 #. module: account
@@ -16230,7 +16307,7 @@ msgstr ""
 #, python-format
 msgid ""
 "You cannot add/modify entries prior to and inclusive of the lock date %s."
-msgstr ""
+msgstr "Kandeid ei saa lisada/muuta pärast lukustatud kuupäeva %s."
 
 #. module: account
 #. odoo-python
@@ -16271,7 +16348,7 @@ msgstr ""
 msgid ""
 "You cannot change the type of an account set as Bank Account on a journal to"
 " Receivable or Payable."
-msgstr ""
+msgstr "Pangakonto andmikku ei saa muuta nõuete/kohustuste andmikuks. "
 
 #. module: account
 #. odoo-python
@@ -16308,6 +16385,8 @@ msgid ""
 "You cannot create a move already in the posted state. Please create a draft "
 "move and post it after."
 msgstr ""
+"Postitatud olekus kannet ei saa luua. Palun looge mustandis kanne ja "
+"postitage. "
 
 #. module: account
 #. odoo-python
@@ -16346,7 +16425,7 @@ msgstr ""
 msgid ""
 "You cannot delete this account tag (%s), it is used on the chart of account "
 "definition."
-msgstr ""
+msgstr "Konto silti ei saa kustutada (%s), kuna on kasutusel kontoplaanis. "
 
 #. module: account
 #. odoo-python
@@ -16356,6 +16435,8 @@ msgid ""
 "You cannot delete this entry, as it has already consumed a sequence number "
 "and is not the last one in the chain. You should probably revert it instead."
 msgstr ""
+"Kannet ei saa kustutada, kuna see on kasutanud järjekorranumbrit ja ei ole "
+"viimane. Tühistage kanne. "
 
 #. module: account
 #. odoo-python
@@ -16365,6 +16446,8 @@ msgid ""
 "You cannot delete this report (%s), it is used by the accounting PDF "
 "generation engine."
 msgstr ""
+"Aruannet ei saa kustutada (%s), kuna seda kasutab raamatupidamise PDF-"
+"generaator."
 
 #. module: account
 #. odoo-python
@@ -16385,6 +16468,8 @@ msgid ""
 "You cannot do this modification on a reconciled journal entry. You can just change some non legal fields or you must unreconcile first.\n"
 "Journal Entry (id): %s (%s)"
 msgstr ""
+"Sobitatud kandeid ei saa muuta. Saate muuta mõningaid lubatud välju või tühistage esmalt kanne.\n"
+"Andmiku kanne (id): %s (%s)"
 
 #. module: account
 #. odoo-python
@@ -16393,7 +16478,7 @@ msgstr ""
 msgid ""
 "You cannot edit the following fields due to restrict mode being activated on"
 " the journal: %s."
-msgstr ""
+msgstr "Andmikul aktiveeritud piirangu tõttu ei saa järgmisi välju muuta: %s."
 
 #. module: account
 #. odoo-python
@@ -16468,7 +16553,7 @@ msgstr "Valitud kontosid ei saa ühendada. "
 msgid ""
 "You cannot modify a posted entry of this journal because it is in strict "
 "mode."
-msgstr ""
+msgstr "Postitatud kannet selles andmikus ei saa muuta piirangu tõttu. "
 
 #. module: account
 #. odoo-python
@@ -16544,6 +16629,8 @@ msgid ""
 "You cannot remove/deactivate the accounts \"%s\" which are set on a tax "
 "repartition line."
 msgstr ""
+"Kontosid ei saa eemaldada/deaktiveerida \"%s\" mis on seadistatud maksude "
+"külge. "
 
 #. module: account
 #. odoo-python
@@ -16553,6 +16640,8 @@ msgid ""
 "You cannot remove/deactivate the accounts \"%s\" which are set on the "
 "account mapping of a fiscal position."
 msgstr ""
+"Kontosid ei saa eemaldada/deaktiveerida, \"%s\" mis on seadistatud "
+"finantspositsioonides kontode kaardistamise all. "
 
 #. module: account
 #. odoo-python
@@ -16655,6 +16744,8 @@ msgid ""
 "create a credit note instead. Use the action menu to transform it into a "
 "credit note or refund."
 msgstr ""
+"Negatiivse summaga arvet ei saa postitada. Palun koostage selle asemel "
+"kreeditarve. Valige ülevalt \"toiming\" ja \"muuda kreeditarveks\"."
 
 #. module: account
 #. odoo-python
@@ -16678,7 +16769,7 @@ msgstr ""
 #: code:addons/account/models/account_move.py:0
 #, python-format
 msgid "You must specify the Profit Account (company dependent)"
-msgstr ""
+msgstr "Määrake kasumi konto (sõltub ettevõttest)"
 
 #. module: account
 #. odoo-python
@@ -16984,6 +17075,8 @@ msgid ""
 "reserves the right to call on the services of a debt recovery company. All "
 "legal expenses will be payable by the client."
 msgstr ""
+"jätab endale õiguse osta võlgade sissenõudmise teenust sisse. Kõik "
+"juriidilised kulud kannab klient. "
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.account_default_terms_and_conditions
@@ -16991,6 +17084,8 @@ msgid ""
 "reserves the right to request a fixed interest payment amounting to 10% of "
 "the sum remaining due."
 msgstr ""
+"jätab endale õiguse nõuda fikseeritud intressi summas, mis moodustab 10% "
+"koguvõlast. "
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_tax_repartition_line__tag_ids_domain
@@ -17036,6 +17131,8 @@ msgid ""
 "accordance with the agreed timeframes. However, none of its obligations can "
 "be considered as being an obligation to achieve results."
 msgstr ""
+"kohustub tegema endast oleneva, et osutada teenus õigeaegselt ja "
+"kokkulepitud ajal. "
 
 #. module: account
 #. odoo-python
@@ -17050,6 +17147,7 @@ msgid ""
 "will be authorized to suspend any provision of services without prior "
 "warning in the event of late payment."
 msgstr ""
+"on volitatud peatama teenuse makseviivituse korral ilma ette teavitamata. "
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.account_tour_upload_bill_email_confirm

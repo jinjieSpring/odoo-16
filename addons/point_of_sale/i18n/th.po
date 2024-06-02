@@ -13,7 +13,7 @@
 # Amin Cheloh <amincheloh@gmail.com>, 2023
 # Wichanon Jamwutthipreecha, 2023
 # Martin Trigaux, 2023
-# Rasareeyar Lappiam, 2023
+# Rasareeyar Lappiam, 2024
 # Wil Odoo, 2024
 # 
 msgid ""
@@ -3771,6 +3771,7 @@ msgstr ""
 #, python-format
 msgid "Only administrators can edit receipt headers and footers"
 msgstr ""
+"มีเพียงผู้ดูแลระบบเท่านั้นที่สามารถแก้ไขส่วนหัวและส่วนท้ายของใบเสร็จรับเงินได้"
 
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_config__only_round_cash_method
@@ -6426,12 +6427,10 @@ msgstr ""
 #, python-format
 msgid ""
 "The maximum difference allowed is %s.\n"
-"\n"
-"                        Please contact your manager to accept the closing difference."
+"Please contact your manager to accept the closing difference."
 msgstr ""
-"ส่วนต่างสูงสุดที่อนุญาตคือ %s\n"
-"\n"
-"                        โปรดติดต่อผู้จัดการของคุณเพื่อยอมรับส่วนต่างในการปิดบัญชี"
+"ความแตกต่างสูงสุดที่อนุญาตคือ %s\n"
+"โปรดติดต่อผู้จัดการของคุณเพื่อยอมรับส่วนต่างในการปิดบัญชี"
 
 #. module: point_of_sale
 #. odoo-python

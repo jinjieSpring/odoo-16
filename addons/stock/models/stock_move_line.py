@@ -264,7 +264,7 @@ class StockMoveLine(models.Model):
             return self.location_dest_id[:1]
         if self.env.context.get('default_location_dest_id'):
             return self.env['stock.location'].browse([self.env.context.get('default_location_dest_id')])
-        return (self.move_id.location_dest_id or self.picking_id.location_dest_id or self.location_dest_id)[0]
+        return (self.move_id.location_dest_id or self.picking_id.location_dest_id or self.location_dest_id)[:1]
 
     def _get_putaway_additional_qty(self):
         addtional_qty = {}
@@ -934,7 +934,7 @@ class StockMoveLine(models.Model):
         self = self.with_context(inventory_mode=False)
         processed_move_line = self.env['stock.move.line']
         for move_line in self:
-            if move_line.is_inventory and not float_is_zero(move_line.qty_done, precision_digits=move_line.product_uom_id.rounding):
+            if move_line.is_inventory and not float_is_zero(move_line.qty_done, precision_rounding=move_line.product_uom_id.rounding):
                 processed_move_line += move_line
                 move_vals.append(move_line._get_revert_inventory_move_values())
         if not processed_move_line:

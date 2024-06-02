@@ -2467,14 +2467,14 @@ msgstr ""
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_lot__delivery_count
 msgid "Delivery order count"
-msgstr "Contagem de ordens de entrega"
+msgstr "Total de pedidos de entrega"
 
 #. module: stock
 #. odoo-python
 #: code:addons/stock/models/stock_lot.py:0
 #, python-format
 msgid "Delivery orders of %s"
-msgstr "Ordens de entrega de %s"
+msgstr "Pedidos de entrega de %s"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_move__product_uom_qty
@@ -4518,6 +4518,13 @@ msgstr "Local: Quando chega a"
 #, python-format
 msgid "Locations"
 msgstr "Locais"
+
+#. module: stock
+#. odoo-python
+#: code:addons/stock/models/stock_picking.py:0
+#, python-format
+msgid "Locations to update"
+msgstr "Locais a atualizar"
 
 #. module: stock
 #: model_terms:ir.ui.view,arch_db:stock.view_picking_form
