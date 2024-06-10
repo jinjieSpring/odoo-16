@@ -677,6 +677,7 @@ export class OdooEditor extends EventTarget {
         this.addDomListener(this.editable, 'mousedown', this._onMouseDown);
         this.addDomListener(this.editable, 'mouseup', this._onMouseup);
         this.addDomListener(this.editable, 'mousemove', this._onMousemove);
+        this.addDomListener(this.editable, 'mouseleave', this._onMouseLeave);
         this.addDomListener(this.editable, 'paste', this._onPaste);
         this.addDomListener(this.editable, 'dragstart', this._onDragStart);
         this.addDomListener(this.editable, 'drop', this._onDrop);
@@ -2418,7 +2419,7 @@ export class OdooEditor extends EventTarget {
                         ancestor = ancestor.parentElement;
                     }
                     if (!hiliteColor) {
-                        hiliteColor = computedStyle.backgroundColor;
+                        hiliteColor = this.document.queryCommandValue('backColor');
                     }
                 }
             }
@@ -4382,9 +4383,12 @@ export class OdooEditor extends EventTarget {
                 restore(); // Make sure to make <br>s visible if needed.
             }
         }
+
+        const tAttrs = ['t-elif', 't-else', 't-esc', 't-foreach', 't-if', 't-out', 't-raw', 't-value'];
         // Remove now empty links
         for (const link of element.querySelectorAll('a')) {
-            if (![...link.childNodes].some(isVisible) && !link.classList.length) {
+            if (![...link.childNodes].some(isVisible) && !link.classList.length
+                && !tAttrs.some(attr => link.hasAttribute(attr))) {
                 link.remove();
             }
         }
@@ -4510,6 +4514,9 @@ export class OdooEditor extends EventTarget {
      * @param {String} currentKeyPress
      */
     _fixSelectionOnEditableRoot(selection, currentKeyPress) {
+        if (!this.editable.isContentEditable) {
+            return;
+        }
         let nodeAfterCursor = this.editable.childNodes[selection.anchorOffset];
         let nodeBeforeCursor = nodeAfterCursor && nodeAfterCursor.previousElementSibling;
         // Handle arrow key presses.
@@ -4761,6 +4768,12 @@ export class OdooEditor extends EventTarget {
         const direction = {top: 'row', right: 'col', bottom: 'row', left: 'col'}[this._isHoveringTdBorder(ev)] || false;
         if (direction || !this._isResizingTable) {
             this._toggleTableResizeCursor(direction);
+        }
+    }
+
+    _onMouseLeave(ev) {
+        if (!this._isResizingTable) {
+            this._toggleTableResizeCursor(false);
         }
     }
 
