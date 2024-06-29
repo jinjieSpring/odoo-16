@@ -382,7 +382,7 @@ class SaleOrder(models.Model):
     def _compute_currency_rate(self):
         cache = {}
         for order in self:
-            order_date = order.date_order.date()
+            order_date = (order.date_order or fields.Datetime.now()).date()
             if not order.company_id:
                 order.currency_rate = order.currency_id.with_context(date=order_date).rate or 1.0
                 continue
@@ -878,11 +878,6 @@ class SaleOrder(models.Model):
             )
 
     def action_done(self):
-        for order in self:
-            tx = order.sudo().transaction_ids._get_last()
-            if tx and tx.state == 'pending' and tx.provider_id.code == 'custom' and tx.provider_id.custom_mode == 'wire_transfer':
-                tx._set_done()
-                tx.write({'is_post_processed': True})
         self.write({'state': 'done'})
 
     def action_unlock(self):

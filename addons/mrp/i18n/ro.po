@@ -720,6 +720,13 @@ msgid "Assign Serial Numbers"
 msgstr "Atribuie numere seriale"
 
 #. module: mrp
+#. odoo-python
+#: code:addons/mrp/models/product.py:0
+#, python-format
+msgid "At least one component can not be resupplied."
+msgstr ""
+
+#. module: mrp
 #: model_terms:ir.ui.view,arch_db:mrp.mrp_bom_form_view
 msgid "At the creation of a Manufacturing Order."
 msgstr "La crearea unei comenzi de fabricație."
@@ -6356,6 +6363,8 @@ msgid ""
 "You must indicate a non-zero amount consumed for at least one of your "
 "components"
 msgstr ""
+"Trebuie să indicați o cantitate consumată diferită de zero pentru cel puțin "
+"unul dintre componentele dvs."
 
 #. module: mrp
 #. odoo-python
