@@ -76,12 +76,12 @@ msgstr ""
 #. module: stock_account
 #: model_terms:ir.ui.view,arch_db:stock_account.stock_valuation_layer_picking
 msgid "<span class=\"o_stat_text\">Valuation</span>"
-msgstr ""
+msgstr "<span class=\"o_stat_text\"> Verdi </span>"
 
 #. module: stock_account
 #: model_terms:ir.ui.view,arch_db:stock_account.stock_account_report_invoice_document
 msgid "<span>Product</span>"
-msgstr ""
+msgstr "<span> Produkt </span>"
 
 #. module: stock_account
 #: model_terms:ir.ui.view,arch_db:stock_account.stock_account_report_invoice_document
@@ -550,7 +550,7 @@ msgstr "Produktkategori"
 #. module: stock_account
 #: model:ir.model,name:stock_account.model_stock_move_line
 msgid "Product Moves (Stock Move Line)"
-msgstr ""
+msgstr "Produktbevegelser (Lagerbevegelseslinje)"
 
 #. module: stock_account
 #. odoo-python
@@ -590,7 +590,7 @@ msgstr ""
 #. module: stock_account
 #: model:ir.model,name:stock_account.model_stock_quant
 msgid "Quants"
-msgstr ""
+msgstr "Antall"
 
 #. module: stock_account
 #: model:ir.model.fields,field_description:stock_account.field_stock_valuation_layer_revaluation__reason
@@ -703,7 +703,7 @@ msgstr ""
 #. module: stock_account
 #: model:ir.model,name:stock_account.model_stock_forecasted_product_product
 msgid "Stock Replenishment Report"
-msgstr ""
+msgstr "Rapport for påfylling av lager"
 
 #. module: stock_account
 #: model:ir.model,name:stock_account.model_stock_request_count

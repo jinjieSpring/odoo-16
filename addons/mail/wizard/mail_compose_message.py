@@ -623,6 +623,11 @@ class MailComposer(models.TransientModel):
         non_mass_mail.can_edit_body = True
         super(MailComposer, self - non_mass_mail)._compute_can_edit_body()
 
+    def _compute_field_value(self, field):
+        if field.compute_sudo:
+            return super(MailComposer, self.with_context(prefetch_fields=False))._compute_field_value(field)
+        return super()._compute_field_value(field)
+
     # ------------------------------------------------------------
     # CRUD / ORM
     # ------------------------------------------------------------
@@ -1259,7 +1264,7 @@ class MailComposer(models.TransientModel):
         template_values = self.template_id._generate_template(
             res_ids,
             template_fields,
-            find_or_create_partners=True
+            find_or_create_partners=find_or_create_partners,
         )
 
         exclusion_list = ('email_cc', 'email_to') if find_or_create_partners else ()

@@ -5,8 +5,8 @@
 # Translators:
 # Jolien De Paepe, 2024
 # Martin Trigaux, 2024
-# Manon Rondou, 2024
 # Wil Odoo, 2024
+# Manon Rondou, 2024
 # Erwin van der Ploeg <erwin@odooexperts.nl>, 2024
 # 
 msgid ""
@@ -1589,7 +1589,7 @@ msgstr "Celwaarden"
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.xml:0
 #, python-format
 msgid "CellIsRule"
-msgstr ""
+msgstr "CelIsRegel"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -1782,7 +1782,7 @@ msgstr "Kleurschaal"
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.xml:0
 #, python-format
 msgid "ColorScaleRule"
-msgstr ""
+msgstr "ColorScaleRule"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -3708,7 +3708,7 @@ msgstr "Pictogrammenset"
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.xml:0
 #, python-format
 msgid "IconSetRule"
-msgstr ""
+msgstr "IconSetRule"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -6042,7 +6042,7 @@ msgstr ""
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.xml:0
 #, python-format
 msgid "Search in formulas"
-msgstr "Zoeken in formules"
+msgstr "Zoek in formules"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -12161,7 +12161,7 @@ msgstr "percentiel"
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.xml:0
 #, python-format
 msgid "plainText"
-msgstr ""
+msgstr "plainText"
 
 #. module: spreadsheet
 #. odoo-javascript

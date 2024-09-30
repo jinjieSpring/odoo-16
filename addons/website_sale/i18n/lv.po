@@ -9,10 +9,11 @@
 # InfernalLV <karlisdreizis@gmail.com>, 2023
 # Anzelika Adejanova, 2023
 # Arnis Putniņš <arnis@allegro.lv>, 2023
-# ievaputnina <ievai.putninai@gmail.com>, 2024
 # Armīns Jeltajevs <armins.jeltajevs@gmail.com>, 2024
 # Will Sensors, 2024
 # Martin Trigaux, 2024
+# myacc-pro, 2024
+# ievaputnina <ievai.putninai@gmail.com>, 2024
 # 
 msgid ""
 msgstr ""
@@ -20,7 +21,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-08-13 10:26+0000\n"
 "PO-Revision-Date: 2023-10-26 23:09+0000\n"
-"Last-Translator: Martin Trigaux, 2024\n"
+"Last-Translator: ievaputnina <ievai.putninai@gmail.com>, 2024\n"
 "Language-Team: Latvian (https://app.transifex.com/odoo/teams/41243/lv/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -192,7 +193,7 @@ msgstr ""
 msgid ""
 "<i class=\"fa fa-plus me-md-2\"/><span class=\"d-none d-md-inline\">Add "
 "address</span>"
-msgstr ""
+msgstr "Pievienot adresi"
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.confirmation
@@ -717,7 +718,7 @@ msgstr ""
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.res_config_settings_view_form
 msgid "Assignment"
-msgstr ""
+msgstr "Uzdevums"
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.res_config_settings_view_form

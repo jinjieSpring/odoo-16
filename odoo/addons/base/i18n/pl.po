@@ -9,6 +9,7 @@
 # Paweł Wodyński <pw@myodoo.pl>, 2024
 # Tadeusz Karpiński <tadeuszkarpinski@gmail.com>, 2024
 # Wil Odoo, 2024
+# Marta Waclawek, 2024
 # 
 msgid ""
 msgstr ""
@@ -16,7 +17,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-26 12:42+0000\n"
 "PO-Revision-Date: 2023-10-26 23:09+0000\n"
-"Last-Translator: Wil Odoo, 2024\n"
+"Last-Translator: Marta Waclawek, 2024\n"
 "Language-Team: Polish (https://app.transifex.com/odoo/teams/41243/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1559,8 +1560,6 @@ msgid ""
 "\n"
 "Add support to fill three optional fields used when using Chorus Pro, especially when invoicing public services.\n"
 msgstr ""
-"\n"
-"Dodano obsługę wypełniania trzech opcjonalnych pól używanych podczas korzystania z aplikacji Chorus Pro, zwłaszcza podczas fakturowania usług publicznych.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_documents_project
@@ -7478,6 +7477,9 @@ msgid ""
 "This module adds to the approvals workflow the possibility to generate\n"
 "RFQ from an approval purchase request.\n"
 msgstr ""
+"\n"
+"Moduł ten dodaje do obiegu zatwierdzeń możliwość generowania\n"
+"RFQ z zatwierdzonego wniosku o zakup.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_hr_attendance
@@ -19003,7 +19005,7 @@ msgstr "Od zapytań ofertowych do wystawiania faktur"
 #: model:ir.module.category,name:base.module_category_human_resources_frontdesk
 #: model:ir.module.module,shortdesc:base.module_frontdesk
 msgid "Frontdesk"
-msgstr ""
+msgstr "Recepcja"
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.ir_access_view_search
@@ -31342,6 +31344,7 @@ msgstr ""
 #: model:ir.module.module,summary:base.module_test_spreadsheet_edition
 msgid "Spreadsheet Test, mainly to test the mixin behavior"
 msgstr ""
+"Test arkusza kalkulacyjnego, głównie w celach sprawdzenia zachowania mixinu"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_spreadsheet_dashboard
@@ -35860,6 +35863,8 @@ msgid ""
 "What are my short and long-term goals with the company, and for my\n"
 "            career?"
 msgstr ""
+"Jakie są moje krótko- i długoterminowe cele w firmie i w mojej\n"
+"             karierze?"
 
 #. module: base
 #: model_terms:res.company,appraisal_employee_feedback_template:base.main_company
