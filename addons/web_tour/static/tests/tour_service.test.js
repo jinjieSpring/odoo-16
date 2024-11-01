@@ -19,6 +19,7 @@ import { Dialog } from "@web/core/dialog/dialog";
 import { session } from "@web/session";
 import { MacroEngine } from "@web/core/macro";
 import { tourState } from "@web_tour/tour_service/tour_state";
+import { useService } from "@web/core/utils/hooks";
 
 describe.current.tags("desktop");
 
@@ -283,8 +284,8 @@ test("a failing tour logs the step that failed in run", async () => {
         `log: [2/2] Tour tour2 → Step .button1`,
         [
             "error: FAILED: [2/2] Tour tour2 → Step .button1.",
-            "Element has been found. The error seems to be with step.run.",
-            "Cannot read properties of null (reading 'click')",
+            "Element has been found.",
+            "ERROR IN ACTION: Cannot read properties of null (reading 'click')",
         ].join("\n"),
         "error: tour not succeeded",
     ];
@@ -331,16 +332,13 @@ test("a failing tour with disabled element", async () => {
     await advanceTime(750);
     await advanceTime(750);
     await advanceTime(750);
-    const expectedError = [
-        [
-            `error: FAILED: [2/3] Tour tour3 → Step .button1.`,
-            `Element has been found. The error seems to be with step.run.`,
-            `Element can't be disabled when you want to click on it.`,
-            `Tip: You can add the ":enabled" pseudo selector to your selector to wait for the element is enabled.`,
-        ].join("\n"),
-        `error: tour not succeeded`,
-    ];
     await advanceTime(10000);
+    const expectedError = [
+        `error: FAILED: [2/3] Tour tour3 → Step .button1.
+Element has been found.
+BUT: Element is not enabled.
+TIMEOUT: The step failed to complete within 10000 ms.`,
+    ];
     expect.verifySteps(expectedError);
 });
 
@@ -396,6 +394,7 @@ test("a failing tour logs the step that failed", async () => {
             {
                 content: "content",
                 trigger: ".wrong_selector",
+                timeout: 111,
                 run: "click",
             },
             {
@@ -431,10 +430,13 @@ test("a failing tour logs the step that failed", async () => {
     expect.verifySteps(["log: [4/9] Tour tour1 → Step content (trigger: .button3)"]);
     await advanceTime(750);
     expect.verifySteps(["log: [5/9] Tour tour1 → Step content (trigger: .wrong_selector)"]);
-    await advanceTime(10000);
+    await advanceTime(750);
+    await advanceTime(111);
     expect.verifySteps([
-        "error: FAILED: [5/9] Tour tour1 → Step content (trigger: .wrong_selector).\nThe cause is that trigger (.wrong_selector) element cannot be found in DOM. TIP: You can use :not(:visible) to force the search for an invisible element.",
-        `runbot: {"content":"content","trigger":".button1","run":"click"},{"content":"content","trigger":".button2","run":"click"},{"content":"content","trigger":".button3","run":"click"},FAILED:[5/9]Tourtour1→Stepcontent(trigger:.wrong_selector){"content":"content","trigger":".wrong_selector","run":"click"},{"content":"content","trigger":".button4","run":"click"},{"content":"content","trigger":".button5","run":"click"},{"content":"content","trigger":".button6","run":"click"},`,
+        `error: FAILED: [5/9] Tour tour1 → Step content (trigger: .wrong_selector).
+The cause is that trigger (.wrong_selector) element cannot be found in DOM. TIP: You can use :not(:visible) to force the search for an invisible element.
+TIMEOUT: The step failed to complete within 111 ms.`,
+        `runbot: {"content":"content","trigger":".button1","run":"click"},{"content":"content","trigger":".button2","run":"click"},{"content":"content","trigger":".button3","run":"click"},FAILED:[5/9]Tourtour1→Stepcontent(trigger:.wrong_selector){"content":"content","trigger":".wrong_selector","run":"click","timeout":111},{"content":"content","trigger":".button4","run":"click"},{"content":"content","trigger":".button5","run":"click"},{"content":"content","trigger":".button6","run":"click"},`,
     ]);
 });
 
@@ -879,7 +881,9 @@ test("automatic tour with invisible element", async () => {
     await advanceTime(750);
     await advanceTime(10000);
     expect.verifySteps([
-        "error: FAILED: [2/3] Tour tour_de_wallonie → Step .button1.\nThe cause is that trigger (.button1) element cannot be found in DOM. TIP: You can use :not(:visible) to force the search for an invisible element.",
+        `error: FAILED: [2/3] Tour tour_de_wallonie → Step .button1.
+The cause is that trigger (.button1) element cannot be found in DOM. TIP: You can use :not(:visible) to force the search for an invisible element.
+TIMEOUT: The step failed to complete within 10000 ms.`,
     ]);
 });
 
@@ -1419,4 +1423,115 @@ test("check alternative trigger that appear after the initial trigger", async ()
     queryFirst(".add_button").appendChild(otherButton);
     await contains(".button1").click();
     expect(".o_tour_pointer").toHaveCount(0);
+});
+
+test("check not possible to click below modal", async () => {
+    patchWithCleanup(console, {
+        warn: () => {},
+        error: (s) => expect.step(`error: ${s}`),
+        log: (s) => expect.step(`log: ${s}`),
+        dir: () => {},
+    });
+    class DummyDialog extends Component {
+        static props = ["*"];
+        static components = { Dialog };
+        static template = xml`
+            <Dialog>
+                <button class="a">A</button>
+                <button class="b">B</button>
+            </Dialog>
+        `;
+    }
+    class Root extends Component {
+        static components = {};
+        static template = xml/*html*/ `
+            <t>
+                <div class="container">
+                    <div class="p-3"><button class="button0" t-on-click="openDialog">Button 0</button></div>
+                    <div class="p-3"><button class="button1">Button 1</button></div>
+                    <div class="p-3"><button class="button2">Button 2</button></div>
+                    <div class="p-3"><button class="button3">Button 3</button></div>
+                </div>
+            </t>
+        `;
+        static props = ["*"];
+        setup() {
+            this.dialogService = useService("dialog");
+        }
+        openDialog() {
+            this.dialogService.add(DummyDialog);
+        }
+    }
+    await mountWithCleanup(Root);
+
+    registry.category("web_tour.tours").add("tour_check_modal", {
+        steps: () => [
+            {
+                trigger: ".button0",
+                run: "click",
+            },
+            {
+                trigger: ".button1",
+                run: "click",
+            },
+        ],
+    });
+    await odoo.startTour("tour_check_modal", { mode: "auto" });
+    await animationFrame();
+    await advanceTime(750);
+    await advanceTime(750);
+    await advanceTime(750);
+    await advanceTime(10000);
+    expect.verifySteps([
+        "log: [1/2] Tour tour_check_modal → Step .button0",
+        "log: [2/2] Tour tour_check_modal → Step .button1",
+        `error: FAILED: [2/2] Tour tour_check_modal → Step .button1.
+Element has been found.
+BUT: It is not allowed to do action on an element that's below a modal.
+TIMEOUT: The step failed to complete within 10000 ms.`,
+    ]);
+});
+
+test("a tour where hoot trigger failed", async () => {
+    patchWithCleanup(browser.console, {
+        error: (s) => expect.step(`error: ${s}`),
+    });
+
+    class Root extends Component {
+        static components = {};
+        static template = xml/*html*/ `
+            <t>
+                <button class="button0">Button 0</button>
+                <button class="button1">Button 1</button>
+                <button class="button2">Button 2</button>
+            </t>
+        `;
+        static props = ["*"];
+    }
+
+    await mountWithCleanup(Root);
+    tourRegistry.add("tour_hoot_failed", {
+        steps: () => [
+            {
+                content: "content",
+                trigger: ".button0",
+                run: "click",
+            },
+            {
+                content: "content",
+                trigger: ".button1:brol(:machin)",
+                run: "click",
+            },
+        ],
+    });
+    await odoo.startTour("tour_hoot_failed", { mode: "auto" });
+    await advanceTime(750);
+    await advanceTime(750);
+    await advanceTime(750);
+    expect.verifySteps([
+        `error: FAILED: [2/2] Tour tour_hoot_failed → Step content (trigger: .button1:brol(:machin)).
+HOOT: Failed to execute 'querySelectorAll' on 'Element': '.button1:brol(:machin)' is not a valid selector.
+TypeError: Cannot read properties of undefined (reading 'find')`,
+        "error: tour not succeeded",
+    ]);
 });

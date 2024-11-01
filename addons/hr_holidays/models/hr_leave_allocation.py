@@ -208,7 +208,9 @@ class HolidaysAllocation(models.Model):
     @api.depends('number_of_days')
     def _compute_number_of_hours_display(self):
         for allocation in self:
-            hours_per_day = allocation.employee_id.sudo().resource_id.calendar_id.hours_per_day or HOURS_PER_DAY
+            hours_per_day = allocation.employee_id.sudo().resource_calendar_id.hours_per_day \
+                            or allocation.holiday_status_id.company_id.resource_calendar_id.hours_per_day \
+                            or HOURS_PER_DAY
             allocation.number_of_hours_display = allocation.number_of_days * hours_per_day
 
     @api.depends('number_of_hours_display', 'number_of_days_display')
@@ -603,7 +605,7 @@ class HolidaysAllocation(models.Model):
         if self.type_request_unit in ['hour']:
             return float_round(fake_allocation.number_of_hours_display - self.number_of_hours_display, precision_digits=2)
         res = round((fake_allocation.number_of_days - self.number_of_days), 2)
-        self._invalidate_cache()
+        fake_allocation._invalidate_cache(['number_of_days', 'number_of_days_display', 'lastcall', 'nextcall', 'number_of_hours_display'])
         return res
 
     ####################################################
@@ -854,6 +856,8 @@ class HolidaysAllocation(models.Model):
         self.number_of_hours_display = 0.0
         self.number_of_days = 0.0
         self.already_accrued = False
+        self.carried_over_days_expiration_date = False
+        self.expiring_carryover_days = 0
         date_to = min(self.date_to, date.today()) if self.date_to else False
         self._process_accrual_plans(date_to)
 
