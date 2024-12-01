@@ -42,15 +42,15 @@ test("basic rendering", async () => {
     await contains(".o-discuss-CallParticipantCard[aria-label='Mitchell Admin']");
     await contains(".o-discuss-CallActionList");
     await contains(".o-discuss-CallMenu-buttonContent");
-    await contains(".o-discuss-CallActionList button", { count: 5 });
+    await contains(".o-discuss-CallActionList button", { count: 6 });
     await contains("button[aria-label='Unmute'], button[aria-label='Mute']"); // FIXME depends on current browser permission
     await contains(".o-discuss-CallActionList button[aria-label='Deafen']");
     await contains(".o-discuss-CallActionList button[aria-label='Turn camera on']");
+    await contains(".o-discuss-CallActionList button[aria-label='Share Screen']");
     await contains("[title='More']");
     await contains(".o-discuss-CallActionList button[aria-label='Disconnect']");
     await click("[title='More']");
     await contains("[title='Raise Hand']");
-    await contains("[title='Share Screen']");
     await contains("[title='Enter Full Screen']");
     // screen sharing not available in mobile OS
     mockUserAgent("Chrome/0.0.0 Android (OdooMobile; Linux; Android 13; Odoo TestSuite)");
@@ -153,9 +153,9 @@ test("should display invitations", async () => {
         channel_member_id: memberId,
         channel_id: channelId,
     });
-    onRpcBefore("/mail/action", (args) => {
+    onRpcBefore("/mail/data", (args) => {
         if (args.init_messaging) {
-            step(`/mail/action - ${JSON.stringify(args)}`);
+            step(`/mail/data - ${JSON.stringify(args)}`);
         }
     });
     mockService("mail.sound_effects", {
@@ -168,7 +168,7 @@ test("should display invitations", async () => {
     });
     await start();
     await assertSteps([
-        `/mail/action - ${JSON.stringify({
+        `/mail/data - ${JSON.stringify({
             init_messaging: {},
             failures: true,
             systray_get_activities: true,

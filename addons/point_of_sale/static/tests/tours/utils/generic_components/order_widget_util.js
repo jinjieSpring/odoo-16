@@ -102,3 +102,15 @@ export function hasTax(amount) {
         trigger: `.order-summary .tax:contains("${amount}")`,
     };
 }
+
+export function hasNoTax() {
+    return {
+        content: "order has not tax",
+        trigger: ".order-summary",
+        run: function () {
+            if (document.querySelector(".tax-info")) {
+                throw new Error("A tax has been found in the order screen.");
+            }
+        },
+    };
+}

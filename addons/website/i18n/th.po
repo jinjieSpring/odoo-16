@@ -129,6 +129,8 @@ msgid ""
 "\"Write a quote here from one of your customers. Quotes are a great way to "
 "build confidence in your products.\""
 msgstr ""
+"“เขียนใบเสนอราคาจากลูกค้าของคุณที่นี่ "
+"ใบเสนอราคาเป็นวิธีที่ดีเยี่ยมในการสร้างความเชื่อมั่นในผลิตภัณฑ์ของคุณ”"
 
 #. module: website
 #: model:ir.model.fields,field_description:website.field_website_visitor__page_count
@@ -659,6 +661,8 @@ msgid ""
 "75% of clients use the service for over a decade consistently.<br/>This "
 "showcases remarkable loyalty and satisfaction with the quality provided."
 msgstr ""
+"ลูกค้าร้อยละ 75 ใช้บริการอย่างต่อเนื่องมานานกว่าทศวรรษ <br/> "
+"ซึ่งแสดงให้เห็นถึงความพึงพอใจอย่างโดดเด่นต่อคุณภาพที่ได้รับ"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_map_options
@@ -817,6 +821,8 @@ msgid ""
 "and<br/> achieve your goals, ensuring your journey is fully "
 "supported.<br/><br/>"
 msgstr ""
+"<br/>มอบเครื่องมือนวัตกรรมที่ปรับแต่งโดยเฉพาะเพื่อช่วยให้คุณเอาชนะความท้าทายและ<br/>บรรลุเป้าหมาย"
+" รับรองว่าการเดินทางของคุณจะได้รับการสนับสนุนอย่างเต็มที่<br/><br/>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_company_team_detail
@@ -830,6 +836,9 @@ msgid ""
 "born from spontaneous creativity, contains stories waiting to be "
 "discovered.<br/><br/>"
 msgstr ""
+"<br/>นวัตกรรมล้ำยุคทุกอย่าง "
+"ไม่ว่าจะได้รับการออกแบบอย่างพิถีพิถันหรือเกิดจากความคิดสร้างสรรค์ตามธรรมชาติ"
+" ล้วนมีเรื่องราวที่รอการค้นพบ<br/><br/>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_references_social
@@ -872,6 +881,8 @@ msgid ""
 "<br/>Our product line offers a range of innovative solutions designed to "
 "meet your needs. Each product is crafted for quality and reliability."
 msgstr ""
+"<br/>ผลิตภัณฑ์ของเรามีโซลูชันนวัตกรรมมากมายที่ออกแบบมาเพื่อตอบสนองความต้องการของคุณ"
+" ผลิตภัณฑ์แต่ละชิ้นได้รับการออกแบบมาอย่างมีคุณภาพและเชื่อถือได้"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_text_cover
@@ -880,6 +891,8 @@ msgid ""
 "the steps, including setup, inventory management, and payment "
 "processing.<br/>"
 msgstr ""
+"<br/>ขายออนไลน์ได้อย่างง่ายดายด้วยแพลตฟอร์มที่ใช้งานง่ายซึ่งช่วยลดขั้นตอนต่างๆ"
+" รวมไปถึงการตั้งค่า การจัดการสินค้าคงคลัง และการประมวลผลการชำระเงิน<br/>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_company_team_detail
@@ -911,6 +924,8 @@ msgid ""
 "<br/>This is a simple hero unit, a simple jumbotron-style component for "
 "calling extra attention to featured content or information.<br/><br/>"
 msgstr ""
+"<br/>นี่เป็นหน่วยฮีโร่ที่เรียบง่าย "
+"ซึ่งเป็นส่วนประกอบแบบจัมโบทรอนเรียบง่ายที่ใช้ดึงความสนใจพิเศษให้กับเนื้อหาหรือข้อมูลที่โดดเด่น<br/><br/>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_faq_horizontal
@@ -1347,6 +1362,9 @@ msgid ""
 "                                        Block 3rd-party services that track users (e.g. YouTube, Google Maps, Facebook...) when the user has not given their consent.\n"
 "                                    </small>"
 msgstr ""
+"<small class=\"text-muted\">\n"
+"                                        บล็อกบริการของบุคคลที่สามที่ติดตามผู้ใช้ (เช่น YouTube, Google Maps, Facebook...) เมื่อผู้ใช้ไม่ได้ให้ความยินยอม\n"
+"                                    </small>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.res_config_settings_view_form
@@ -1666,6 +1684,9 @@ msgid ""
 "                        <small class=\"text-muted\">Apr 03, 2024</small>\n"
 "                        <strong>New Dashboard Features for Custom Reports</strong>"
 msgstr ""
+"<span class=\"o_dot o_not_editable position-absolute translate-middle-x rounded-circle pe-none text-o-color-1\" contenteditable=\"false\"/>\n"
+"                        <small class=\"text-muted\">03 เม.ย. 2567</small>\n"
+"                        <strong>ฟีเจอร์แดชบอร์ดใหม่สำหรับรายงานที่กำหนดเอง</strong>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_timeline_list
@@ -1674,6 +1695,9 @@ msgid ""
 "                        <small class=\"text-muted\">Aug 27, 2024</small>\n"
 "                        <strong>Improved Security Protocols Implemented</strong>"
 msgstr ""
+"<span class=\"o_dot o_not_editable position-absolute translate-middle-x rounded-circle pe-none text-o-color-1\" contenteditable=\"false\"/>\n"
+"                        <small class=\"text-muted\">27 ส.ค. 2567</small>\n"
+"                        <strong>ปรับปรุงการใช้โปรโตคอลความปลอดภัยแล้ว</strong>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_timeline_list
@@ -1682,6 +1706,9 @@ msgid ""
 "                        <small class=\"text-muted\">Dec 22, 2024</small>\n"
 "                        <strong>Advanced Analytics Tools Introduced</strong>"
 msgstr ""
+"<span class=\"o_dot o_not_editable position-absolute translate-middle-x rounded-circle pe-none text-o-color-1\" contenteditable=\"false\"/>\n"
+"                        <small class=\"text-muted\">22 ธันวาคม 2567</small>\n"
+"                        <strong>แนะนำเครื่องมือวิเคราะห์ขั้นสูง</strong>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_timeline_list
@@ -1690,6 +1717,9 @@ msgid ""
 "                        <small class=\"text-muted\">Feb 11, 2024</small>\n"
 "                        <strong>Enhanced User Interface for Better Navigation</strong>"
 msgstr ""
+"<span class=\"o_dot o_not_editable position-absolute translate-middle-x rounded-circle pe-none text-o-color-1\" contenteditable=\"false\"/>\n"
+"                        <small class=\"text-muted\">11 ก.พ. 2567</small>\n"
+"                        <strong>อินเทอร์เฟซผู้ใช้ที่ได้รับการปรับปรุงเพื่อการนำทางที่ดีขึ้น</strong>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_timeline_list
@@ -1698,6 +1728,9 @@ msgid ""
 "                        <small class=\"text-muted\">Jun 15, 2024</small>\n"
 "                        <strong>Integrated Multi-Language Support Added</strong>"
 msgstr ""
+"<span class=\"o_dot o_not_editable position-absolute translate-middle-x rounded-circle pe-none text-o-color-1\" contenteditable=\"false\"/>\n"
+"                        <small class=\"text-muted\">15 มิถุนายน 2567</small>\n"
+"                        <strong>เพิ่มการรองรับหลายภาษาแบบผสานรวมแล้ว</strong>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_timeline_list
@@ -1706,6 +1739,9 @@ msgid ""
 "                        <small class=\"text-muted\">Oct 09, 2024</small>\n"
 "                        <strong>Mobile App Compatibility Expanded</strong>"
 msgstr ""
+"<span class=\"o_dot o_not_editable position-absolute translate-middle-x rounded-circle pe-none text-o-color-1\" contenteditable=\"false\"/>\n"
+"                        <small class=\"text-muted\">09 ต.ค. 2567</small>\n"
+"                        <strong>ขยายความเข้ากันได้ของแอปบนอุปกรณ์เคลื่อนที่แล้ว</strong>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.footer_copyright_company_name
@@ -2093,6 +2129,7 @@ msgid ""
 "A classic black tea blend infused with the aromatic essence of bergamot, "
 "offering a fragrant, citrusy flavor."
 msgstr ""
+"การผสมผสานชาดำคลาสสิกเข้ากับกลิ่นหอมของมะกรูด มอบกลิ่นหอมสดชื่นแบบซิตรัส"
 
 #. module: website
 #: model:ir.model.fields,help:website.field_ir_actions_server__website_published
@@ -2124,6 +2161,8 @@ msgid ""
 "A creamy, smooth cheesecake with a graham cracker crust, topped with a layer"
 " of fresh fruit or chocolate ganache."
 msgstr ""
+"ชีสเค้กเนื้อครีมเนียนนุ่มพร้อมเปลือกแครกเกอร์เกรแฮม "
+"ราดด้วยกานาชผลไม้สดหรือช็อกโกแลต"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_product_catalog
@@ -2131,6 +2170,8 @@ msgid ""
 "A crusty loaf with a chewy interior, made with a naturally fermented "
 "sourdough starter for a tangy flavor."
 msgstr ""
+"ขนมปังกรอบกรุบกรอบเคี้ยวเพลิน "
+"ทำจากแป้งหมักตามธรรมชาติเพื่อให้มีรสชาติเปรี้ยว"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_freegrid
@@ -2143,6 +2184,8 @@ msgid ""
 "A delicious mix of four toppings: mushrooms, artichokes, ham, and olives, "
 "all on a bed of mozzarella and tomato sauce."
 msgstr ""
+"การผสมผสานรสชาติอันแสนอร่อยของท็อปปิ้งสี่ชนิดอย่างเช่น เห็ด อาติโช๊ค แฮม "
+"และมะกอก ราดบนมอสซาเรลลาและซอสมะเขือเทศ"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_showcase
@@ -2150,6 +2193,7 @@ msgid ""
 "A feature section allows you to clearly showcase the main benefits and "
 "unique aspects of your product."
 msgstr ""
+"ส่วนฟีเจอร์ช่วยให้คุณสามารถแสดงประโยชน์หลักและลักษณะเฉพาะของผลิตภัณฑ์ได้อย่างชัดเจน"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_showcase
@@ -2202,6 +2246,8 @@ msgid ""
 "A spiced cake loaded with grated carrots, nuts, and a hint of cinnamon, "
 "topped with a tangy cream cheese frosting."
 msgstr ""
+"เค้กเครื่องเทศที่มีแครอทขูด ถั่ว และอบเชยเล็กน้อย "
+"ราดด้วยครีมชีสฟรอสติ้งรสเปรี้ยว"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.bs_debug_view
@@ -2228,6 +2274,8 @@ msgid ""
 "A vibrant spot known for its expertly crafted coffee, sourced directly from "
 "farmers and roasted to perfection."
 msgstr ""
+"สถานที่ที่มีชีวิตชีวาที่รู้จักกันดีในเรื่องกาแฟที่ชงอย่างพิถีพิถัน "
+"มาจากเกษตรกรโดยตรงและคั่วจนสมบูรณ์แบบ"
 
 #. module: website
 #: model:ir.model.fields,help:website.field_website_visitor__is_connected
@@ -2882,6 +2930,8 @@ msgid ""
 "Although this Website may be linked to other websites, we are not, directly "
 "or indirectly, implying any approval."
 msgstr ""
+"แม้ว่าเว็บไซต์นี้อาจเชื่อมโยงกับเว็บไซต์อื่น "
+"แต่เราไม่ได้แสดงว่ามีการอนุมัติโดยตรงหรือโดยอ้อม"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.snippet_options
@@ -2952,6 +3002,8 @@ msgid ""
 "inline\"/>an in-depth look at the key metrics driving our company's "
 "achievements"
 msgstr ""
+"การวิเคราะห์ตัวเลขเบื้องหลังความสำเร็จของเรา: <br class=\"d-none d-xxl-"
+"inline\"/>การมองเชิงลึกเกี่ยวกับตัวชี้วัดหลักที่ขับเคลื่อนความสำเร็จของบริษัทเรา"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_numbers_showcase
@@ -2959,6 +3011,8 @@ msgid ""
 "Analyzing the numbers behind our success: an in-depth look at the key "
 "metrics driving our company's achievements."
 msgstr ""
+"วิเคราะห์ตัวเลขเบื้องหลังความสำเร็จของเรา: "
+"การพิจารณาแบบเจาะลึกตัวชี้วัดหลักที่ผลักดันความสำเร็จของบริษัทของเรา"
 
 #. module: website
 #. odoo-javascript
@@ -4046,6 +4100,8 @@ msgid ""
 "Classic pizza with fresh mozzarella, San Marzano tomatoes, and basil leaves,"
 " drizzled with extra virgin olive oil."
 msgstr ""
+"พิซซ่าคลาสสิกพร้อมชีสมอสซาเรลลาสด มะเขือเทศซานมาร์ซาโน และใบโหระพา "
+"ราดด้วยน้ำมันมะกอกบริสุทธิ์พิเศษ"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_countdown_options
@@ -4879,6 +4935,9 @@ msgid ""
 "Customer satisfaction is our priority. Our support team is always ready to "
 "assist, ensuring you have a smooth and successful experience."
 msgstr ""
+"ความพึงพอใจของลูกค้าคือสิ่งสำคัญที่สุดสำหรับเรา "
+"ทีมสนับสนุนของเราพร้อมให้ความช่วยเหลือเสมอ "
+"เพื่อให้แน่ใจว่าคุณจะได้รับประสบการณ์ที่ราบรื่นและประสบความสำเร็จ"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_mega_menu_big_icons_subtitles
@@ -6005,6 +6064,8 @@ msgid ""
 "Empowering teams to collaborate and innovate, creating impactful solutions "
 "that drive business growth and deliver lasting value."
 msgstr ""
+"เสริมสร้างพลังให้ทีมงานทำงานร่วมกันและสร้างสรรค์นวัตกรรม "
+"สร้างสรรค์โซลูชันที่มีประสิทธิภาพซึ่งขับเคลื่อนการเติบโตทางธุรกิจและส่งมอบมูลค่าที่ยั่งยืน"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.new_page_template_landing_s_features
@@ -6220,6 +6281,9 @@ msgid ""
 "enhancing<br/>technology with this latest innovation, crafted to elevate "
 "every athlete's journey."
 msgstr ""
+"สัมผัสกับความสะดวกสบายที่ไม่มีใครเทียบได้ ดีไซน์ล้ำสมัย<br/> "
+"และเทคโนโลยีช่วยเพิ่มประสิทธิภาพด้วยนวัตกรรมล่าสุดนี้ "
+"ซึ่งออกแบบมาเพื่อยกระดับการเดินทางของนักกีฬาทุกคน"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_framed_intro
@@ -7026,6 +7090,8 @@ msgid ""
 "Get in touch with your customers to provide them with better service. You "
 "can modify the form fields to gather more precise information."
 msgstr ""
+"ติดต่อกับลูกค้าของคุณเพื่อมอบบริการที่ดีขึ้นให้กับพวกเขา "
+"คุณสามารถปรับเปลี่ยนช่องข้อมูลในแบบฟอร์มเพื่อรวบรวมข้อมูลที่แม่นยำยิ่งขึ้น"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_empowerment
@@ -7265,6 +7331,8 @@ msgid ""
 "Growth capability is a system's ability to scale and adapt, meeting "
 "increasing demands and evolving needs for long-term success."
 msgstr ""
+"ความสามารถในการเติบโตคือความสามารถของระบบในการขยายและปรับตัว "
+"ตอบสนองความต้องการที่เพิ่มขึ้นและความต้องการที่เปลี่ยนแปลงไปเพื่อความสำเร็จในระยะยาว"
 
 #. module: website
 #. odoo-javascript
@@ -10695,6 +10763,8 @@ msgid ""
 " security, and functionality, ensuring it remains at the cutting edge of "
 "innovation."
 msgstr ""
+"ทีมพัฒนาของเราทำงานอย่างหนักเพื่อเพิ่มประสิทธิภาพ ความปลอดภัย "
+"และการทำงานของแพลตฟอร์ม เพื่อให้มั่นใจว่าแพลตฟอร์มจะอยู่แถวหน้าของนวัตกรรม"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.new_page_template_landing_2_s_three_columns
@@ -10730,6 +10800,9 @@ msgid ""
 "expansion, highlight our strategic prowess and commitment to sustainable "
 "business success."
 msgstr ""
+"ตัวชี้วัดหลักของเรา "
+"ตั้งแต่การเติบโตของรายได้ไปจนถึงการรักษาลูกค้าและการขยายตลาด "
+"เน้นย้ำถึงความสามารถเชิงกลยุทธ์และความมุ่งมั่นของเราในการประสบความสำเร็จทางธุรกิจอย่างยั่งยืน"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_dynamic_snippet_template
@@ -10803,6 +10876,9 @@ msgid ""
 "Our support team is available 24/7 to assist with any inquiries or issues, "
 "ensuring you get help whenever you need it."
 msgstr ""
+"ทีมสนับสนุนของเราพร้อมให้บริการตลอด 24 ชั่วโมง "
+"เพื่อช่วยเหลือในกรณีที่มีคำถามหรือปัญหาใดๆ "
+"เพื่อให้แน่ใจว่าคุณจะได้รับความช่วยเหลือเมื่อใดก็ตามที่คุณต้องการ"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_faq_horizontal
@@ -10810,6 +10886,9 @@ msgid ""
 "Our support team is available 24/7 to assist with any issues or questions "
 "you may have, ensuring that help is always within reach."
 msgstr ""
+"ทีมสนับสนุนของเราพร้อมให้บริการตลอด 24 "
+"ชั่วโมงทุกวันเพื่อช่วยเหลือเกี่ยวกับปัญหาหรือคำถามที่คุณอาจมี "
+"เพื่อให้แน่ใจว่าคุณจะได้รับความช่วยเหลืออยู่เสมอ"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_company_team_shapes
@@ -10850,6 +10929,7 @@ msgid ""
 "Our website is designed for easy navigation, allowing you to find the "
 "information you need quickly and efficiently."
 msgstr ""
+"เว็บไซต์ของเราได้รับการออกแบบมาเพื่อให้ใช้งานและค้นหาข้อมูลที่ต้องการได้อย่างรวดเร็วและมีประสิทธิภาพ"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.snippet_options
@@ -11154,6 +11234,8 @@ msgid ""
 "Penne pasta tossed in a spicy tomato and garlic sauce with a hint of chili "
 "peppers, finished with fresh parsley."
 msgstr ""
+"พาสต้าเพนเนคลุกกับซอสมะเขือเทศและกระเทียมรสเผ็ด พร้อมพริกชี้ฟ้าเล็กน้อย "
+"ตกแต่งด้วยผักชีฝรั่งสด"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.snippets
@@ -13085,6 +13167,8 @@ msgid ""
 "Speed and efficiency ensure tasks are completed quickly and resources are "
 "used optimally, enhancing productivity and satisfaction."
 msgstr ""
+"ความเร็วและประสิทธิภาพช่วยให้มั่นใจว่างานจะเสร็จสิ้นอย่างรวดเร็วและทรัพยากรจะถูกใช้อย่างเหมาะสม"
+" ส่งผลให้ผลผลิตและความพึงพอใจเพิ่มขึ้น"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_pricelist_boxed
@@ -13615,6 +13699,8 @@ msgid ""
 "The company “%(company_name)s” cannot be archived because it has a linked website “%(website_name)s”.\n"
 "Change that website's company first."
 msgstr ""
+"ไม่สามารถเก็บถาวรบริษัท “%(company_name)s” ได้ เนื่องจากมีเว็บไซต์ที่เชื่อมโยงกับ “%(website_name)s”\n"
+"ให้เปลี่ยนบริษัทของเว็บไซต์นั้นก่อน"
 
 #. module: website
 #. odoo-javascript
@@ -14423,6 +14509,8 @@ msgid ""
 "meets functionality. Elevate your space with pieces that blend style and "
 "comfort seamlessly."
 msgstr ""
+"ปรับเปลี่ยนสภาพแวดล้อมของคุณด้วยคอลเลกชันดีไซน์ใหม่ของเราที่ผสมผสานความสง่างามเข้ากับการใช้งาน"
+" ยกระดับพื้นที่ของคุณด้วยชิ้นงานที่ผสมผสานสไตล์และความสบายได้อย่างลงตัว"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.snippet_options_carousel
@@ -15173,6 +15261,9 @@ msgid ""
 "We also provide regular updates and new features based on user feedback, "
 "ensuring that our platform continues to evolve to meet your needs."
 msgstr ""
+"นอกจากนี้ เรายังมอบการอัปเดตเป็นประจำและฟีเจอร์ใหม่ๆ ตามความคิดเห็นของผู้ใช้"
+" "
+"เพื่อให้แน่ใจว่าแพลตฟอร์มของเราจะพัฒนาอย่างต่อเนื่องเพื่อตอบสนองความต้องการของคุณ"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.footer_custom
@@ -15214,6 +15305,8 @@ msgid ""
 "We are committed to continuous improvement, regularly releasing updates and "
 "new features based on user feedback and technological advancements."
 msgstr ""
+"เราให้ความมุ่งมั่นที่จะปรับปรุงอย่างต่อเนื่องโดยปล่อยอัปเดตและฟีเจอร์ใหม่ๆ "
+"เป็นประจำตามความคิดเห็นของผู้ใช้และความก้าวหน้าทางเทคโนโลยี"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_faq_horizontal
@@ -15253,6 +15346,9 @@ msgid ""
 "success, ensuring sustainable growth and competitive advantage in a dynamic "
 "market."
 msgstr ""
+"เราผสมผสานข้อมูลเชิงลึกเชิงกลยุทธ์และโซลูชันนวัตกรรมเพื่อขับเคลื่อนความสำเร็จทางธุรกิจ"
+" "
+"มั่นใจถึงการเติบโตอย่างยั่งยืนและความได้เปรียบทางการแข่งขันในตลาดที่มีการเปลี่ยนแปลงตลอดเวลา"
 
 #. module: website
 #. odoo-javascript
@@ -15273,6 +15369,9 @@ msgid ""
 "We deliver seamless, innovative solutions that not only meet your needs but "
 "exceed expectations, driving meaningful results and lasting success."
 msgstr ""
+"เราส่งมอบโซลูชั่นที่ราบรื่นและสร้างสรรค์ "
+"ไม่เพียงแต่ตอบโจทย์ความต้องการของคุณเท่านั้นแต่ยังเกินความคาดหมาย "
+"ซึ่งส่งผลให้ได้ผลลัพธ์ที่มีความหมายและความสำเร็จที่ยั่งยืน"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.cookie_policy
@@ -15332,6 +15431,8 @@ msgid ""
 "We offer cutting-edge products and services to tackle modern challenges. "
 "Leveraging the latest technology, we help you achieve your goals."
 msgstr ""
+"เรานำเสนอผลิตภัณฑ์และบริการล้ำสมัยเพื่อรับมือกับความท้าทายในยุคใหม่ "
+"โดยใช้เทคโนโลยีล่าสุดเพื่อช่วยให้คุณประสบความสำเร็จ"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_mega_menu_cards
@@ -15349,6 +15450,8 @@ msgid ""
 "We provide 24/7 support through various channels, including live chat, "
 "email, and phone, to assist with any queries."
 msgstr ""
+"เราให้การสนับสนุนตลอด 24 ชั่วโมง ผ่านช่องทางต่างๆ เช่น ไลฟ์แชท อีเมล "
+"และโทรศัพท์ เพื่อช่วยเหลือเกี่ยวกับคำถามต่างๆ"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_cards_grid
@@ -15357,6 +15460,8 @@ msgid ""
 "We provide personalized solutions to meet your unique needs. Our team works "
 "with you to ensure optimal results from start to finish."
 msgstr ""
+"เราจัดเตรียมโซลูชันเฉพาะบุคคลเพื่อตอบสนองความต้องการเฉพาะของคุณ "
+"ทีมงานของเราทำงานร่วมกับคุณเพื่อให้แน่ใจว่าจะได้รับผลลัพธ์ที่ดีที่สุดตั้งแต่ต้นจนจบ"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_key_benefits
@@ -15364,6 +15469,8 @@ msgid ""
 "We provide transparent pricing that offers great value, ensuring you always "
 "get the best deal without hidden costs."
 msgstr ""
+"เราเสนอราคาที่โปร่งใสซึ่งมอบความคุ้มค่าสูงสุด "
+"เพื่อให้มั่นใจว่าคุณจะได้รับข้อเสนอที่ดีที่สุดเสมอโดยไม่มีค่าใช้จ่ายแอบแฝง"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_faq_horizontal
@@ -15857,6 +15964,8 @@ msgid ""
 "With extensive experience and deep industry knowledge, we provide insights "
 "and solutions that keep you ahead of the curve."
 msgstr ""
+"ด้วยประสบการณ์อันกว้างขวางและความรู้เชิงลึกเกี่ยวกับอุตสาหกรรม "
+"เราจึงมอบข้อมูลเชิงลึกและโซลูชันที่ช่วยให้คุณก้าวล้ำนำหน้าผู้อื่น"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.new_page_template_services_0_s_three_columns
@@ -16392,6 +16501,9 @@ msgid ""
 "visuals, portfolio, arrangement, collection, visual-grid, split, alignment, "
 "added value"
 msgstr ""
+"คอลัมน์, แกลลอรี่, รูปภาพ, ภาพถ่าย, สื่อ, ข้อความ, เนื้อหา, อัลบั้ม, "
+"โชว์เคส, ภาพ, พอร์ตโฟลิโอ, การจัดเรียง, คอลเลกชัน, ตารางภาพ, การแยก, "
+"การจัดตำแหน่ง, มูลค่าเพิ่ม"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.snippets
@@ -16405,6 +16517,8 @@ msgid ""
 "collapsible, hide-show, movement, information, image, picture, photo, "
 "illustration, media, visual"
 msgstr ""
+"คำตอบทั่วไป คำถามทั่วไป คำถามที่พบบ่อย QA ยุบ ขยายได้ สลับ พับได้ ซ่อน-แสดง "
+"การเคลื่อนไหว ข้อมูล รูปภาพ รูปถ่าย ภาพประกอบ สื่อ ภาพ"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.snippets
@@ -16474,6 +16588,9 @@ msgid ""
 "combination, trendy, pattern, design, shape, geometric, patterned, contrast,"
 " collage, arrangement, gallery, creative, mosaic"
 msgstr ""
+"เนื้อหา รูปภาพ ภาพถ่าย ภาพประกอบ สื่อ ภาพ บทความ เรื่องราว การผสมผสาน "
+"ทันสมัย ​​รูปแบบ การออกแบบ รูปทรง เรขาคณิต ลวดลาย ความแตกต่าง ภาพตัดปะ "
+"การจัดเรียง แกลเลอรี สร้างสรรค์ โมเสก"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.snippets
@@ -16519,6 +16636,9 @@ msgid ""
 " content, picture, photo, illustration, media, visual, article, story, "
 "combination, showcase, announcement, reveal"
 msgstr ""
+"คำอธิบาย คอนเทนเนอร์ เค้าโครง โครงสร้าง หลายคอลัมน์ โมดูล กล่อง เนื้อหา "
+"รูปภาพ รูปถ่าย ภาพประกอบ สื่อ ภาพ บทความ เรื่องราว การรวมกัน จัดแสดง ประกาศ "
+"เปิดเผย"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.snippets
@@ -16680,6 +16800,8 @@ msgid ""
 "visuals, portfolio, mosaic, collage, arrangement, collection, visual-grid, "
 "split, alignment"
 msgstr ""
+"ตาราง แกลอรี่ รูปภาพ รูปถ่าย สื่อ ข้อความ เนื้อหา อัลบั้ม โชว์เคส ภาพ "
+"แฟ้มผลงาน โมเสก ภาพตัดปะ การจัดเรียง คอลเลกชัน ตารางภาพ แยก การจัดตำแหน่ง"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.snippets
@@ -16702,6 +16824,8 @@ msgid ""
 "article, combination, trendy, pattern, design, bold, impactful, vibrant, "
 "standout"
 msgstr ""
+"หัวเรื่อง, ส่วนหัว, เนื้อหา, รูปภาพ, ภาพถ่าย, ภาพประกอบ, สื่อ, ภาพ, บทความ, "
+"การรวมกัน, ทันสมัย, รูปแบบ, การออกแบบ, โดดเด่น, มีพลัง, สดใส"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.snippets
@@ -16752,6 +16876,9 @@ msgid ""
 "introduction, overview, spotlight, presentation, welcome, context, "
 "description, primary, highlight, lead, CTA, promote, promotion"
 msgstr ""
+"ฮีโร่ จัมโบทรอน หัวเรื่อง ส่วนหัว บทนำ หน้าแรก เนื้อหา บทนำ ภาพรวม จุดสนใจ "
+"การนำเสนอ ยินดีต้อนรับ บริบท คำอธิบาย หลัก ไฮไลท์ นำหน้า CTA ส่งเสริม "
+"การส่งเสริมการขาย"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.snippets
@@ -16760,6 +16887,8 @@ msgid ""
 "introduction, overview, spotlight, presentation, welcome, context, "
 "description, primary, highlight, lead, discover, exploration, reveal"
 msgstr ""
+"ฮีโร่ จัมโบทรอน หัวเรื่อง ส่วนหัว บทนำ หน้าแรก เนื้อหา บทนำ ภาพรวม จุดสนใจ "
+"การนำเสนอ ยินดีต้อนรับ บริบท คำอธิบาย หลัก ไฮไลท์ นำ ค้นพบ การสำรวจ เปิดเผย"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.snippets
@@ -16769,6 +16898,9 @@ msgid ""
 "description, primary, highlight, lead, journey, skills, expertises, experts,"
 " accomplishments, knowledge"
 msgstr ""
+"ฮีโร่ จัมโบ้ทรอน หัวเรื่อง ส่วนหัว บทนำ หน้าแรก เนื้อหา บทนำ ภาพรวม จุดสนใจ "
+"การนำเสนอ ยินดีต้อนรับ บริบท คำอธิบาย หลัก ไฮไลท์ นำทาง การเดินทาง ทักษะ "
+"ความเชี่ยวชาญ ผู้เชี่ยวชาญ ความสำเร็จ ความรู้"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.snippets
@@ -16785,6 +16917,8 @@ msgid ""
 "photo, illustration, media, visual, article, combination, trendy, pattern, "
 "design, centered"
 msgstr ""
+"ฮีโร่ จัมโบ้ทรอน หัวเรื่อง ส่วนหัว บทนำ บ้าน เนื้อหา ภาพ ภาพถ่าย ภาพประกอบ "
+"สื่อ ภาพ บทความ การรวมกัน ทันสมัย ​​รูปแบบ การออกแบบ ตรงกลาง"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.snippets
@@ -17040,6 +17174,8 @@ msgid ""
 "information, knowledge, guide, troubleshooting, assistance, QA, terms of "
 "services"
 msgstr ""
+"คำถาม คำตอบ คำตอบทั่วไป คำถามทั่วไป คำถามที่พบบ่อย ความช่วยเหลือ การสนับสนุน"
+" ข้อมูล ความรู้ คำแนะนำ การแก้ไขปัญหา ความช่วยเหลือ QA เงื่อนไขการบริการ"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.snippets
@@ -17119,6 +17255,8 @@ msgid ""
 "skills, achievements, benchmarks, milestones, indicators, data, "
 "measurements, reports, trends, results"
 msgstr ""
+"สถิติ สถิติ KPI เมตริก แผงข้อมูล การวิเคราะห์ ไฮไลท์ ตัวเลข ทักษะ ความสำเร็จ"
+" เกณฑ์มาตรฐาน เหตุการณ์สำคัญ ตัวบ่งชี้ ข้อมูล การวัด รายงาน แนวโน้ม ผลลัพธ์"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.snippets
@@ -17128,6 +17266,9 @@ msgid ""
 "measurements, reports, trends, results, analytics, cta, call to action, "
 "button"
 msgstr ""
+"สถิติ สถิติ KPI เมตริก แผงข้อมูล การวิเคราะห์ ไฮไลท์ ตัวเลข ทักษะ ความสำเร็จ"
+" เกณฑ์มาตรฐาน เหตุการณ์สำคัญ ตัวบ่งชี้ ข้อมูล การวัด รายงาน แนวโน้ม ผลลัพธ์ "
+"การวิเคราะห์ CTA ปุ่มเรียกร้องให้ดำเนินการ ปุ่ม"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.snippets
@@ -17136,6 +17277,9 @@ msgid ""
 "skills, achievements, benchmarks, milestones, indicators, data, "
 "measurements, reports, trends, results, analytics, summaries, summary"
 msgstr ""
+"สถิติ สถิติ KPI เมตริก แผงข้อมูล การวิเคราะห์ ไฮไลท์ ตัวเลข ทักษะ ความสำเร็จ"
+" เกณฑ์มาตรฐาน เหตุการณ์สำคัญ ตัวบ่งชี้ ข้อมูล การวัด รายงาน แนวโน้ม ผลลัพธ์ "
+"การวิเคราะห์ สรุป สรุป"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.snippets
@@ -17145,6 +17289,9 @@ msgid ""
 "measurements, reports, trends, results, analytics, summaries, summary, "
 "large-figures, prominent, standout"
 msgstr ""
+"สถิติ สถิติ KPI เมตริก แผงข้อมูล การวิเคราะห์ ไฮไลท์ ตัวเลข ทักษะ ความสำเร็จ"
+" เกณฑ์มาตรฐาน เหตุการณ์สำคัญ ตัวบ่งชี้ ข้อมูล การวัด รายงาน แนวโน้ม ผลลัพธ์ "
+"การวิเคราะห์ สรุป สรุป ตัวเลขขนาดใหญ่ โดดเด่น โดดเด่น"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.color_combinations_debug_view

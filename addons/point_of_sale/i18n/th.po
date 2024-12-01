@@ -567,6 +567,12 @@ msgid "Accept payments with an Adyen payment terminal"
 msgstr "รับชำระเงินด้วยสถานีชำระเงิน Adyen"
 
 #. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/backend/pos_kanban_view/pos_kanban_view.js:0
+msgid "Access Denied"
+msgstr "การเข้าถึงถูกปฏิเสธ"
+
+#. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_config__access_token
 msgid "Access Token"
 msgstr "โทเค็นการเข้าถึง"
@@ -996,7 +1002,7 @@ msgstr ""
 #. module: point_of_sale
 #: model:ir.model.fields.selection,name:point_of_sale.selection__res_company__point_of_sale_update_stock_quantities__closing
 msgid "At the session closing"
-msgstr ""
+msgstr "เมื่อปิดเซสชัน"
 
 #. module: point_of_sale
 #: model:ir.model.fields,help:point_of_sale.field_res_company__point_of_sale_update_stock_quantities
@@ -3632,6 +3638,14 @@ msgid "It is possible to print your tickets by making use of an IoT Box."
 msgstr "คุณสามารถพิมพ์ทิกเก็ตของคุณได้โดยใช้กล่อง IoT"
 
 #. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/backend/pos_kanban_view/pos_kanban_view.js:0
+msgid ""
+"It seems like you don't have enough rights to create point of sale "
+"configurations."
+msgstr ""
+
+#. module: point_of_sale
 #: model:product.template,name:point_of_sale.jean_jacket_product_template
 msgid "Jean Jacket"
 msgstr "แจ็กเก็ตยีนส์"
@@ -5733,6 +5747,8 @@ msgid ""
 "Print information on the receipt to allow the costumer to easily request the"
 " invoice anytime, from Odoo's portal"
 msgstr ""
+"พิมพ์ข้อมูลบนใบเสร็จเพื่อให้ลูกค้าสามารถขอรับใบแจ้งหนี้ได้อย่างง่ายดายทุกที่ทุกเวลาจากพอร์ทัล"
+" Odoo"
 
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.res_config_settings_view_form
@@ -5740,6 +5756,8 @@ msgid ""
 "Print information on the receipt to allow the customer to easily request the"
 " invoice anytime, from Odoo's portal."
 msgstr ""
+"พิมพ์ข้อมูลบนใบเสร็จเพื่อให้ลูกค้าสามารถขอรับใบแจ้งหนี้ได้อย่างง่ายดายตลอดเวลาจากพอร์ทัลของ"
+" Odoo"
 
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.res_config_settings_view_form
@@ -6027,12 +6045,12 @@ msgstr "การชำระเงินด้วยรหัส QR โค้�
 #. module: point_of_sale
 #: model:ir.model.fields.selection,name:point_of_sale.selection__res_company__point_of_sale_ticket_portal_url_display_mode__qr_code
 msgid "QR code"
-msgstr ""
+msgstr "รหัส QR โค้ด"
 
 #. module: point_of_sale
 #: model:ir.model.fields.selection,name:point_of_sale.selection__res_company__point_of_sale_ticket_portal_url_display_mode__qr_code_and_url
 msgid "QR code + URL"
-msgstr ""
+msgstr "รหัส QR โค้ด + URL"
 
 #. module: point_of_sale
 #. odoo-javascript
@@ -8582,6 +8600,8 @@ msgid ""
 "When active, orderlines will be sorted based on product category and "
 "sequence in the product screen's order cart."
 msgstr ""
+"เมื่อเปิดใช้งาน "
+"ระบบจะเรียงลำดับตามหมวดหมู่สินค้าและลำดับในรถเข็นสั่งซื้อของหน้าจอสินค้า"
 
 #. module: point_of_sale
 #: model:ir.model.fields.selection,name:point_of_sale.selection__pos_config__picking_policy__one
@@ -8802,7 +8822,7 @@ msgstr "คุณไม่สามารถใช้สมุดรายวั
 msgid ""
 "You do not have permission to open a POS session. Please try opening a "
 "session with a different user"
-msgstr ""
+msgstr "คุณไม่มีสิทธิ์ในการเปิดเซสชัน POS โปรดลองเปิดเซสชันกับผู้ใช้รายอื่น"
 
 #. module: point_of_sale
 #. odoo-python
@@ -8864,6 +8884,8 @@ msgid ""
 "You must set the iot box's IP address to use an IoT-connected screen. You'll"
 " find the field under the 'IoT Box' option."
 msgstr ""
+"คุณต้องตั้งค่าที่อยู่ IP ของกล่อง IoT เพื่อใช้หน้าจอที่เชื่อมต่อกับ IoT "
+"คุณจะพบช่องภายใต้ตัวเลือก 'กล่อง IoT'"
 
 #. module: point_of_sale
 #. odoo-python

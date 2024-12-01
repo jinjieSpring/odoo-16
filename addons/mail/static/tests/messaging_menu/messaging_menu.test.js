@@ -1,4 +1,3 @@
-import { mailDataHelpers } from "@mail/../tests/mock_server/mail_mock_server";
 import {
     SIZES,
     assertSteps,
@@ -17,6 +16,7 @@ import {
     triggerEvents,
     triggerHotkey,
 } from "@mail/../tests/mail_test_helpers";
+import { mailDataHelpers } from "@mail/../tests/mock_server/mail_mock_server";
 
 import { describe, expect, test } from "@odoo/hoot";
 import { Deferred, mockUserAgent } from "@odoo/hoot-mock";
@@ -34,7 +34,6 @@ import { browser } from "@web/core/browser/browser";
 import { deserializeDateTime } from "@web/core/l10n/dates";
 import { rpc } from "@web/core/network/rpc";
 import { getOrigin } from "@web/core/utils/urls";
-import { queryOne } from "@odoo/hoot-dom";
 
 describe.current.tags("desktop");
 defineMailModels();
@@ -758,7 +757,7 @@ test("chat preview should not display correspondent name in body", async () => {
     await contains(".o-mail-NotificationItem img");
     await contains(".o-mail-NotificationItem-name", { text: "Demo" });
     await contains(".o-mail-NotificationItem-text", { text: "test" });
-    expect(queryOne(".o-mail-NotificationItem-text").textContent).toBe("test"); // exactly
+    expect(".o-mail-NotificationItem-text:only").toHaveText("test"); // exactly
 });
 
 test("filtered previews", async () => {
@@ -1124,7 +1123,7 @@ test("can open messaging menu even if messaging is not initialized", async () =>
     patchBrowserNotification("default");
     await startServer();
     const def = new Deferred();
-    onRpcBefore("/mail/action", async (args) => {
+    onRpcBefore("/mail/data", async (args) => {
         if (args.init_messaging) {
             await def;
         }
@@ -1258,4 +1257,32 @@ test("keyboard navigation with quick search", async () => {
     await insertText(".o-mail-MessagingMenu input", "", { replace: true });
     await contains(".o-mail-NotificationItem", { count: 23 });
     await contains(".o-mail-NotificationItem.o-active", { count: 0 });
+});
+
+test("failure is removed from messaging menu when message is deleted", async () => {
+    const pyEnv = await startServer();
+    const recipientId = pyEnv["res.partner"].create({ name: "James" });
+    const messageId = pyEnv["mail.message"].create({
+        body: "Hello world!",
+        model: "res.partner",
+        partner_ids: [recipientId],
+        res_id: serverState.partnerId,
+    });
+    pyEnv["mail.notification"].create({
+        failure_type: "mail_email_invalid",
+        mail_message_id: messageId,
+        notification_status: "exception",
+        notification_type: "email",
+        res_partner_id: serverState.partnerId,
+    });
+    await start();
+    await click(".o_menu_systray i[aria-label='Messages']");
+    await contains(".o-mail-NotificationItem", {
+        contains: [
+            [".o-mail-NotificationItem-name", { text: "Contact" }],
+            [".o-mail-NotificationItem-text", { text: "An error occurred when sending an email" }],
+        ],
+    });
+    pyEnv["mail.message"].unlink([messageId]);
+    await contains(".o-mail-NotificationItem", { count: 0 });
 });

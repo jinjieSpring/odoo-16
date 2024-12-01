@@ -3956,7 +3956,7 @@ msgstr "現金アカウント"
 #. module: account
 #: model:account.account,name:account.1_cash_journal_default_account_52
 msgid "Cash Bakery"
-msgstr "現金 パン屋"
+msgstr "現金 製パン店"
 
 #. module: account
 #: model:account.account,name:account.1_cash_journal_default_account_54
@@ -11424,7 +11424,7 @@ msgstr "取引先与信限度警告"
 #. module: account
 #: model:ir.actions.act_window,name:account.action_account_moves_ledger_partner
 msgid "Partner Ledger"
-msgstr "取引先仕訳"
+msgstr "取引先元帳"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_res_partner__use_partner_credit_limit
@@ -11511,7 +11511,7 @@ msgstr "ハッシュ化された記帳で使用されている取引先はマー
 #: model_terms:ir.ui.view,arch_db:account.view_move_form
 #: model_terms:ir.ui.view,arch_db:account.view_move_line_payment_tree
 msgid "Pay"
-msgstr "お支払い"
+msgstr "支払"
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.res_config_settings_view_form
@@ -14709,10 +14709,9 @@ msgstr "支払条件には、少なくとも1つ以上の％の行があり、�
 #. odoo-python
 #: code:addons/account/models/chart_template.py:0
 msgid ""
-"The Syscohada chart template shouldn't be selected directly. Instead, you "
-"should directly select the chart template related to your country."
+"The %s chart template shouldn't be selected directly. Instead, you should "
+"directly select the chart template related to your country."
 msgstr ""
-"Syscohada チャートテンプレートを直接選択すべきではありません。代わりに、あなたの国に関連するチャートテンプレートを直接選択して下さい。"
 
 #. module: account
 #: model:ir.model.fields,help:account.field_base_document_layout__vat
@@ -15263,7 +15262,7 @@ msgstr "仕訳の会社の取引先は、関連銀行口座と不一致してい
 #. module: account
 #: model:ir.model.constraint,message:account.constraint_account_payment_check_amount_not_negative
 msgid "The payment amount cannot be negative."
-msgstr "お支払い金額は負にすることはできません。"
+msgstr "支払金額は負にすることはできません。"
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_bank_statement_line__payment_reference

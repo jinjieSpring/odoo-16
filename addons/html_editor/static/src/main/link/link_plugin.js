@@ -218,17 +218,6 @@ export class LinkPlugin extends Plugin {
         this.removeLinkShortcut();
     }
 
-    handleCommand(command, payload) {
-        switch (command) {
-            case "NORMALIZE":
-                this.normalizeLink();
-                break;
-            case "CLEAN_FOR_SAVE":
-                this.removeEmptyLinks(payload.root);
-                break;
-        }
-    }
-
     // -------------------------------------------------------------------------
     // Commands
     // -------------------------------------------------------------------------
@@ -592,7 +581,10 @@ export class LinkPlugin extends Plugin {
                 continue;
             }
             const classes = [...link.classList].filter((c) => !this.ignoredClasses.has(c));
-            if (!classes.length) {
+            const attributes = [...link.attributes].filter(
+                (a) => !["style", "href", "class"].includes(a.name)
+            );
+            if (!classes.length && !attributes.length) {
                 link.remove();
             }
         }

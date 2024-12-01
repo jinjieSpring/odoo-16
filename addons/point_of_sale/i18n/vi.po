@@ -581,6 +581,12 @@ msgid "Accept payments with an Adyen payment terminal"
 msgstr "Chấp nhận thanh toán với thiết bị đầu cuối thanh toán Adyen"
 
 #. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/backend/pos_kanban_view/pos_kanban_view.js:0
+msgid "Access Denied"
+msgstr "Truy cập bị từ chối"
+
+#. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_config__access_token
 msgid "Access Token"
 msgstr "Token truy cập"
@@ -974,7 +980,7 @@ msgstr "Bánh táo"
 #. odoo-javascript
 #: code:addons/point_of_sale/static/src/app/utils/input_popups/text_input_popup.xml:0
 msgid "Apply"
-msgstr "Ứng tuyển"
+msgstr "Áp dụng"
 
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.pos_config_view_form
@@ -1214,7 +1220,7 @@ msgstr "Dòng sao kê ngân hàng"
 #. odoo-javascript
 #: code:addons/point_of_sale/static/src/backend/pos_kanban_view/pos_kanban_view.js:0
 msgid "Bar"
-msgstr "Cột"
+msgstr "Quán bar"
 
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.res_config_settings_view_form
@@ -3144,7 +3150,7 @@ msgstr "Tên sản phẩm đầy đủ"
 #. odoo-python
 #: code:addons/point_of_sale/models/pos_config.py:0
 msgid "Furniture Shop"
-msgstr "Cửa hàng đồ nội thất"
+msgstr "Cửa hàng nội thất"
 
 #. module: point_of_sale
 #. odoo-javascript
@@ -3682,6 +3688,14 @@ msgstr "Không được phép kết hợp hoàn tiền và bán hàng"
 #: code:addons/point_of_sale/static/src/app/printer/pos_printer_service.js:0
 msgid "It is possible to print your tickets by making use of an IoT Box."
 msgstr "Có thể in phiếu của bạn bằng cách sử dụng Hộp IoT."
+
+#. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/backend/pos_kanban_view/pos_kanban_view.js:0
+msgid ""
+"It seems like you don't have enough rights to create point of sale "
+"configurations."
+msgstr "Có vẻ như bạn không có quyền thích hợp để tạo cấu hình điểm bán hàng."
 
 #. module: point_of_sale
 #: model:product.template,name:point_of_sale.jean_jacket_product_template
@@ -7273,7 +7287,7 @@ msgstr "TỔNG"
 #. odoo-javascript
 #: code:addons/point_of_sale/static/src/backend/pos_kanban_view/pos_kanban_view.js:0
 msgid "Tables, menus, kitchen display, etc."
-msgstr "Bàn, thực đơn, màn hình hiển thị nhà bếp,..."
+msgstr "Bàn, thực đơn, màn hình nhà bếp,..."
 
 #. module: point_of_sale
 #. odoo-javascript

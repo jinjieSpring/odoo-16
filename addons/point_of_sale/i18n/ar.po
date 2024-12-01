@@ -52,7 +52,7 @@ msgstr "نسبة الخصم % "
 #. odoo-python
 #: code:addons/point_of_sale/models/stock_warehouse.py:0
 msgid "%(name)s Picking POS"
-msgstr ""
+msgstr "%(name)sالانتقاء في نقطة البيع "
 
 #. module: point_of_sale
 #. odoo-python
@@ -575,6 +575,12 @@ msgstr "قبول المدفوعات عن طريق جهاز دفع Stripe "
 #: model_terms:ir.ui.view,arch_db:point_of_sale.res_config_settings_view_form
 msgid "Accept payments with an Adyen payment terminal"
 msgstr "قبول المدفوعات عن طريق جهاز دفع Adyen "
+
+#. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/backend/pos_kanban_view/pos_kanban_view.js:0
+msgid "Access Denied"
+msgstr "تم رفض الوصول "
 
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_config__access_token
@@ -3654,6 +3660,14 @@ msgid "It is possible to print your tickets by making use of an IoT Box."
 msgstr "هل يمكن طباعة تذاكرك عن طريق الاستفادة من جهاز IoT؟ "
 
 #. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/backend/pos_kanban_view/pos_kanban_view.js:0
+msgid ""
+"It seems like you don't have enough rights to create point of sale "
+"configurations."
+msgstr ""
+
+#. module: point_of_sale
 #: model:product.template,name:point_of_sale.jean_jacket_product_template
 msgid "Jean Jacket"
 msgstr "جاكيت جينز "
@@ -5875,7 +5889,7 @@ msgstr "منتج يتكون من عدة عناصر "
 #. module: point_of_sale
 #: model:ir.model,name:point_of_sale.model_product_combo_item
 msgid "Product Combo Item"
-msgstr ""
+msgstr "منتج يتكون من عدة عناصر "
 
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_product_product__public_description

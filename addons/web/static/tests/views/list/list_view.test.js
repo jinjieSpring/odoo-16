@@ -123,7 +123,7 @@ class Foo extends models.Model {
             amount: 1200,
             currency_id: 2,
             reference: "bar,1",
-            properties: [],
+            properties: {},
         },
         {
             id: 2,
@@ -135,7 +135,7 @@ class Foo extends models.Model {
             m2m: [1, 2, 3],
             amount: 500,
             reference: "res.currency,1",
-            properties: [],
+            properties: {},
         },
         {
             id: 3,
@@ -147,7 +147,7 @@ class Foo extends models.Model {
             m2m: [],
             amount: 300,
             reference: "res.currency,2",
-            properties: [],
+            properties: {},
         },
         {
             id: 4,
@@ -158,7 +158,7 @@ class Foo extends models.Model {
             m2o: 1,
             m2m: [1],
             amount: 0,
-            properties: [],
+            properties: {},
         },
     ];
 }
@@ -770,6 +770,29 @@ test(`list view with adjacent buttons with invisible modifier`, async () => {
     expect(`td button i.fa-star`).toHaveCount(2);
     expect(`td button i.fa-refresh`).toHaveCount(3);
     expect(`td button i.fa-exclamation`).toHaveCount(3);
+});
+
+test(`list view with adjacent buttons with width attribute`, async () => {
+    await mountView({
+        resModel: "foo",
+        type: "list",
+        arch: `
+            <list>
+                <field name="foo"/>
+                <button icon="fa-play"/>
+                <button icon="fa-heart" width="25px"/>
+                <button icon="fa-cog"/>
+                <button icon="fa-list"/>
+            </list>
+        `,
+    });
+    expect(`th:not(.o_list_record_selector)`).toHaveCount(4, {
+        message: "adjacent buttons with no width in the arch must be grouped in a single column",
+    });
+    expect(".o_data_row td:not(.o_list_record_selector):nth-child(3) .fa-play").toHaveCount(4);
+    expect(".o_data_row td:not(.o_list_record_selector):nth-child(4) .fa-heart").toHaveCount(4);
+    expect(".o_data_row td:not(.o_list_record_selector):nth-child(5) .fa-cog").toHaveCount(4);
+    expect(".o_data_row td:not(.o_list_record_selector):nth-child(5) .fa-list").toHaveCount(4);
 });
 
 test(`list view with icon buttons`, async () => {
@@ -7160,6 +7183,44 @@ test(`click on a button in a list view`, async () => {
     expect.verifySteps(["doActionButton", "web_search_read"]);
 });
 
+test("click on a button in a list view on second page", async () => {
+    onRpc("web_search_read", ({ kwargs }) => {
+        expect.step(`web_search_read (offset: ${kwargs.offset})`);
+    });
+    mockService("action", {
+        doActionButton: (action) => {
+            expect.step("doActionButton");
+            action.onClose();
+        },
+    });
+
+    await mountView({
+        resModel: "foo",
+        type: "list",
+        arch: `
+            <list limit="3">
+                <field name="foo"/>
+                <button string="a button" name="button_action" icon="fa-car" type="object"/>
+            </list>
+        `,
+    });
+
+    expect(".o_data_row").toHaveCount(3);
+
+    await pagerNext();
+    expect(".o_data_row").toHaveCount(1);
+
+    await contains(".o_data_row .o_list_button button").click();
+    expect(".o_data_row").toHaveCount(1);
+
+    expect.verifySteps([
+        "web_search_read (offset: 0)",
+        "web_search_read (offset: 3)",
+        "doActionButton",
+        "web_search_read (offset: 3)",
+    ]);
+});
+
 test(`invisible attrs in readonly and editable list`, async () => {
     await mountView({
         resModel: "foo",
@@ -8701,7 +8762,6 @@ test(`list with handle widget`, async () => {
         expect(params.ids).toEqual([3, 2, 1], {
             message: "should write the sequence in correct order",
         });
-        return Promise.resolve();
     });
 
     await mountView({
@@ -9436,7 +9496,7 @@ test(`multi edit field with daterange widget (edition without using the picker)`
 
     onRpc("write", ({ args }) => {
         expect.step("write");
-        expect(args).toEqual([[1, 2], { date_start: "2021-04-01" }]);
+        expect(args).toEqual([[1, 2], { date_start: "2016-04-01" }]);
     });
 
     await mountView({
@@ -9456,7 +9516,7 @@ test(`multi edit field with daterange widget (edition without using the picker)`
     // Change the date in the first datetime
     await contains(
         `.o_data_row .o_data_cell .o_field_daterange[name='date_start'] input[data-field='date_start']`
-    ).edit("2021-04-01 11:00:00", { confirm: "enter" });
+    ).edit("2016-04-01 11:00:00", { confirm: "enter" });
     expect(`.modal`).toHaveCount(1, {
         message: "The confirm dialog should appear to confirm the multi edition.",
     });
@@ -9464,7 +9524,7 @@ test(`multi edit field with daterange widget (edition without using the picker)`
         "Field:",
         "Date start",
         "Update to:",
-        "04/01/2021\n01/26/2017",
+        "04/01/2016\n01/26/2017",
     ]);
 
     // Valid the confirm dialog
@@ -10811,7 +10871,7 @@ test(`grouped list view, indentation for empty group`, async () => {
         // Override of the read_group to display the row even if there is no record in it,
         // to mock the behavihour of some fields e.g stage_id on the sale order.
         if (kwargs.groupby[0] === "m2o") {
-            return Promise.resolve({
+            return {
                 groups: [
                     {
                         id: 8,
@@ -10825,7 +10885,7 @@ test(`grouped list view, indentation for empty group`, async () => {
                     },
                 ],
                 length: 1,
-            });
+            };
         }
     });
 
@@ -10920,9 +10980,7 @@ test(`list view move to previous page when all records from last page deleted`, 
     let checkSearchRead = false;
     onRpc("web_search_read", ({ kwargs }) => {
         if (checkSearchRead) {
-            expect.step("web_search_read");
-            expect(kwargs.limit).toBe(3, { message: "limit should 3" });
-            expect(kwargs.offset).toBe(0, { message: "offset should be 0" });
+            expect.step(`web_search_read (limit: ${kwargs.limit}, offset: ${kwargs.offset})`);
         }
     });
     await mountView({
@@ -10948,16 +11006,17 @@ test(`list view move to previous page when all records from last page deleted`, 
     await contains(`.modal button.btn-primary`).click();
     expect(getPagerValue()).toEqual([1, 3]);
     expect(getPagerLimit()).toBe(3);
-    expect.verifySteps(["web_search_read"]);
+    expect.verifySteps([
+        "web_search_read (limit: 3, offset: 3)",
+        "web_search_read (limit: 3, offset: 0)",
+    ]);
 });
 
 test(`grouped list view move to previous page of group when all records from last page deleted`, async () => {
     let checkSearchRead = false;
     onRpc("web_search_read", ({ kwargs }) => {
         if (checkSearchRead) {
-            expect.step("web_search_read");
-            expect(kwargs.limit).toBe(2, { message: "limit should 2" });
-            expect(kwargs.offset).toBe(0, { message: "offset should be 0" });
+            expect.step(`web_search_read (limit: ${kwargs.limit}, offset: ${kwargs.offset})`);
         }
     });
 
@@ -10992,7 +11051,10 @@ test(`grouped list view move to previous page of group when all records from las
     await contains(`.modal .btn-primary`).click();
     expect(`th.o_group_name:eq(0) .o_pager_counter`).toHaveCount(0);
     expect(`.o_data_row`).toHaveCount(2);
-    expect.verifySteps(["web_search_read"]);
+    expect.verifySteps([
+        "web_search_read (limit: 2, offset: 2)",
+        "web_search_read (limit: 2, offset: 0)",
+    ]);
 });
 
 test(`grouped list view move to next page when all records from the current page deleted`, async () => {
@@ -11511,11 +11573,11 @@ test(`grouped list: have a group with pager, then apply filter`, async () => {
 
     await contains(`.o_group_header:eq(1)`).click();
     expect(`.o_data_row`).toHaveCount(2);
-    expect(queryFirst(`.o_group_header .o_pager`).innerText).toBe("1-2 / 3");
+    expect(`.o_group_header .o_pager:first`).toHaveText("1-2 / 3");
 
     await contains(`.o_group_header .o_pager_next`).click();
     expect(`.o_data_row`).toHaveCount(1);
-    expect(queryFirst(`.o_group_header .o_pager`).innerText).toBe("3-3 / 3");
+    expect(`.o_group_header .o_pager:first`).toHaveText("3-3 / 3");
 
     await toggleSearchBarMenu();
     await toggleMenuItem("Some Filter");
@@ -12996,6 +13058,40 @@ test(`add a new row in grouped editable="bottom" list`, async () => {
     await contains(`.o_selected_row [name=foo] input`).edit("pla", { confirm: false });
     await contains(`.o_list_button_save`).click();
     expect(`.o_data_row`).toHaveCount(5);
+});
+
+test("editable grouped list: fold group with edited row", async () => {
+    await mountView({
+        resModel: "foo",
+        type: "list",
+        arch: '<list editable="top"><field name="foo"/></list>',
+        groupBy: ["bar"],
+    });
+
+    await contains(".o_group_header").click();
+    expect(".o_data_row .o_data_cell").toHaveText("blip");
+    await contains(".o_data_row .o_data_cell").click();
+    await contains(".o_selected_row [name=foo] input").edit("some change");
+    await contains(".o_group_header").click();
+    await contains(".o_group_header").click();
+    expect(".o_data_row .o_data_cell").toHaveText("some change");
+});
+
+test("editable grouped list: add row with edited row", async () => {
+    await mountView({
+        resModel: "foo",
+        type: "list",
+        arch: '<list editable="bottom"><field name="foo"/></list>',
+        groupBy: ["bar"],
+    });
+
+    await contains(".o_group_header").click();
+    expect(".o_data_row").toHaveCount(1);
+    await contains(".o_data_row .o_data_cell").click();
+    await contains(".o_selected_row [name=foo] input").edit("some change");
+    await contains(".o_group_field_row_add a").click();
+    expect(".o_data_row").toHaveCount(2);
+    expect(".o_data_row:first .o_data_cell").toHaveText("some change");
 });
 
 test(`add and discard a line through keyboard navigation without crashing`, async () => {
@@ -14959,7 +15055,7 @@ test(`Properties: char`, async () => {
     Bar._records[0].definitions = [definition];
     for (const record of Foo._records) {
         if (record.m2o === 1) {
-            record.properties = [{ ...definition, value: "CHAR" }];
+            record.properties = { [definition.name]: "CHAR" };
         }
     }
 
@@ -15006,7 +15102,7 @@ test(`Properties: boolean`, async () => {
     Bar._records[0].definitions = [definition];
     for (const record of Foo._records) {
         if (record.m2o === 1) {
-            record.properties = [{ ...definition, value: true }];
+            record.properties = { [definition.name]: true };
         }
     }
 
@@ -15049,7 +15145,7 @@ test(`Properties: integer`, async () => {
     Bar._records[0].definitions = [definition];
     for (const record of Foo._records) {
         if (record.m2o === 1) {
-            record.properties = [{ ...definition, value: 123 }];
+            record.properties = { [definition.name]: 123 };
         }
     }
 
@@ -15096,7 +15192,7 @@ test(`Properties: float`, async () => {
     Bar._records[0].definitions = [definition];
     for (const record of Foo._records) {
         if (record.m2o === 1) {
-            record.properties = [{ ...definition, value: record.id === 4 ? false : 123.45 }];
+            record.properties = { [definition.name]: record.id === 4 ? false : 123.45 };
         }
     }
 
@@ -15143,7 +15239,7 @@ test(`Properties: date`, async () => {
     Bar._records[0].definitions = [definition];
     for (const record of Foo._records) {
         if (record.m2o === 1) {
-            record.properties = [{ ...definition, value: "2022-12-12" }];
+            record.properties = { [definition.name]: "2022-12-12" };
         }
     }
 
@@ -15187,7 +15283,7 @@ test(`Properties: datetime`, async () => {
     Bar._records[0].definitions = [definition];
     for (const record of Foo._records) {
         if (record.m2o === 1) {
-            record.properties = [{ ...definition, value: "2022-12-12 12:12:00" }];
+            record.properties = { [definition.name]: "2022-12-12 12:12:00" };
         }
     }
 
@@ -15239,7 +15335,7 @@ test(`Properties: selection`, async () => {
     Bar._records[0].definitions = [definition];
     for (const record of Foo._records) {
         if (record.m2o === 1) {
-            record.properties = [{ ...definition, value: "b" }];
+            record.properties = { [definition.name]: "b" };
         }
     }
 
@@ -15287,7 +15383,7 @@ test(`Properties: tags`, async () => {
     Bar._records[0].definitions = [definition];
     for (const record of Foo._records) {
         if (record.m2o === 1) {
-            record.properties = [{ ...definition, value: ["a", "c"] }];
+            record.properties = { [definition.name]: ["a", "c"] };
         }
     }
 
@@ -15339,7 +15435,7 @@ test(`Properties: many2one`, async () => {
     Bar._records[0].definitions = [definition];
     for (const record of Foo._records) {
         if (record.m2o === 1) {
-            record.properties = [{ ...definition, value: [1, "USD"] }];
+            record.properties = { [definition.name]: [1, "USD"] };
         }
     }
 
@@ -15384,7 +15480,7 @@ test(`Properties: many2many`, async () => {
     Bar._records[0].definitions = [definition];
     for (const record of Foo._records) {
         if (record.m2o === 1) {
-            record.properties = [{ ...definition, value: [[1, "USD"]] }];
+            record.properties = { [definition.name]: [[1, "USD"]] };
         }
     }
 
@@ -15422,9 +15518,9 @@ test(`multiple sources of properties definitions`, async () => {
     Bar._records[1].definitions = [definition1];
     for (const record of Foo._records) {
         if (record.m2o === 1) {
-            record.properties = [{ ...definition0, value: "0" }];
+            record.properties = { [definition0.name]: "0" };
         } else if (record.m2o === 2) {
-            record.properties = [{ ...definition1, value: true }];
+            record.properties = { [definition1.name]: true };
         }
     }
 
@@ -15467,9 +15563,12 @@ test(`toggle properties`, async () => {
     Bar._records[1].definitions = [definition1, definition2];
     for (const record of Foo._records) {
         if (record.m2o === 1) {
-            record.properties = [{ ...definition0, value: "0" }];
+            record.properties = { [definition0.name]: "0" };
         } else if (record.m2o === 2) {
-            record.properties = [definition1, { ...definition2, value: true }];
+            record.properties = {
+                [definition1.name]: false,
+                [definition2.name]: true,
+            };
         }
     }
 
@@ -15512,7 +15611,7 @@ test(`properties: optional show/hide (no config in local storage)`, async () => 
     Bar._records[0].definitions = [definition];
     for (const record of Foo._records) {
         if (record.m2o === 1) {
-            record.properties = [{ ...definition, value: "0" }];
+            record.properties = { [definition.name]: "0" };
         }
     }
 
@@ -15541,7 +15640,7 @@ test(`properties: optional show/hide (config from local storage)`, async () => {
     Bar._records[0].definitions = [definition];
     for (const record of Foo._records) {
         if (record.m2o === 1) {
-            record.properties = [{ ...definition, value: "0" }];
+            record.properties = { [definition.name]: "0" };
         }
     }
 
@@ -15576,7 +15675,7 @@ test(`properties: optional show/hide (at reload, config from local storage)`, as
     Bar._records[0].definitions = [definition];
     for (const record of Foo._records) {
         if (record.m2o === 1) {
-            record.properties = [{ ...definition, value: "0" }];
+            record.properties = { [definition.name]: "0" };
         }
     }
 
@@ -15622,7 +15721,7 @@ test(`reload properties definitions when domain change`, async () => {
     Bar._records[0].definitions = [definition0];
     for (const record of Foo._records) {
         if (record.m2o === 1) {
-            record.properties = [{ ...definition0, value: "AA" }];
+            record.properties = { [definition0.name]: "AA" };
         }
     }
 
@@ -15669,7 +15768,7 @@ test(`do not reload properties definitions when page change`, async () => {
     Bar._records[0].definitions = [definition0];
     for (const record of Foo._records) {
         if (record.m2o === 1) {
-            record.properties = [{ ...definition0, value: "0" }];
+            record.properties = { [definition0.name]: "0" };
         }
     }
 
@@ -15705,7 +15804,7 @@ test(`load properties definitions only once when grouped`, async () => {
     Bar._records[0].definitions = [definition0];
     for (const record of Foo._records) {
         if (record.m2o === 1) {
-            record.properties = [{ ...definition0, value: "0" }];
+            record.properties = { [definition0.name]: "0" };
         }
     }
 
@@ -15742,7 +15841,7 @@ test(`Invisible Properties`, async () => {
     Bar._records[0].definitions = [definition];
     for (const record of Foo._records) {
         if (record.m2o === 1) {
-            record.properties = [{ ...definition, value: 123 }];
+            record.properties = { [definition.name]: 123 };
         }
     }
 
@@ -16215,7 +16314,7 @@ test(`properties do not disappear after domain change`, async () => {
     Bar._records[0].definitions = [definition0];
     for (const record of Foo._records) {
         if (record.m2o === 1) {
-            record.properties = [{ ...definition0, value: "AA" }];
+            record.properties = { [definition0.name]: "AA" };
         }
     }
 
@@ -16249,4 +16348,86 @@ test(`properties do not disappear after domain change`, async () => {
 
     await toggleMenuItem("My filter");
     expect(`.o_list_renderer th[data-name="properties.property_char"]`).toHaveCount(1);
+});
+
+test("two pages, go page 2, record deleted meanwhile", async () => {
+    await mountView({
+        resModel: "foo",
+        type: "list",
+        arch: `<list limit="3">
+                <field name="foo"/>
+                <field name="int_field"/>
+            </list>
+        `,
+    });
+
+    expect(".o_data_row").toHaveCount(3);
+    expect(getPagerValue()).toEqual([1, 3]);
+    expect(getPagerLimit()).toBe(4);
+
+    Foo._records.splice(3);
+    await pagerNext();
+    expect(".o_data_row").toHaveCount(3);
+    expect(getPagerValue()).toEqual([1, 3]);
+    expect(getPagerLimit()).toBe(3);
+});
+
+test("two pages, go page 2, record deleted meanwhile (grouped case)", async () => {
+    for (let i = 0; i < 4; i++) {
+        Foo._records[i].bar = true;
+    }
+    await mountView({
+        resModel: "foo",
+        type: "list",
+        groupBy: ["bar"],
+        arch: `<list limit="3">
+                <field name="foo"/>
+                <field name="int_field"/>
+            </list>
+        `,
+    });
+
+    expect(".o_group_header").toHaveCount(1);
+    expect(".o_data_row").toHaveCount(0);
+
+    await contains(".o_group_header").click();
+    expect(".o_data_row").toHaveCount(3);
+    expect(getPagerValue(queryFirst(".o_group_header"))).toEqual([1, 3]);
+    expect(getPagerLimit(queryFirst(".o_group_header"))).toBe(4);
+
+    Foo._records.splice(3);
+    await pagerNext(queryFirst(".o_group_header"));
+    expect(".o_data_row").toHaveCount(3);
+    expect(".o_group_header .o_pager").toHaveCount(0);
+});
+
+test("open record, with invalid record in list", async () => {
+    // in this scenario, the record is already invalid in db, so we should be allowed to
+    // leave it
+    Foo._records[0].foo = false;
+    Foo._views = {
+        form: `<form><field name="foo"/><field name="int_field"/></form>`,
+        list: `<list><field name="foo" required="1"/><field name="int_field"/></list>`,
+        search: `<search/>`,
+    };
+
+    mockService("notification", {
+        add() {
+            throw new Error("should not display a notification");
+        },
+    });
+
+    await mountWithCleanup(WebClient);
+    await getService("action").doAction({
+        res_model: "foo",
+        type: "ir.actions.act_window",
+        views: [
+            [false, "list"],
+            [false, "form"],
+        ],
+    });
+
+    await contains(".o_data_cell").click();
+
+    expect(".o_form_view").toHaveCount(1);
 });
