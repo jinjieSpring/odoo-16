@@ -70,14 +70,6 @@ class IotBoxOwlHomePage(Home):
             'message': 'Odoo service restarted',
         })
 
-    @http.route('/hw_posbox_homepage/restart_iotbox', auth='none', type='http', cors='*')
-    def iotbox_restart(self):
-        subprocess.call(['sudo', 'reboot'])
-        return json.dumps({
-            'status': 'success',
-            'message': 'IoT Box is restarting',
-        })
-
     @http.route('/hw_posbox_homepage/iot_logs', auth='none', type='http', cors='*')
     def get_iot_logs(self):
         with open("/var/log/odoo/odoo-server.log", encoding="utf-8") as file:
@@ -152,7 +144,8 @@ class IotBoxOwlHomePage(Home):
         iot_device = []
         for device in iot_devices:
             iot_device.append({
-                'name': iot_devices[device].device_name + ' : ' + str(iot_devices[device].data['value']),
+                'name': iot_devices[device].device_name,
+                'value': str(iot_devices[device].data['value']),
                 'type': iot_devices[device].device_type.replace('_', ' '),
                 'identifier': iot_devices[device].device_identifier,
             })

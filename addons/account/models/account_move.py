@@ -5184,7 +5184,7 @@ class AccountMove(models.Model):
 
         self._check_draftable()
         # We remove all the analytics entries for this journal
-        self.mapped('line_ids.analytic_line_ids').with_context(force_analytic_line_delete=True).unlink()
+        self.mapped('line_ids.analytic_line_ids').unlink()
         self.mapped('line_ids').remove_move_reconcile()
         self.state = 'draft'
 
@@ -6130,6 +6130,19 @@ class AccountMove(models.Model):
         Down-payments can be created from a sale order. This method is overridden in the sale order module.
         '''
         return False
+
+    def _refunds_origin_required(self):
+        return False
+
+    def _set_reversed_entry(self, credit_note):
+        """ Try to find the original invoice for a single credit_note. """
+        if len(credit_note) != 1 or credit_note.move_type != 'out_refund':
+            return
+
+        original_invoice = self.filtered(lambda inv: inv.move_type == 'out_invoice'
+                                         and credit_note.invoice_line_ids.sale_line_ids in inv.invoice_line_ids.sale_line_ids)
+        if len(original_invoice) == 1 and original_invoice._refunds_origin_required():
+            credit_note.reversed_entry_id = original_invoice.id
 
     @api.model
     def get_invoice_localisation_fields_required_to_invoice(self, country_id):

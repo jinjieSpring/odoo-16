@@ -3211,6 +3211,11 @@ class SnippetsMenu extends Component {
         var self = this;
         var $html = $(html);
 
+        // TODO: Remove in master and add it in template s_website_form
+        const websiteFormEditorOptionsEl = $html.find('[data-js="WebsiteFormEditor"]')[0];
+        if (websiteFormEditorOptionsEl) {
+            websiteFormEditorOptionsEl.dataset.dropExcludeAncestor = "form";
+        }
         this.templateOptions = [];
         var selectors = [];
         var $styles = $html.find('[data-selector]');
@@ -3607,7 +3612,7 @@ class SnippetsMenu extends Component {
         if (!$scrollingElement[0]) {
             $scrollingElement = $(this.ownerDocument).find('.o_editable');
         }
-        const oNotebook = this.ownerDocument.querySelector(".o_notebook:not(.o_fullscreen_ancestor)");
+        const oNotebook = this.ownerDocument.querySelector(".o_notebook");
         if (oNotebook) {
             $scrollingElement = $(oNotebook);
         }
