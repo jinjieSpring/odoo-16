@@ -18,7 +18,7 @@ export class PosOrder extends Base {
     setup(vals) {
         super.setup(vals);
 
-        if (!this.session_id && typeof this.id === "string") {
+        if (!this.session_id && (!this.finalized || typeof this.id !== "number")) {
             this.update({ session_id: this.session });
         }
 
@@ -46,19 +46,21 @@ export class PosOrder extends Base {
         }
 
         // !!Keep all uiState in one object!!
-        this.uiState = {
-            lineToRefund: {},
-            displayed: true,
-            booked: false,
-            screen_data: {},
-            selected_orderline_uuid: undefined,
-            selected_paymentline_uuid: undefined,
-            locked: this.state !== "draft",
-            // Pos restaurant specific to most proper way is to override this
-            TipScreen: {
-                inputTipAmount: "",
-            },
-        };
+        if (!this.uiState) {
+            this.uiState = {
+                lineToRefund: {},
+                displayed: true,
+                booked: false,
+                screen_data: {},
+                selected_orderline_uuid: undefined,
+                selected_paymentline_uuid: undefined,
+                locked: this.state !== "draft",
+                // Pos restaurant specific to most proper way is to override this
+                TipScreen: {
+                    inputTipAmount: "",
+                },
+            };
+        }
     }
 
     get user() {
@@ -737,7 +739,10 @@ export class PosOrder extends Base {
                     sum +=
                         orderLine.get_all_prices().priceWithTaxBeforeDiscount -
                         orderLine.get_all_prices().priceWithTax;
-                    if (orderLine.display_discount_policy() === "without_discount") {
+                    if (
+                        orderLine.display_discount_policy() === "without_discount" &&
+                        !(orderLine.price_type === "manual")
+                    ) {
                         sum +=
                             (orderLine.get_taxed_lst_unit_price() -
                                 orderLine.getUnitDisplayPriceBeforeDiscount()) *
@@ -945,7 +950,7 @@ export class PosOrder extends Base {
 
     //see set_screen_data
     get_screen_data() {
-        const screen = this.uiState?.screen_data["value"];
+        const screen = this.uiState?.screen_data?.["value"];
         // If no screen data is saved
         //   no payment line -> product screen
         //   with payment line -> payment screen

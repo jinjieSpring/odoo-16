@@ -5,6 +5,7 @@ from stdnum.fr import siret
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 from odoo.addons.account_edi_ubl_cii.models.account_edi_common import EAS_MAPPING
+from odoo.addons.account.models.company import PEPPOL_DEFAULT_COUNTRIES
 
 
 class ResPartner(models.Model):
@@ -108,7 +109,7 @@ class ResPartner(models.Model):
             ('0142', "SECETI Object Identifiers - 0142"),
             ('0193', "UBL.BE party identifier - 0193"),
             ('0199', "Legal Entity Identifier (LEI) - 0199"),
-            ('0201', "Codice Univoco UnitÃ  Organizzativa iPA - 0201"),
+            ('0201', "Codice Univoco Unità Organizzativa iPA - 0201"),
             ('0202', "Indirizzo di Posta Elettronica Certificata - 0202"),
             ('0209', "GS1 identification keys - 0209"),
             ('0210', "Codice Fiscale - 0210"),
@@ -135,7 +136,7 @@ class ResPartner(models.Model):
     @api.model
     def _get_ubl_cii_formats_info(self):
         return {
-            'ubl_bis3': {'countries': list(EAS_MAPPING), 'on_peppol': True, 'sequence': 200},
+            'ubl_bis3': {'countries': list(PEPPOL_DEFAULT_COUNTRIES), 'on_peppol': True, 'sequence': 200},
             'xrechnung': {'countries': ['DE'], 'on_peppol': True},
             'ubl_a_nz': {'countries': ['NZ', 'AU'], 'on_peppol': True},
             'nlcius': {'countries': ['NL'], 'on_peppol': True},

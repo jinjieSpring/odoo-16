@@ -1362,6 +1362,15 @@
                                         </div>
                                         <div id="product_option_block" class="d-flex flex-wrap w-100"/>
                                     </div>
+                                    <t
+                                        t-if="is_view_active('website_sale.product_tags')"
+                                        t-call="website_sale.product_tags"
+                                    >
+                                      <t
+                                            t-set="all_product_tags"
+                                            t-value="product_variant.all_product_tag_ids"
+                                        />
+                                    </t>
                                 </div>
                             </form>
                             <p t-elif="not product.active" class="alert alert-warning">
@@ -1390,15 +1399,6 @@
                                     </div>
                                 </section>
                             </div>
-                            <t
-                                t-if="is_view_active('website_sale.product_tags')"
-                                t-call="website_sale.product_tags"
-                            >
-                                <t
-                                    t-set="all_product_tags"
-                                    t-value="product_variant.all_product_tag_ids"
-                                />
-                            </t>
                             <div
                                 t-if="not is_view_active('website_sale_comparison.accordion_specs_item')"
                                 id="product_attributes_simple"
@@ -1492,7 +1492,7 @@
     </template>
 
     <template id="product_tags" name="Product Tags" active="True">
-        <div class="o_product_tags o_field_tags d-flex flex-wrap align-items-center gap-2 mb-4">
+        <div class="o_product_tags o_field_tags d-flex flex-wrap align-items-center gap-2 mb-2 mt-1">
             <t t-foreach="all_product_tags" t-as="tag">
                 <t t-if="tag.visible_on_ecommerce">
                     <span t-if="tag.image"
@@ -2188,7 +2188,7 @@
             - xmlid: The id of the xml templated rendered by the controller.
         -->
         <t t-set="step_specific_values" t-value="website._get_checkout_steps(xmlid)"/>
-        <div t-attf-class="#{_container_classes} d-flex #{_form_send_navigation and 'flex-column flex-lg-row align-items-lg-center' or 'flex-column'} pt-4">
+        <div t-attf-class="#{_container_classes} d-flex #{_form_send_navigation and 'flex-column flex-lg-row align-items-lg-center' or 'flex-column'} mb-5 mb-lg-0 pt-4">
             <t t-if="website_sale_order and website_sale_order.website_order_line">
                 <t t-if="xmlid == 'website_sale.payment'">
                     <div t-if="not errors and not website_sale_order.amount_total"
@@ -2831,7 +2831,7 @@
                         <!-- This div serves as an anchor for the navigation buttons on the mobile
                              view. -->
                         <div t-if="not show_shorter_cart_summary and show_navigation_button"
-                             class="o_cta_navigation_placeholder d-block d-lg-none order-lg-4"/>
+                             class="o_cta_navigation_placeholder d-block d-none d-lg-none order-lg-4"/>
                     </div>
                 </div>
                 <!-- This is the drag-and-drop area for website building blocs at the end of each

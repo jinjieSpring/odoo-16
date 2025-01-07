@@ -3244,9 +3244,21 @@ export class OdooEditor extends EventTarget {
                     : 'none';
             }
 
+            const selectionText = sel.toString().replace(/\s+/g, "");
             const translateDropdown = this.toolbar.querySelector('#translate');
             if (translateDropdown) {
-                translateDropdown.style.display = sel.isCollapsed ? 'none' : '';
+                const translateDropdownBtn = translateDropdown.querySelector('.btn');
+                if (sel.isCollapsed) {
+                    translateDropdown.style.display = 'none';
+                } else {
+                    translateDropdown.style.display = '';
+                    translateDropdownBtn.classList[!selectionText ? 'add' : 'remove']('disabled');
+                }
+            }
+
+            const chatGptBtn = this.toolbar.querySelector('#open-chatgpt.btn');
+            if (chatGptBtn && !sel.isCollapsed) {
+                chatGptBtn.classList[!selectionText ? 'add' : 'remove']('disabled');
             }
         }
         this.updateColorpickerLabels();
@@ -3442,7 +3454,10 @@ export class OdooEditor extends EventTarget {
         // Hide toolbar if it overflows the scroll container.
         const distToScrollContainer = Math.min(toolbarTop - scrollContainerRect.top,
                                                 scrollContainerRect.bottom - toolbarBottom);
-        this.toolbar.classList.toggle('d-none', distToScrollContainer < OFFSET / 2);
+        const isToolbarOverflow = distToScrollContainer < OFFSET / 2;
+        if (isToolbarOverflow) {
+            this.toolbar.style.top = `${(Math.max(selRect.top, scrollContainerRect.top) + OFFSET)}px`
+        }
     }
 
     // PASTING / DROPPING

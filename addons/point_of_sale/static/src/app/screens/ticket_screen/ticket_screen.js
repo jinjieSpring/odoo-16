@@ -12,12 +12,13 @@ import { OrderWidget } from "@point_of_sale/app/generic_components/order_widget/
 import { CenteredIcon } from "@point_of_sale/app/generic_components/centered_icon/centered_icon";
 import { SearchBar } from "@point_of_sale/app/screens/ticket_screen/search_bar/search_bar";
 import { usePos } from "@point_of_sale/app/store/pos_hook";
-import { Component, onMounted, useState } from "@odoo/owl";
+import { Component, onMounted, onWillStart, useState } from "@odoo/owl";
 import {
     BACKSPACE,
     Numpad,
     getButtons,
-    DEFAULT_LAST_ROW,
+    ZERO,
+    DECIMAL,
 } from "@point_of_sale/app/generic_components/numpad/numpad";
 import { PosOrderLineRefund } from "@point_of_sale/app/models/pos_order_line_refund";
 import { fuzzyLookup } from "@web/core/utils/search";
@@ -75,6 +76,16 @@ export class TicketScreen extends Component {
         Object.assign(this.state, this.props.stateOverride || {});
 
         onMounted(this.onMounted);
+        onWillStart(async () => {
+            if (this.pos._shouldLoadOrders()) {
+                try {
+                    this.pos.setLoadingOrderState(true);
+                    await this.pos.getServerOrders();
+                } finally {
+                    this.pos.setLoadingOrderState(false);
+                }
+            }
+        });
     }
     onMounted() {
         setTimeout(() => {
@@ -93,12 +104,15 @@ export class TicketScreen extends Component {
         }
     }
     getNumpadButtons() {
-        return getButtons(DEFAULT_LAST_ROW, [
-            { value: "quantity", text: _t("Qty"), class: "active border-primary" },
-            { value: "discount", text: _t("% Disc"), disabled: true },
-            { value: "price", text: _t("Price"), disabled: true },
-            BACKSPACE,
-        ]);
+        return getButtons(
+            [{ value: "-", text: "+/-", disabled: true }, ZERO, DECIMAL],
+            [
+                { value: "quantity", text: _t("Qty"), class: "active border-primary" },
+                { value: "discount", text: _t("% Disc"), disabled: true },
+                { value: "price", text: _t("Price"), disabled: true },
+                BACKSPACE,
+            ]
+        );
     }
     async onSearch(search) {
         this.state.search = search;
@@ -311,7 +325,7 @@ export class TicketScreen extends Component {
         );
     }
     activeOrderFilter(o) {
-        const screen = ["PaymentScreen", "ProductScreen", "ReceiptScreen", "TipScreen"];
+        const screen = ["ReceiptScreen", "TipScreen"];
         const oScreen = o.get_screen_data();
         return (!o.finalized || screen.includes(oScreen.name)) && o.uiState.displayed;
     }
@@ -334,8 +348,8 @@ export class TicketScreen extends Component {
             orders = fuzzyLookup(this.state.search.searchTerm, orders, repr);
         }
 
-        const sortOrders = (orders, ascending = false) => {
-            return orders.sort((a, b) => {
+        const sortOrders = (orders, ascending = false) =>
+            orders.sort((a, b) => {
                 const dateA = parseUTCString(a.date_order, "yyyy-MM-dd HH:mm:ss");
                 const dateB = parseUTCString(b.date_order, "yyyy-MM-dd HH:mm:ss");
 
@@ -347,7 +361,6 @@ export class TicketScreen extends Component {
                     return ascending ? nameA - nameB : nameB - nameA;
                 }
             });
-        };
 
         if (this.state.filter === "SYNCED") {
             return sortOrders(orders).slice(
