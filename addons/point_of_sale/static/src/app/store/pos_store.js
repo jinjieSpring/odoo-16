@@ -622,12 +622,12 @@ export class PosStore extends Reactive {
     }
 
     async _loadMissingPricelistItems(products) {
-        if (!products.length) {
+        const validProducts = products.filter((product) => typeof product.id === "number");
+        if (!validProducts.length) {
             return;
         }
-
-        const product_tmpl_ids = products.map((product) => product.raw.product_tmpl_id);
-        const product_ids = products.map((product) => product.id);
+        const product_tmpl_ids = validProducts.map((product) => product.raw.product_tmpl_id);
+        const product_ids = validProducts.map((product) => product.id);
         await this.data.callRelated("pos.session", "get_pos_ui_product_pricelist_item_by_product", [
             odoo.pos_session_id,
             product_tmpl_ids,
@@ -1297,7 +1297,9 @@ export class PosStore extends Reactive {
 
                 if (refundedOrderLine) {
                     const order = refundedOrderLine.order_id;
-                    delete order.uiState.lineToRefund[refundedOrderLine.uuid];
+                    if (order) {
+                        delete order.uiState.lineToRefund[refundedOrderLine.uuid];
+                    }
                     refundedOrderLine.refunded_qty += Math.abs(line.qty);
                 }
             }
@@ -2121,7 +2123,10 @@ export class PosStore extends Reactive {
     }
 
     showSearchButton() {
-        return this.mainScreen.component === ProductScreen && this.mobile_pane === "right";
+        if (this.mainScreen.component === ProductScreen) {
+            return this.ui.isSmall ? this.mobile_pane === "right" : true;
+        }
+        return false;
     }
 
     doNotAllowRefundAndSales() {

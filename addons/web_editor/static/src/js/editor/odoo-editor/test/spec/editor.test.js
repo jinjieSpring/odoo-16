@@ -3481,6 +3481,34 @@ X[]
                                     </div>`,
                 });
             });
+            it('should delete columns when all selected', async () => {
+                await testEditor(BasicEditor, {
+                    contentBefore: `<div class="container o_text_columns">[<div class="row"><div class="col-4"><p><br></p></div><div class="col-4"><p><br></p></div><div class="col-4"><p><br></p></div></div>]</div>`,
+                    stepFunction: deleteBackward,
+                    contentAfter: `[]<br>`,
+                });
+            });
+            it('should delete columns when all selected along with text from an outer node', async () => {
+                await testEditor(BasicEditor, {
+                    contentBefore: `<p>a[b</p><div class="container o_text_columns"><div class="row"><div class="col-4"><p><br></p></div><div class="col-4"><p><br></p></div><div class="col-4"><p><br></p></div></div>]</div>`,
+                    stepFunction: deleteBackward,
+                    contentAfter: `<p>a[]</p>`,
+                });
+            });
+            it('should delete all columns when all selected within a text', async () => {
+                await testEditor(BasicEditor, {
+                    contentBefore: `<p>a[b</p><div class="container o_text_columns"><div class="row"><div class="col-4"><p><br></p></div><div class="col-4"><p><br></p></div><div class="col-4"><p><br></p></div></div></div><p>a]b</p>`,
+                    stepFunction: deleteBackward,
+                    contentAfter: `<p>a[]b</p>`,
+                });
+            });
+            it('should adjust selection and delete columns', async () => {
+                await testEditor(BasicEditor, {
+                    contentBefore: `<div class="container o_text_columns"><div class="row"><div class="col-4">[<p><br></p></div><div class="col-4"><p><br></p></div><div class="col-4"><p><br></p>]</div></div></div>`,
+                    stepFunction: deleteBackward,
+                    contentAfter: `[]<br>`,
+                });
+            });
         });
     });
 
@@ -7940,6 +7968,19 @@ X[]
                         await simulateMouseClick(editor, firstTable, true);
                     },
                     contentAfter: '<table></table><p>[]<br></p><table></table>'
+                });
+            });
+            it('should reset selection on mousedown on empty editable', async () => {
+                await testEditor(BasicEditor, {
+                    contentBefore: '<p>[<br>]</p>',
+                    stepFunction: async editor => {
+                        const paragraph = editor.editable.querySelector('p');
+                        await triggerEvent(paragraph, 'mousedown');
+                        await nextTick();
+                        await triggerEvent(paragraph, 'mouseup');
+                        triggerEvent(paragraph, 'click');
+                    },
+                    contentAfter: '<p>[]<br></p>'
                 });
             });
         });
