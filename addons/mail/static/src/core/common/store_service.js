@@ -79,6 +79,8 @@ export class Store extends BaseStore {
     Notification;
     /** @type {typeof import("@mail/core/common/persona_model").Persona} */
     Persona;
+    /** @type {typeof import("@mail/core/common/res_groups_model").ResGroups} */
+    ["res.groups"];
     /** @type {typeof import "@mail/chatter/web/scheduled_message_model).ScheduledMessage"} */
     ScheduledMessage;
     /** @type {typeof import("@mail/core/common/settings_model").Settings} */
@@ -427,22 +429,9 @@ export class Store extends BaseStore {
             ev.preventDefault();
             this.openChat({ partnerId: id });
             return true;
-        } else if (ev.target.tagName === "A" && model && id) {
-            ev.preventDefault();
-            Promise.resolve(
-                this.env.services.action.doAction({
-                    type: "ir.actions.act_window",
-                    res_model: model,
-                    views: [[false, "form"]],
-                    res_id: id,
-                })
-            ).then(() => this.onLinkFollowed(thread));
-            return true;
         }
         return false;
     }
-
-    onLinkFollowed(fromThread) {}
 
     setup() {
         super.setup();
