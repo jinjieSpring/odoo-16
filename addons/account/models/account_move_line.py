@@ -516,7 +516,7 @@ class AccountMoveLine(models.Model):
             if line.display_type == 'payment_term':
                 term_lines = term_by_move.get(line.move_id, self.env['account.move.line'])
                 n_terms = len(line.move_id.invoice_payment_term_id.line_ids)
-                if line.move_id.payment_reference and line.move_id.ref:
+                if line.move_id.payment_reference and line.move_id.ref and line.move_id.payment_reference != line.move_id.ref:
                     name = f'{line.move_id.ref} - {line.move_id.payment_reference}'
                 else:
                     name = line.move_id.payment_reference or ''
@@ -2790,6 +2790,7 @@ class AccountMoveLine(models.Model):
 
             caba_rounding_diff_label = _("Cash basis rounding difference")
             move_vals['date'] = max(move_vals['date'], move.date)
+            move_vals['journal_id'] = self.company_id.tax_cash_basis_journal_id.id
             for caba_treatment, line in move_values['to_process_lines']:
 
                 vals = {
